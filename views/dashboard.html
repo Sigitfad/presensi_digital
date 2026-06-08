@@ -1,0 +1,208 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .foto-sm-img{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;}
+    .foto-sm-ini{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#2563EB;border:2px solid #E2E8F0;flex-shrink:0;}
+  </style>
+</head>
+<body>
+<div id="page-content" class="page-content">
+  <div class="page-header">
+    <div class="page-title">Dashboard</div>
+    <div class="page-subtitle" id="greet">Memuat data...</div>
+  </div>
+
+  <!-- 6 stat cards sesuai permintaan -->
+  <div class="row g-3 mb-3">
+    <div class="col-6 col-md-4 col-lg-2 fade-in-up">
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="bi bi-people-fill"></i></div>
+        <div><div class="stat-value" id="s-siswa">-</div><div class="stat-label">Total Siswa</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2 fade-in-up">
+      <div class="stat-card">
+        <div class="stat-icon purple"><i class="bi bi-shield-fill-check"></i></div>
+        <div><div class="stat-value" id="s-kepsek">-</div><div class="stat-label">Kepala Sekolah</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2 fade-in-up">
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="bi bi-mortarboard-fill"></i></div>
+        <div><div class="stat-value" id="s-guru">-</div><div class="stat-label">Total Guru</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2 fade-in-up">
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="bi bi-person-badge-fill"></i></div>
+        <div><div class="stat-value" id="s-operator">-</div><div class="stat-label">Total Operator</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2 fade-in-up">
+      <div class="stat-card">
+        <div class="stat-icon orange"><i class="bi bi-shield-fill"></i></div>
+        <div><div class="stat-value" id="s-penjaga">-</div><div class="stat-label">Total Penjaga</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2 fade-in-up">
+      <div class="stat-card">
+        <div class="stat-icon purple"><i class="bi bi-mortarboard"></i></div>
+        <div><div class="stat-value" id="s-lulusan">-</div><div class="stat-label">Total Lulusan</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2 fade-in-up">
+      <div class="stat-card">
+        <div class="stat-icon orange"><i class="bi bi-box-arrow-right"></i></div>
+        <div><div class="stat-value" id="s-pindahan">-</div><div class="stat-label">Total Pindahan</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2 fade-in-up">
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="bi bi-person-check-fill"></i></div>
+        <div><div class="stat-value" id="s-hadir">-</div><div class="stat-label">Absensi Hari Ini</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="card-modern">
+        <div class="card-modern-header">
+          <div class="card-modern-title">
+            <i class="bi bi-calendar-check" style="color:var(--primary)"></i>
+            Presensi Hari Ini
+            <span id="tgl-badge" style="font-size:12px;font-weight:500;color:var(--gray);"></span>
+          </div>
+          <a href="/pages/riwayat" class="btn-primary-custom" style="padding:5px 13px;font-size:12px;">Lihat Semua</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table-modern">
+            <thead><tr><th>Foto</th><th>NISN</th><th>Nama</th><th>Kelas</th><th>Jam</th><th>Status</th></tr></thead>
+            <tbody id="tbl-today"><tr><td colspan="6" class="text-center py-4"><div class="loading-spinner"></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="paginationToday" class="pagination-bar d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3" style="display:none;"></div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card-modern mb-3">
+        <div class="card-modern-header"><div class="card-modern-title"><i class="bi bi-lightning-fill" style="color:#F59E0B"></i> Aksi Cepat</div></div>
+        <div class="card-modern-body">
+          <div class="d-grid gap-2">
+            <a href="/pages/scan"    class="btn-success-custom justify-content-center"><i class="bi bi-qr-code-scan"></i> Scan Presensi</a>
+            <a href="/pages/rekap"   class="btn-primary-custom justify-content-center"><i class="bi bi-bar-chart-fill"></i> Rekap Presensi</a>
+            <a href="/pages/qrcode"  class="btn-primary-custom justify-content-center" style="background:linear-gradient(135deg,#7C3AED,#6D28D9)"><i class="bi bi-qr-code"></i> Cetak QR Code</a>
+            <a href="/pages/riwayat" class="btn-primary-custom justify-content-center" style="background:linear-gradient(135deg,#0EA5E9,#0284C7)"><i class="bi bi-download"></i> Export Presensi</a>
+          </div>
+        </div>
+      </div>
+      <div class="card-modern">
+        <div class="card-modern-header"><div class="card-modern-title"><i class="bi bi-info-circle-fill" style="color:var(--primary)"></i> Info Sistem</div></div>
+        <div class="card-modern-body">
+          <div style="font-size:12.5px;color:var(--gray);line-height:2.2;">
+            <div><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Tepat Waktu:</strong> Sebelum <span id="inf-jam" style="font-weight:800;color:var(--dark)">07:00</span></div>
+            <div><i class="bi bi-clock-fill text-warning me-2"></i><strong>Terlambat:</strong> Setelah <span id="inf-jam2" style="font-weight:800;color:var(--dark)">07:00</span></div>
+            <hr style="margin:8px 0;opacity:0.1;">
+            <div><i class="bi bi-calendar me-2" style="color:var(--primary)"></i><span id="inf-tgl">-</span></div>
+            <div><i class="bi bi-building me-2" style="color:var(--primary)"></i><span id="inf-sekolah">-</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/app.js?v=5"></script>
+<script>
+const BULAN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const HARI =['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+const STATUS_BADGE={
+  'Hadir'    :'<span class="badge-hadir"><i class="bi bi-check-circle-fill"></i> Hadir</span>',
+  'Terlambat':'<span class="badge-terlambat"><i class="bi bi-clock-fill"></i> Terlambat</span>',
+  'Izin'     :'<span class="badge-izin"><i class="bi bi-file-text-fill"></i> Izin</span>',
+  'Sakit'    :'<span class="badge-sakit"><i class="bi bi-heart-pulse-fill"></i> Sakit</span>',
+  'Alpha'    :'<span class="badge-alpha"><i class="bi bi-x-circle-fill"></i> Alpha</span>',
+};
+
+let _todayData=[], _todayPage=1, _todayPerPage=5;
+
+function renderTodayRow(d, i) {
+  const ini = d.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  const fotoHtml = d.foto
+    ? `<img src="${d.foto}" class="foto-sm-img">`
+    : `<div class="foto-sm-ini">${ini}</div>`;
+  return `<tr>
+    <td>${fotoHtml}</td>
+    <td style="font-weight:600">${d.nisn}</td>
+    <td style="font-weight:700;color:var(--dark)">${d.nama}</td>
+    <td>${d.kelas}</td>
+    <td style="font-weight:600">${d.jam_masuk?d.jam_masuk.slice(0,5):'-'}</td>
+    <td>${STATUS_BADGE[d.status]||d.status}</td>
+  </tr>`;
+}
+
+function renderTodayPage(){
+  const tbody=document.getElementById('tbl-today');
+  if(!_todayData.length){
+    tbody.innerHTML='<tr><td colspan="6"><div class="empty-state"><i class="bi bi-inbox"></i><p>Belum ada data</p></div></td></tr>';
+    document.getElementById('paginationToday').style.display='none';
+    return;
+  }
+  const pp=_todayPerPage;
+  const totalPages=Math.ceil(_todayData.length/pp);
+  if(_todayPage>totalPages) _todayPage=totalPages;
+  const start=(_todayPage-1)*pp;
+  const end=Math.min(start+pp,_todayData.length);
+  tbody.innerHTML=_todayData.slice(start,end).map((r,i)=>renderTodayRow(r,start+i)).join('');
+  buildPaginationUI('paginationToday',{
+    currentPage:_todayPage, totalPages, currentSize:_todayPerPage,
+    sizes:[5,10,15,20,25,50],
+    onPageChange:p=>{_todayPage=p;renderTodayPage();},
+    onSizeChange:s=>{_todayPerPage=s;_todayPage=1;renderTodayPage();}
+  });
+}
+
+async function init(){
+  await loadLayout('dashboard','Dashboard');
+  const data = await fetchAPI('/api/dashboard');
+  if(!data) return;
+
+  const ROLE_LABEL={ operator:'Operator', guru:'Guru', kepala_sekolah:'Kepala Sekolah', penjaga_sekolah:'Penjaga Sekolah', guru_bidang:'Guru Bidang' };
+  document.getElementById('greet').innerHTML=`Selamat datang, <strong>${data.operator}</strong> <em>${ROLE_LABEL[data.role]||data.role}</em>`;
+  document.getElementById('s-siswa').textContent   = data.totalSiswa;
+  document.getElementById('s-kepsek').textContent  = data.totalKepsek;
+  document.getElementById('s-guru').textContent    = data.totalGuru;
+  document.getElementById('s-operator').textContent= data.totalOperator;
+  document.getElementById('s-penjaga').textContent = data.totalPenjaga;
+  document.getElementById('s-lulusan').textContent = data.totalLulusan;
+  document.getElementById('s-pindahan').textContent = data.totalPindahan;
+  document.getElementById('s-hadir').textContent   = data.totalHadirHariIni;
+
+  const now=new Date();
+  const tgl=`${HARI[now.getDay()]}, ${now.getDate()} ${BULAN[now.getMonth()]} ${now.getFullYear()}`;
+  document.getElementById('tgl-badge').textContent=`(${now.getDate()} ${BULAN[now.getMonth()].slice(0,3)} ${now.getFullYear()})`;
+  document.getElementById('inf-tgl').textContent=tgl;
+  document.getElementById('inf-jam').textContent=data.batasTerlambat||'07:00';
+  document.getElementById('inf-jam2').textContent=data.batasTerlambat||'07:00';
+  document.getElementById('inf-sekolah').textContent=data.identitas?.nama_sekolah||'-';
+
+  if(!data.presensiHariIni?.length){
+    document.getElementById('tbl-today').innerHTML=`<tr><td colspan="6"><div class="empty-state"><i class="bi bi-inbox"></i><p>Belum ada presensi hari ini</p><a href="/pages/scan" class="btn-primary-custom mt-2"><i class="bi bi-qr-code-scan"></i> Mulai Scan</a></div></td></tr>`;
+    return;
+  }
+  _todayData=data.presensiHariIni;
+  _todayPage=1;
+  renderTodayPage();
+}
+init();
+</script>
+</body>
+</html>

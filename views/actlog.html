@@ -1,0 +1,233 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Log Aktivitas</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+  </style>
+</head>
+<body>
+<div id="page-content" class="page-content">
+  <div class="page-header">
+    <div class="page-title">Log Aktivitas</div>
+    <div class="page-subtitle">Riwayat semua aktivitas pengguna dalam sistem</div>
+  </div>
+
+  <div class="card-modern">
+    <div class="card-modern-header flex-wrap gap-2">
+      <div class="card-modern-title">
+        <i class="bi bi-journal-text" style="color:var(--primary)"></i> Riwayat Aktivitas
+      </div>
+      <div class="d-flex gap-2 flex-wrap">
+        <!-- Filter nama pengguna -->
+        <input type="text" id="filterUser" class="form-control-modern"
+               placeholder="Cari nama pengguna..." style="width:190px;" oninput="clearTimeout(window._dL);window._dL=setTimeout(()=>loadLog(),300)">
+
+        <!-- Filter jenis aktivitas -->
+        <select id="filterAksi" class="form-control-modern" style="width:190px;" onchange="loadLog()">
+          <option value="Semua">Semua Aktivitas</option>
+          <option value="Login">Login</option>
+          <option value="Logout">Logout</option>
+          <option value="Scan Presensi">Scan Presensi</option>
+          <option value="Presensi Manual">Presensi Manual</option>
+          <option value="Tambah Siswa">Tambah Siswa</option>
+          <option value="Edit Siswa">Edit Siswa</option>
+          <option value="Hapus Siswa">Hapus Siswa</option>
+          <option value="Tambah User">Tambah User</option>
+          <option value="Edit User">Edit User</option>
+          <option value="Hapus User">Hapus User</option>
+          <option value="Edit Identitas Sekolah">Edit Identitas Sekolah</option>
+          <option value="Backup Database">Backup Database</option>
+          <option value="Restore Database">Restore Database</option>
+          <option value="Import Backup">Import Backup</option>
+          <option value="Hapus Backup">Hapus Backup</option>
+          <option value="Edit Settings">Edit Settings</option>
+        </select>
+
+        <!-- Jumlah tampil -->
+        <select id="filterLimit" class="form-control-modern" style="width:140px;" onchange="loadLog()">
+          <option value="50">50 Terakhir</option>
+          <option value="100" selected>100 Terakhir</option>
+          <option value="200">200 Terakhir</option>
+          <option value="500">500 Terakhir</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Ringkasan -->
+    <div id="log-ringkasan" style="padding:10px 20px;background:#F8FAFF;border-bottom:1px solid rgba(0,0,0,0.05);font-size:12.5px;color:var(--gray);display:none;">
+      Menampilkan <strong id="log-jumlah">0</strong> aktivitas
+    </div>
+
+    <div class="table-responsive">
+      <table class="table-modern">
+        <thead>
+          <tr>
+            <th>#</th><th>Waktu</th><th>Pengguna</th><th>Role</th>
+            <th>Aktivitas</th><th>Detail</th><th>IP</th>
+          </tr>
+        </thead>
+        <tbody id="tblLog">
+          <tr><td colspan="7" class="text-center py-4"><div class="loading-spinner"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div id="paginationLog" class="pagination-bar d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3" style="display:none;"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/app.js?v=5"></script>
+<script>
+const ROLE_BADGE = {
+  kepala_sekolah : `<span style="background:#EDE9FE;color:#7C3AED;padding:1px 8px;border-radius:10px;font-size:10.5px;font-weight:700;">Kepsek</span>`,
+  guru           : `<span style="background:#D1FAE5;color:#059669;padding:1px 8px;border-radius:10px;font-size:10.5px;font-weight:700;">Guru</span>`,
+  operator       : `<span style="background:#DBEAFE;color:#2563EB;padding:1px 8px;border-radius:10px;font-size:10.5px;font-weight:700;">Operator</span>`,
+  penjaga_sekolah: `<span style="background:#FEF3C7;color:#D97706;padding:1px 8px;border-radius:10px;font-size:10.5px;font-weight:700;">Penjaga</span>`,
+  guru_bidang    : `<span style="background:#CFFAFE;color:#0891B2;padding:1px 8px;border-radius:10px;font-size:10.5px;font-weight:700;">Guru Bidang</span>`,
+};
+
+const AKSI_CONFIG = {
+  'Login'                : { dot:'#10B981', icon:'bi-box-arrow-in-right' },
+  'Logout'               : { dot:'#64748B', icon:'bi-box-arrow-right' },
+  'Scan Presensi'        : { dot:'#2563EB', icon:'bi-qr-code-scan' },
+  'Presensi Manual'      : { dot:'#2563EB', icon:'bi-calendar-check' },
+  'Tambah Siswa'         : { dot:'#059669', icon:'bi-person-plus-fill' },
+  'Edit Siswa'           : { dot:'#D97706', icon:'bi-pencil-square' },
+  'Hapus Siswa'          : { dot:'#DC2626', icon:'bi-person-dash-fill' },
+  'Tambah User'          : { dot:'#059669', icon:'bi-person-plus-fill' },
+  'Edit User'            : { dot:'#D97706', icon:'bi-person-gear' },
+  'Hapus User'           : { dot:'#DC2626', icon:'bi-person-x-fill' },
+  'Edit Identitas Sekolah': { dot:'#7C3AED', icon:'bi-building' },
+  'Backup Database (DB)' : { dot:'#2563EB', icon:'bi-database-fill-up' },
+  'Backup Database (JSON)': { dot:'#059669', icon:'bi-filetype-json' },
+  'Restore Database'     : { dot:'#D97706', icon:'bi-cloud-arrow-down' },
+  'Import Backup'        : { dot:'#7C3AED', icon:'bi-cloud-arrow-up' },
+  'Hapus Backup'         : { dot:'#DC2626', icon:'bi-trash3-fill' },
+  'Edit Settings'        : { dot:'#64748B', icon:'bi-gear-fill' },
+};
+
+let _logData=[], _logPage=1, _logPerPage=5;
+
+function renderLogRow(d, i) {
+  const cfg = AKSI_CONFIG[d.aksi] || {dot:'#2563EB',icon:'bi-activity'};
+  return `<tr>
+    <td style="color:var(--gray)">${i+1}</td>
+    <td style="font-size:12px;white-space:nowrap;">${d.created_at}</td>
+    <td style="font-weight:600">${d.user_nama}</td>
+    <td>${d.role==='guru_bidang'&&d.bidang_keahlian?`<span style="background:#CFFAFE;color:#0891B2;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap;">${d.bidang_keahlian}</span>`:(ROLE_BADGE[d.role]||d.role)}</td>
+    <td>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span style="width:8px;height:8px;border-radius:50%;background:${cfg.dot};display:inline-block;"></span>
+        <span style="font-size:12px;font-weight:600;">${d.aksi}</span>
+      </div>
+    </td>
+    <td>
+      <i class="bi bi-person-fill-exclamation" title="Lihat Detail" onclick="showDetailLog(_logData[${i}].user_nama,_logData[${i}].aksi,_logData[${i}].detail,_logData[${i}].created_at,_logData[${i}].ip||'')" style="color:#2563EB;cursor:pointer;font-size:16px;"></i>
+      <span style="font-size:11.5px;color:var(--gray)">${(d.detail||'').length>50?d.detail.substring(0,50)+'...':d.detail||'-'}</span>
+    </td>
+    <td style="font-size:11.5px;color:var(--gray);font-family:monospace;">${d.ip||'-'}</td>
+  </tr>`;
+}
+
+function renderLogPage(){
+  const tbody=document.getElementById('tblLog');
+  if(!_logData.length){
+    tbody.innerHTML='<tr><td colspan="7"><div class="empty-state"><i class="bi bi-journal"></i><p>Tidak ada aktivitas untuk filter ini</p></div></td></tr>';
+    document.getElementById('paginationLog').style.display='none';
+    return;
+  }
+  const pp=_logPerPage;
+  const totalPages=Math.ceil(_logData.length/pp);
+  if(_logPage>totalPages) _logPage=totalPages;
+  const start=(_logPage-1)*pp;
+  const end=Math.min(start+pp,_logData.length);
+  tbody.innerHTML=_logData.slice(start,end).map((l,i)=>renderLogRow(l,start+i)).join('');
+  buildPaginationUI('paginationLog',{
+    currentPage:_logPage, totalPages, currentSize:_logPerPage,
+    sizes:[5,10,15,20,25,50],
+    onPageChange:p=>{_logPage=p;renderLogPage();},
+    onSizeChange:s=>{_logPerPage=s;_logPage=1;renderLogPage();}
+  });
+}
+
+async function loadLog(){
+  const user  = document.getElementById('filterUser').value;
+  const aksi  = document.getElementById('filterAksi').value;
+  const limit = document.getElementById('filterLimit').value;
+  const params= new URLSearchParams({ user, aksi, limit });
+  const res   = await fetchAPI(`/api/log?${params}`);
+  if(!res) return;
+
+  _logData = res.data || [];
+
+  document.getElementById('log-jumlah').textContent = _logData.length;
+  document.getElementById('log-ringkasan').style.display = 'block';
+
+  _logPage = 1;
+  renderLogPage();
+}
+
+async function init(){
+  await loadLayout('actlog','Log Aktivitas');
+  loadLog();
+}
+
+function showDetailLog(user, aksi, detail, waktu, ip){
+  const old=document.getElementById('_mDetailLog'); if(old) old.remove();
+  const cfg=AKSI_CONFIG[aksi]||{dot:'#2563EB',icon:'bi-activity'};
+  const d=document.createElement('div');
+  d.innerHTML=`<div class="modal fade" id="_mDetailLog" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius:16px;border:none;box-shadow:0 10px 40px rgba(0,0,0,0.15);">
+        <div style="padding:20px 24px;border-bottom:1px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:38px;height:38px;background:${cfg.dot}15;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+              <i class="bi ${cfg.icon}" style="color:${cfg.dot};font-size:18px;"></i>
+            </div>
+            <div>
+              <div style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:15px;color:#1E293B;">Detail Aktivitas</div>
+              <div style="font-size:11.5px;color:#94A3B8;">${waktu||'-'}</div>
+            </div>
+          </div>
+          <button type="button" data-bs-dismiss="modal" style="background:none;border:none;font-size:20px;color:#94A3B8;cursor:pointer;line-height:1;">&times;</button>
+        </div>
+        <div class="modal-body p-4">
+          <div style="display:grid;gap:14px;">
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+              <i class="bi bi-person-fill" style="color:#64748B;font-size:16px;margin-top:2px;flex-shrink:0;"></i>
+              <div><div style="font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Pengguna</div><div style="font-weight:600;color:#1E293B;margin-top:2px;">${user}</div></div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+              <i class="bi ${cfg.icon}" style="color:${cfg.dot};font-size:16px;margin-top:2px;flex-shrink:0;"></i>
+              <div><div style="font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Aktivitas</div><div style="font-weight:600;color:#1E293B;margin-top:2px;">${aksi}</div></div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+              <i class="bi bi-text-left" style="color:#64748B;font-size:16px;margin-top:2px;flex-shrink:0;"></i>
+              <div><div style="font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Detail</div><div style="font-weight:500;color:#1E293B;margin-top:2px;line-height:1.6;word-break:break-word;">${detail||'-'}</div></div>
+            </div>
+            ${ip ? `<div style="display:flex;align-items:flex-start;gap:12px;">
+              <i class="bi bi-globe" style="color:#64748B;font-size:16px;margin-top:2px;flex-shrink:0;"></i>
+              <div><div style="font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">IP Address</div><div style="font-weight:500;color:#1E293B;margin-top:2px;font-family:monospace;font-size:13px;">${ip}</div></div>
+            </div>` : ''}
+          </div>
+        </div>
+        <div style="padding:12px 24px;border-top:1px solid #F1F5F9;display:flex;justify-content:flex-end;">
+          <button class="btn btn-light" data-bs-dismiss="modal" style="border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;">Tutup</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  document.body.appendChild(d);
+  new bootstrap.Modal(document.getElementById('_mDetailLog')).show();
+  document.getElementById('_mDetailLog').addEventListener('hidden.bs.modal',()=>{document.getElementById('_mDetailLog').remove();},{once:true});
+}
+init();
+</script>
+</body>
+</html>

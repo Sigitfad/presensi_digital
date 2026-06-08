@@ -1,0 +1,138 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Pengaturan â€” SDN Karangpawitan 1</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div id="page-content" class="page-content">
+  <div class="page-header"><div class="page-title">Pengaturan</div><div class="page-subtitle">Konfigurasi jam masuk, identitas sekolah, dan sistem</div></div>
+
+  <div class="row g-3">
+    <!-- JAM MASUK -->
+    <div class="col-lg-6">
+      <div class="card-modern">
+        <div class="card-modern-header">
+          <div class="card-modern-title"><i class="bi bi-clock-fill" style="color:var(--primary)"></i> Jadwal Jam Masuk</div>
+        </div>
+        <div class="card-modern-body">
+          <div class="mb-3">
+            <label class="form-label-modern">Jam Masuk Sekolah</label>
+            <input type="time" id="jam_masuk" class="form-control-modern" value="07:00">
+            <div style="font-size:11.5px;color:var(--gray);margin-top:5px;">Jam mulai sekolah (informasi)</div>
+          </div>
+          <div class="mb-4">
+            <label class="form-label-modern">Batas Tepat Waktu</label>
+            <input type="time" id="batas_terlambat" class="form-control-modern" value="07:00">
+            <div style="font-size:11.5px;color:var(--gray);margin-top:5px;">Siswa yang hadir <strong>sebelum atau tepat</strong> jam ini dianggap Tepat Waktu. Setelah jam ini = Terlambat.</div>
+          </div>
+          <div style="background:#F0F7FF;border-radius:10px;padding:14px;margin-bottom:16px;border:1px solid #BFDBFE;">
+            <div style="font-size:12.5px;font-weight:700;color:#1E40AF;margin-bottom:8px;"><i class="bi bi-info-circle me-2"></i>Contoh Pengaturan</div>
+            <div style="font-size:12px;color:#374151;line-height:2;">
+              Jam masuk: 07:00 -  Sekolah dimulai pukul 07:00<br>
+              Batas tepat waktu: 07:00 - Scan &le;07:00 = <strong>Hadir</strong>, &gt;07:00 = <strong>Terlambat</strong>
+            </div>
+          </div>
+          <button class="btn-primary-custom w-100" onclick="simpanJam()"><i class="bi bi-save"></i> Simpan Pengaturan Jam</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- IDENTITAS SEKOLAH -->
+    <div class="col-lg-6">
+      <div class="card-modern">
+        <div class="card-modern-header">
+          <div class="card-modern-title"><i class="bi bi-building" style="color:var(--primary)"></i> Identitas Sekolah</div>
+        </div>
+        <div class="card-modern-body">
+          <!-- Preview logo -->
+          <div class="text-center mb-3">
+            <div id="logo-preview-wrap" style="width:80px;height:80px;border-radius:16px;background:#F1F5F9;border:2px solid #E2E8F0;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;overflow:hidden;">
+              <i class="bi bi-image" style="font-size:28px;color:#CBD5E1;" id="logo-placeholder"></i>
+              <img id="logo-preview" src="" style="width:100%;height:100%;object-fit:cover;display:none;">
+            </div>
+            <label style="cursor:pointer;background:var(--primary-light);color:var(--primary);padding:6px 14px;border-radius:8px;font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:6px;">
+              <i class="bi bi-upload"></i> Upload Logo
+              <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="previewLogo(this)">
+            </label>
+          </div>
+          <div class="row g-2">
+            <div class="col-12"><label class="form-label-modern">Nama Sekolah *</label><input type="text" id="nama_sekolah" class="form-control-modern"></div>
+            <div class="col-12"><label class="form-label-modern">Alamat</label><textarea id="alamat" class="form-control-modern" rows="2" style="resize:none;"></textarea></div>
+            <div class="col-md-6"><label class="form-label-modern">Tahun Ajaran</label><input type="text" id="tahun_ajaran" class="form-control-modern" placeholder="2024/2025"></div>
+            <div class="col-md-6"><label class="form-label-modern">No. Telp</label><input type="text" id="telp" class="form-control-modern" placeholder="(022) xxxx"></div>
+            <div class="col-md-6"><label class="form-label-modern">Email</label><input type="email" id="s_email" class="form-control-modern"></div>
+            <div class="col-md-6"><label class="form-label-modern">Website</label><input type="text" id="website" class="form-control-modern" placeholder="www.sekolah.sch.id"></div>
+          </div>
+          <button class="btn-primary-custom w-100 mt-3" onclick="simpanIdentitas()"><i class="bi bi-save"></i> Simpan Identitas</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/app.js?v=5"></script>
+<script>
+async function loadSettings() {
+  const [rs, ri] = await Promise.all([fetchAPI('/api/settings'), fetchAPI('/api/identitas')]);
+  if (rs?.success) {
+    document.getElementById('jam_masuk').value      = rs.data.jam_masuk||'07:00';
+    document.getElementById('batas_terlambat').value = rs.data.batas_terlambat||'07:00';
+  }
+  if (ri?.success && ri.data) {
+    const d = ri.data;
+    document.getElementById('nama_sekolah').value  = d.nama_sekolah||'';
+    document.getElementById('alamat').value         = d.alamat||'';
+    document.getElementById('tahun_ajaran').value   = d.tahun_ajaran||'';
+    document.getElementById('telp').value           = d.telp||'';
+    document.getElementById('s_email').value        = d.email||'';
+    document.getElementById('website').value        = d.website||'';
+    if (d.logo) {
+      document.getElementById('logo-preview').src          = d.logo;
+      document.getElementById('logo-preview').style.display= 'block';
+      document.getElementById('logo-placeholder').style.display='none';
+    }
+  }
+}
+
+function previewLogo(input) {
+  const file = input.files[0]; if(!file) return;
+  document.getElementById('logo-preview').src           = URL.createObjectURL(file);
+  document.getElementById('logo-preview').style.display = 'block';
+  document.getElementById('logo-placeholder').style.display='none';
+}
+
+async function simpanJam() {
+  const body={jam_masuk:document.getElementById('jam_masuk').value, batas_terlambat:document.getElementById('batas_terlambat').value};
+  const res=await fetchAPI('/api/settings/simpan','POST',body);
+  if(res?.success) showToast('Pengaturan jam berhasil disimpan!','success');
+  else showToast(res?.message||'Gagal','error');
+}
+
+async function simpanIdentitas() {
+  const fd=new FormData();
+  fd.append('nama_sekolah', document.getElementById('nama_sekolah').value);
+  fd.append('alamat',       document.getElementById('alamat').value);
+  fd.append('tahun_ajaran', document.getElementById('tahun_ajaran').value);
+  fd.append('telp',         document.getElementById('telp').value);
+  fd.append('email',        document.getElementById('s_email').value);
+  fd.append('website',      document.getElementById('website').value);
+  const logoFile = document.getElementById('logoInput').files[0];
+  if (logoFile) fd.append('logo', logoFile);
+
+  const res=await fetchAPI('/api/identitas/simpan','POST',fd);
+  if(res?.success){showToast('Identitas sekolah disimpan!','success'); setTimeout(()=>location.reload(),1500);}
+  else showToast(res?.message||'Gagal','error');
+}
+
+async function init(){await loadLayout('settings','Pengaturan');loadSettings();}
+init();
+</script>
+</body>
+</html>

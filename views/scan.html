@@ -1,0 +1,338 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Scan QR Presensi</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body{background:#F0F4FF;margin:0;padding:0;}
+    .scan-header{background:linear-gradient(135deg,#1E3A8A,#2563EB);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,0.1);}
+    .scan-header .brand{display:flex;align-items:center;gap:12px;color:white;text-decoration:none;}
+    .scan-header .brand-icon{width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;color:white;}
+    .scan-header .brand-text{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:16px;color:white;}
+    .scan-header .brand-sub{font-size:11px;color:rgba(255,255,255,0.8);}
+    .scan-header .back-btn{background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);color:white;padding:8px 18px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:6px;transition:all 0.2s;}
+    .scan-header .back-btn:hover{background:rgba(255,255,255,0.25);}
+    .scan-container{max-width:1100px;margin:24px auto;padding:0 20px;}
+    #popup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9000;align-items:center;justify-content:center;animation:_fi 0.25s ease;}
+    #popup-overlay.show{display:flex;}
+    .popup-card{background:white;border-radius:24px;padding:32px 28px 28px;width:100%;max-width:380px;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,0.25);position:relative;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);}
+    @keyframes popIn{from{opacity:0;transform:scale(0.7) translateY(30px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    @keyframes _fi{from{opacity:0}to{opacity:1}}
+    .popup-close{position:absolute;top:14px;right:16px;background:#F1F5F9;border:none;width:30px;height:30px;border-radius:50%;font-size:16px;color:#64748B;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .popup-close:hover{background:#E2E8F0;}
+    .popup-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:19px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:8px;}
+    .popup-title.success{color:#16A34A;}
+    .popup-title.warning{color:#D97706;}
+    .popup-foto-wrap{width:110px;height:110px;border-radius:50%;overflow:hidden;margin:0 auto 14px;border:4px solid #E2E8F0;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;}
+    .popup-foto-wrap img{width:100%;height:100%;object-fit:cover;}
+    .popup-foto-ini{font-family:'Plus Jakarta Sans',sans-serif;font-size:36px;font-weight:800;}
+    .popup-nama{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;color:#1E293B;margin-bottom:4px;}
+    .popup-info{font-size:13px;color:#64748B;margin-bottom:18px;}
+    .popup-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .popup-box{border:2px solid #E2E8F0;border-radius:12px;padding:12px 8px;}
+    .popup-box-label{font-size:10.5px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:5px;}
+    .popup-box-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:19px;font-weight:800;}
+    .popup-box-value.tepat{color:#16A34A;}
+    .popup-box-value.terlambat{color:#DC2626;}
+    .popup-box-value.jam{color:#1E293B;}
+    .popup-timer-bar{height:4px;background:#E2E8F0;border-radius:4px;margin-top:18px;overflow:hidden;}
+    .popup-timer-fill{height:100%;background:linear-gradient(90deg,#2563EB,#10B981);border-radius:4px;width:100%;transition:width linear;}
+    .cam-placeholder{background:#0F172A;border-radius:12px;min-height:280px;display:flex;align-items:center;justify-content:center;text-align:center;color:rgba(255,255,255,0.5);padding:30px;}
+    .scan-log-item{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid rgba(0,0,0,0.05);}
+  </style>
+</head>
+<body>
+
+<!-- POPUP ABSEN BERHASIL -->
+<div id="popup-overlay">
+  <div class="popup-card">
+    <button class="popup-close" onclick="tutupPopup()"><i class="bi bi-x"></i></button>
+    <div class="popup-title" id="popup-title">
+      <i class="bi bi-check-circle-fill"></i> Absen Berhasil !
+    </div>
+    <div class="popup-foto-wrap" id="popup-foto-wrap">
+      <span class="popup-foto-ini" id="popup-inisial" style="color:#2563EB;">--</span>
+    </div>
+    <div class="popup-nama"  id="popup-nama">-</div>
+    <div class="popup-info"  id="popup-info">-</div>
+    <div class="popup-grid">
+      <div class="popup-box">
+        <div class="popup-box-label">JAM MASUK</div>
+        <div class="popup-box-value jam" id="popup-jam">--:--</div>
+      </div>
+      <div class="popup-box">
+        <div class="popup-box-label">STATUS</div>
+        <div class="popup-box-value" id="popup-status">-</div>
+      </div>
+    </div>
+    <div class="popup-timer-bar"><div class="popup-timer-fill" id="popup-timer"></div></div>
+  </div>
+</div>
+
+<!-- HEADER STANDALONE -->
+<div class="scan-header">
+  <a href="/pages/dashboard" class="brand">
+    <div class="brand-icon">
+      <i class="bi bi-mortarboard-fill" id="scanLogoIcon"></i>
+      <img id="scanLogoImg" src="" style="width:100%;height:100%;object-fit:cover;border-radius:10px;display:none;">
+    </div>
+    <div>
+      <div class="brand-text" id="schoolName">SISTEM ABSENSI DIGITAL</div>
+      <div class="brand-sub" id="schoolSub">SDN Karangpawitan 1</div>
+    </div>
+  </a>
+  <a href="/pages/dashboard" class="back-btn">
+    <i class="bi bi-arrow-left"></i> Dashboard
+  </a>
+</div>
+
+<!-- KONTEN SCAN -->
+<div class="scan-container">
+  <div class="row g-4 justify-content-center">
+    <!-- Kolom Kiri: Scanner -->
+    <div class="col-lg-6">
+      <div class="card-modern">
+        <div class="card-modern-header">
+          <div class="card-modern-title"><i class="bi bi-camera-video-fill" style="color:var(--primary)"></i> Kamera Scanner</div>
+          <div id="scan-badge" style="font-size:12px;padding:4px 12px;border-radius:20px;font-weight:600;background:#FEF3C7;color:#92400E;">
+            <i class="bi bi-circle-fill" style="font-size:8px;"></i> Belum Aktif
+          </div>
+        </div>
+        <div class="card-modern-body">
+          <div id="cam-placeholder" class="cam-placeholder">
+            <div>
+              <i class="bi bi-camera-video-off" style="font-size:48px;display:block;margin-bottom:12px;"></i>
+              <div style="font-size:14px;">Klik tombol di bawah untuk memulai kamera</div>
+            </div>
+          </div>
+          <div id="reader" style="display:none;"></div>
+          <div class="d-grid gap-2 mt-3">
+            <button id="btn-start" class="btn-success-custom justify-content-center" onclick="startCamera()">
+              <i class="bi bi-camera-video"></i> Aktifkan Kamera
+            </button>
+            <button id="btn-stop" class="btn-danger-custom justify-content-center" onclick="stopCamera()"
+                    style="display:none;padding:9px 20px;font-size:13.5px;">
+              <i class="bi bi-stop-circle"></i> Hentikan Kamera
+            </button>
+          </div>
+          <div class="mt-3" style="border-top:1px solid rgba(0,0,0,0.06);padding-top:14px;">
+            <div style="font-size:12.5px;color:var(--gray);font-weight:600;margin-bottom:8px;">
+              <i class="bi bi-keyboard me-1"></i> Input Manual NISN
+            </div>
+            <div class="d-flex gap-2">
+              <input type="text" id="manual-nisn" class="form-control-modern" placeholder="Ketik NISN siswa..." style="flex:1;"
+                     onkeydown="if(event.key==='Enter') submitManual()">
+              <button class="btn-primary-custom" onclick="submitManual()" style="white-space:nowrap;">
+                <i class="bi bi-check-lg"></i> Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kolom Kanan: Log Scan -->
+    <div class="col-lg-5">
+      <div class="card-modern">
+        <div class="card-modern-header">
+          <div class="card-modern-title"><i class="bi bi-list-check" style="color:var(--primary)"></i> Riwayat Absensi Hari Ini</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span id="live-badge" style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;background:#FEE2E2;color:#991B1B;">LIVE MONITOR</span>
+            <span id="log-count" style="font-size:12px;background:var(--primary-light);color:var(--primary);padding:3px 10px;border-radius:20px;font-weight:700;">0</span>
+          </div>
+        </div>
+        <div style="max-height:500px;overflow-y:auto;" id="log-container">
+          <div class="empty-state" style="padding:40px;">
+            <i class="bi bi-qr-code-scan" style="font-size:40px;opacity:0.25;display:block;margin-bottom:10px;"></i>
+            <p style="font-size:13px;">Belum ada presensi hari ini</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="/js/app.js?v=5"></script>
+<script>
+let html5QrCode=null, scanning=false, logData=[], popupTimer=null;
+let lastScanned='', lastScanTime=0;
+
+// Load school identity for header
+(async function(){
+  try{
+    const r=await fetch('/api/identitas');
+    const d=await r.json();
+    if(d.success&&d.data){
+      document.getElementById('schoolName').textContent=d.data.nama_sekolah||'SISTEM ABSENSI DIGITAL';
+      document.getElementById('schoolSub').textContent='Presensi Digital';
+      document.title=`Scan QR Presensi ${d.data.nama_sekolah||'SDN Karangpawitan 1'}`;
+      if(d.data.logo){
+        document.getElementById('scanLogoImg').src=d.data.logo;
+        document.getElementById('scanLogoImg').style.display='block';
+        document.getElementById('scanLogoIcon').style.display='none';
+      }
+    }
+  }catch(e){}
+  // Check session
+  try{
+    const r=await fetch('/api/session');
+    const s=await r.json();
+    if(!s.loggedIn) window.location.href='/login';
+  }catch(e){window.location.href='/login';}
+})();
+
+async function startCamera(){
+  document.getElementById('cam-placeholder').style.display='none';
+  document.getElementById('reader').style.display='block';
+  document.getElementById('btn-start').style.display='none';
+  document.getElementById('btn-stop').style.display='block';
+  setBadge('aktif');
+  try {
+    html5QrCode=new Html5Qrcode('reader');
+    const cameras=await Html5Qrcode.getCameras();
+    let camId=cameras[0]?.id;
+    const back=cameras.find(c=>c.label.toLowerCase().includes('back')||c.label.toLowerCase().includes('environment'));
+    if(back) camId=back.id;
+    await html5QrCode.start(camId||{facingMode:'environment'},{fps:15,qrbox:{width:220,height:220},aspectRatio:1.0},onScanSuccess,()=>{});
+    scanning=true;
+  } catch(err){
+    console.error(err);
+    stopCamera();
+    showToast('Gagal akses kamera. Gunakan Input Manual NISN.','error');
+    document.getElementById('manual-nisn').focus();
+  }
+}
+
+async function stopCamera(){
+  if(html5QrCode&&scanning){try{await html5QrCode.stop();}catch(e){} scanning=false;}
+  html5QrCode=null;
+  document.getElementById('reader').style.display='none';
+  document.getElementById('reader').innerHTML='';
+  document.getElementById('cam-placeholder').style.display='flex';
+  document.getElementById('btn-start').style.display='block';
+  document.getElementById('btn-stop').style.display='none';
+  setBadge('berhenti');
+}
+
+function setBadge(state){
+  const b=document.getElementById('scan-badge');
+  if(state==='aktif'){b.style.background='#D1FAE5';b.style.color='#065F46';b.innerHTML='<i class="bi bi-circle-fill" style="font-size:8px;animation:_pulse 1s infinite"></i> Aktif';}
+  else{b.style.background='#FEF3C7';b.style.color='#92400E';b.innerHTML='<i class="bi bi-circle-fill" style="font-size:8px;"></i> Berhenti';}
+}
+
+async function onScanSuccess(text){
+  const now=Date.now();
+  if(text===lastScanned&&(now-lastScanTime)<3000) return;
+  lastScanned=text; lastScanTime=now;
+  await prosesPresensi(text.trim());
+}
+
+async function submitManual(){
+  const nisn=document.getElementById('manual-nisn').value.trim();
+  if(!nisn){showToast('Masukkan NISN siswa!','warning');return;}
+  await prosesPresensi(nisn);
+  document.getElementById('manual-nisn').value='';
+}
+
+async function prosesPresensi(nisn){
+  try {
+    const res=await fetchAPI('/api/presensi/scan','POST',{nisn});
+    if(!res) return;
+    if(res.success){
+      const jam=res.jam_masuk?res.jam_masuk.slice(0,5):'--:--';
+      tampilkanPopup({tipe:'berhasil',siswa:res.siswa,jam,status:res.status});
+      logData.unshift({nama:res.siswa.nama,kelas:res.siswa.kelas,jam,status:res.status});
+      renderLog();
+    } else if(res.sudah){
+      const jam=res.presensi.jam_masuk.slice(0,5);
+      tampilkanPopup({tipe:'sudah',siswa:res.siswa,jam,status:res.presensi.status});
+    } else {
+      showToast(res.message,'error');
+    }
+  } catch(e){showToast('Terjadi kesalahan koneksi','error');}
+}
+
+function tampilkanPopup(data){
+  const {tipe,siswa,jam,status} = data;
+  const isBerhasil = tipe==='berhasil';
+  const isTepat    = status==='Hadir';
+
+  const titleEl=document.getElementById('popup-title');
+  if(isBerhasil){
+    titleEl.className='popup-title success';
+    titleEl.innerHTML='<i class="bi bi-check-circle-fill"></i> Absen Berhasil !';
+  } else {
+    titleEl.className='popup-title warning';
+    titleEl.innerHTML='<i class="bi bi-info-circle-fill"></i> Sudah Absen Hari Ini';
+  }
+
+  const fotoWrap = document.getElementById('popup-foto-wrap');
+  const inisial  = siswa.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  const iniColor = isTepat ? '#2563EB' : '#D97706';
+  const iniBg    = isTepat ? 'linear-gradient(135deg,#DBEAFE,#EDE9FE)' : 'linear-gradient(135deg,#FEF3C7,#FFEDD5)';
+
+  if(siswa.foto && siswa.foto !== ''){
+    fotoWrap.style.background = 'transparent';
+    fotoWrap.innerHTML = `<img src="${siswa.foto}" style="width:100%;height:100%;object-fit:cover;" onerror="this.outerHTML='<span class=\\'popup-foto-ini\\' style=\\'color:${iniColor}\\'>${inisial}</span>';this.parentElement.style.background='${iniBg}';">`;
+  } else {
+    fotoWrap.style.background = iniBg;
+    fotoWrap.innerHTML = `<span class="popup-foto-ini" style="color:${iniColor};">${inisial}</span>`;
+  }
+
+  document.getElementById('popup-nama').textContent = siswa.nama;
+  document.getElementById('popup-info').textContent = `${siswa.kelas}  -  NISN: ${siswa.nisn}`;
+  document.getElementById('popup-jam').textContent  = jam;
+
+  const statusEl = document.getElementById('popup-status');
+  statusEl.textContent  = status;
+  statusEl.className    = 'popup-box-value '+(isTepat?'tepat':'terlambat');
+
+  document.getElementById('popup-overlay').classList.add('show');
+
+  const timerBar=document.getElementById('popup-timer');
+  timerBar.style.transition='none'; timerBar.style.width='100%';
+  clearTimeout(popupTimer);
+  setTimeout(()=>{ timerBar.style.transition='width 5s linear'; timerBar.style.width='0%'; },50);
+  popupTimer=setTimeout(tutupPopup,5000);
+}
+
+function tutupPopup(){
+  clearTimeout(popupTimer);
+  document.getElementById('popup-overlay').classList.remove('show');
+}
+
+document.getElementById('popup-overlay').addEventListener('click',function(e){
+  if(e.target===this) tutupPopup();
+});
+
+function renderLog(){
+  document.getElementById('log-count').textContent=logData.length;
+  const el=document.getElementById('log-container');
+  if(!logData.length){
+    el.innerHTML='<div class="empty-state" style="padding:40px;"><i class="bi bi-qr-code-scan" style="font-size:40px;opacity:0.25;display:block;margin-bottom:10px;"></i><p style="font-size:13px;">Belum ada presensi hari ini</p></div>';
+    return;
+  }
+  el.innerHTML=logData.map((d,i)=>`
+    <div class="scan-log-item">
+      <div style="width:38px;height:38px;border-radius:50%;background:${d.status==='Hadir'?'#D1FAE5':'#FEF3C7'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="bi bi-${d.status==='Hadir'?'check-circle-fill':'clock-fill'}" style="color:${d.status==='Hadir'?'#059669':'#D97706'};font-size:15px;"></i>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:700;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.nama}</div>
+        <div style="font-size:12px;color:var(--gray);">ID Kartu: ${logData.length-i}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div style="font-weight:800;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;">${d.jam} WIB</div>
+      </div>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>

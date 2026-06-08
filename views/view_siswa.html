@@ -1,0 +1,280 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Detail Siswa â€” Presensi SDN Karangpawitan 1</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .info-row{display:flex;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.06);}
+    .info-row:last-child{border-bottom:none;}
+    .info-label{width:170px;font-size:13px;font-weight:600;color:var(--gray);flex-shrink:0;}
+    .info-value{font-size:13.5px;color:var(--dark);font-weight:500;}
+    .foto-profil{width:130px;height:130px;border-radius:50%;object-fit:cover;border:4px solid #E2E8F0;display:block;margin:0 auto 16px;}
+    .foto-profil-ini{width:130px;height:130px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-family:var(--font-main);font-size:46px;font-weight:800;color:#2563EB;border:4px solid #E2E8F0;margin:0 auto 16px;}
+    .stat-mini{background:white;border-radius:10px;padding:14px 10px;text-align:center;border:1.5px solid #E2E8F0;}
+    .stat-mini-val{font-family:var(--font-main);font-size:22px;font-weight:800;line-height:1;margin-bottom:4px;}
+    .stat-mini-lbl{font-size:11.5px;font-weight:600;}
+  </style>
+</head>
+<body>
+<div id="page-content" class="page-content">
+  <div class="page-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+    <div>
+      <div class="page-title" id="page-nama">Detail Siswa</div>
+      <div class="page-subtitle">Informasi lengkap data siswa</div>
+    </div>
+    <a href="/pages/siswa" class="btn-primary-custom">
+      <i class="bi bi-arrow-left"></i> Kembali ke Data Siswa
+    </a>
+  </div>
+
+  <div id="content-area">
+    <div class="text-center py-5"><div class="loading-spinner"></div><div style="margin-top:12px;color:var(--gray);font-size:13px;">Memuat data...</div></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/app.js?v=5"></script>
+<script>
+async function init(){
+  await loadLayout('siswa','Detail Siswa');
+
+  const params = new URLSearchParams(window.location.search);
+  const id     = params.get('id');
+  if(!id){
+    document.getElementById('content-area').innerHTML =
+      '<div class="empty-state"><i class="bi bi-exclamation-circle"></i><p>ID siswa tidak ditemukan di URL</p></div>';
+    return;
+  }
+
+  // Fetch siswa by ID
+  const res = await fetchAPI(`/api/siswa/${id}`);
+  if(!res?.success){
+    document.getElementById('content-area').innerHTML =
+      `<div class="empty-state"><i class="bi bi-person-x"></i><p>${res?.message||'Siswa tidak ditemukan'}</p></div>`;
+    return;
+  }
+  const siswa = res.data;
+  document.getElementById('page-nama').textContent = siswa.nama;
+  document.title = `${siswa.nama} â€” Presensi SDN Karangpawitan 1`;
+
+  const ini = siswa.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  const pengampuHTML = siswa.pengampu_kelas_list?.length
+    ? siswa.pengampu_kelas_list.map(p =>
+        `<span style="background:var(--primary-light);color:var(--primary);padding:4px 14px;border-radius:8px;font-size:13px;font-weight:600;display:inline-block;margin:2px 4px;">${p.nama}</span>`
+      ).join('')
+    : '<span style="color:var(--gray);font-size:12px;">-</span>';
+
+  // Fetch rekap bulan ini
+  const now   = new Date();
+  const bulan = String(now.getMonth()+1).padStart(2,'0');
+  const tahun = now.getFullYear();
+  const BULAN_NAMA = ['','Januari','Februari','Maret','April','Mei','Juni',
+                      'Juli','Agustus','September','Oktober','November','Desember'];
+
+  const rekapRes = await fetchAPI(`/api/rekap/detail/${id}?bulan=${bulan}&tahun=${tahun}`);
+  const presensi = rekapRes?.data || [];
+  let h=0,t=0,i=0,s=0,a=0;
+  presensi.forEach(p=>{
+    if(p.status==='Hadir')h++;
+    else if(p.status==='Terlambat'){h++;t++;}
+    else if(p.status==='Izin')i++;
+    else if(p.status==='Sakit')s++;
+    else if(p.status==='Alpha')a++;
+  });
+
+  // Fetch rekap total (semua bulan - ambil dari riwayat presensi)
+  const totalRes = await fetchAPI(`/api/presensi?`);
+  // Hitung total kehadiran siswa ini dari semua presensi
+  const allPresensi = totalRes?.data?.filter(p => String(p.siswa_id)===String(id) || p.nisn===siswa.nisn) || [];
+
+  document.getElementById('content-area').innerHTML = `
+    <div class="row g-3">
+      <!-- Foto + Info Singkat -->
+      <div class="col-lg-4">
+        <div class="card-modern p-4 text-center">
+          ${siswa.foto
+            ? `<img src="${siswa.foto}" class="foto-profil" onerror="this.outerHTML='<div class=\\'foto-profil-ini\\'>${ini}</div>'">`
+            : `<div class="foto-profil-ini">${ini}</div>`
+          }
+          <div style="font-family:var(--font-main);font-size:21px;font-weight:800;color:var(--dark);">${siswa.nama}</div>
+          <div style="margin-top:4px;"><span style="background:#EEF2FF;color:#4F46E5;padding:3px 14px;border-radius:8px;font-size:13px;font-weight:600;">${siswa.kelas}</span></div>
+          <div style="margin-top:10px;">
+            <span style="background:var(--primary-light);color:var(--primary);padding:4px 16px;border-radius:20px;font-size:13px;font-weight:700;">NISN: ${siswa.nisn}</span>
+          </div>
+          <div style="margin-top:10px;">
+            <div style="font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Pengampu Kelas</div>
+            <div>${pengampuHTML}</div>
+          </div>
+          <div style="margin-top:8px;">
+            <span style="color:${siswa.jenis_kelamin==='Laki-laki'?'#2563EB':'#DB2777'};font-weight:600;font-size:13px;">
+              <i class="bi bi-gender-${siswa.jenis_kelamin==='Laki-laki'?'male':'female'}"></i>
+              ${siswa.jenis_kelamin}
+            </span>
+          </div>
+
+          <hr style="margin:16px 0;opacity:0.1;">
+
+          <!-- Quick Actions -->
+          <div class="d-grid gap-2">
+            <a href="/pages/rekap" class="btn-primary-custom justify-content-center">
+              <i class="bi bi-bar-chart-fill"></i> Rekap Presensi
+            </a>
+            <button onclick="exportRekap()" class="btn-success-custom justify-content-center">
+              <i class="bi bi-file-earmark-excel-fill"></i> Export Excel Bulan Ini
+            </button>
+            <a href="/pages/siswa" class="btn btn-light" style="border-radius:var(--radius-sm);font-weight:600;font-size:13px;">
+              <i class="bi bi-pencil me-1"></i> Edit Data Siswa
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail Info -->
+      <div class="col-lg-8">
+        <!-- Data Pribadi -->
+        <div class="card-modern mb-3">
+          <div class="card-modern-header">
+            <div class="card-modern-title">
+              <i class="bi bi-person-lines-fill" style="color:var(--primary)"></i> Data Pribadi
+            </div>
+          </div>
+          <div class="card-modern-body">
+            <div class="info-row">
+              <div class="info-label">NISN</div>
+              <div class="info-value"><strong style="font-family:var(--font-main);color:var(--primary);">${siswa.nisn}</strong></div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">Nama Lengkap</div>
+              <div class="info-value"><strong>${siswa.nama}</strong></div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">Pengampu Kelas</div>
+              <div class="info-value">${pengampuHTML}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">Kelas</div>
+              <div class="info-value">
+                <span style="background:var(--primary-light);color:var(--primary);padding:2px 12px;border-radius:20px;font-size:12.5px;font-weight:700;">${siswa.kelas}</span>
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">Jenis Kelamin</div>
+              <div class="info-value" style="color:${siswa.jenis_kelamin==='Laki-laki'?'#2563EB':'#DB2777'};font-weight:600;">
+                <i class="bi bi-gender-${siswa.jenis_kelamin==='Laki-laki'?'male':'female'}"></i>
+                ${siswa.jenis_kelamin}
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">NIK</div>
+              <div class="info-value">${siswa.nik||'-'}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">Tempat, Tanggal Lahir</div>
+              <div class="info-value">${siswa.tempat_lahir||'-'}${siswa.tanggal_lahir?', '+siswa.tanggal_lahir:'-'}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">Agama</div>
+              <div class="info-value">${siswa.agama||'-'}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">Alamat</div>
+              <div class="info-value">${siswa.alamat||'-'}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">No. HP Orang Tua</div>
+              <div class="info-value">${siswa.no_hp_ortu||'-'}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">Status</div>
+              <div class="info-value">
+                <span style="background:${siswa.status==='Aktif'?'#D1FAE5':siswa.status&&siswa.status.startsWith('Lulus')?'#DBEAFE':'#FEE2E2'};color:${siswa.status==='Aktif'?'#065F46':siswa.status&&siswa.status.startsWith('Lulus')?'#1E40AF':'#991B1B'};padding:3px 12px;border-radius:20px;font-size:12.5px;font-weight:700;">${siswa.status||'Aktif'}</span>
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">Tanggal Terdaftar</div>
+              <div class="info-value">${siswa.created_at?.slice(0,10)||'-'}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">Terakhir Diupdate</div>
+              <div class="info-value">${siswa.updated_at?.slice(0,10)||'-'}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rekap Bulan Ini -->
+        <div class="card-modern">
+          <div class="card-modern-header">
+            <div class="card-modern-title">
+              <i class="bi bi-calendar-check" style="color:var(--primary)"></i>
+              Rekap Presensi â€” ${BULAN_NAMA[parseInt(bulan)]} ${tahun}
+            </div>
+          </div>
+          <div class="card-modern-body">
+            <div class="row g-2 mb-3">
+              ${[
+                ['#D1FAE5','#059669',h,   'Hadir'],
+                ['#FEF3C7','#D97706',t,   'Terlambat'],
+                ['#DBEAFE','#2563EB',i,   'Izin'],
+                ['#EDE9FE','#7C3AED',s,   'Sakit'],
+                ['#FEE2E2','#DC2626',a,   'Alpha'],
+              ].map(([bg,col,val,lbl])=>`
+                <div class="col">
+                  <div class="stat-mini" style="background:${bg};border-color:${bg};">
+                    <div class="stat-mini-val" style="color:${col};">${val}</div>
+                    <div class="stat-mini-lbl" style="color:${col};">${lbl}</div>
+                  </div>
+                </div>`).join('')}
+            </div>
+
+            <!-- 10 presensi terakhir -->
+            ${presensi.length > 0
+              ? `<div style="font-size:12.5px;font-weight:700;color:var(--gray);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">Data Presensi Terbaru</div>
+                 <div class="table-responsive">
+                   <table class="table-modern">
+                     <thead><tr><th>Tanggal</th><th>Jam Masuk</th><th>Status</th><th>Keterangan</th></tr></thead>
+                     <tbody>${[...presensi].reverse().slice(0,8).map(p=>`
+                       <tr>
+                         <td style="font-weight:600">${p.tanggal}</td>
+                         <td style="font-weight:700;font-family:var(--font-main)">${p.jam_masuk?.slice(0,5)||'-'}</td>
+                         <td>${
+                           p.status==='Hadir'    ?'<span class="badge-hadir"><i class="bi bi-check-circle-fill"></i> Hadir</span>':
+                           p.status==='Terlambat'?'<span class="badge-terlambat"><i class="bi bi-clock-fill"></i> Terlambat</span>':
+                           p.status==='Izin'     ?'<span class="badge-izin"><i class="bi bi-file-text-fill"></i> Izin</span>':
+                           p.status==='Sakit'    ?'<span class="badge-sakit"><i class="bi bi-heart-pulse-fill"></i> Sakit</span>':
+                                                   '<span class="badge-alpha"><i class="bi bi-x-circle-fill"></i> Alpha</span>'
+                         }</td>
+                         <td style="font-size:12px;color:var(--gray)">${p.keterangan||'-'}</td>
+                       </tr>`).join('')}
+                     </tbody>
+                   </table>
+                 </div>`
+              : `<div class="text-center" style="padding:20px;color:var(--gray);font-size:13px;">
+                   <i class="bi bi-calendar-x" style="font-size:32px;display:block;margin-bottom:8px;opacity:0.3;"></i>
+                   Belum ada data presensi bulan ${BULAN_NAMA[parseInt(bulan)]} ${tahun}
+                 </div>`
+            }
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function exportRekap(){
+  const params = new URLSearchParams(window.location.search);
+  const id     = params.get('id');
+  const now    = new Date();
+  const bulan  = String(now.getMonth()+1).padStart(2,'0');
+  const tahun  = now.getFullYear();
+  window.location.href = `/api/rekap/export-excel-siswa/${id}?bulan=${bulan}&tahun=${tahun}`;
+  showToast('Mengunduh Excel...','info');
+}
+
+init();
+</script>
+</body>
+</html>

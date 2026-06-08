@@ -1,0 +1,199 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Riwayat Presensi</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+  </style>
+</head>
+<body>
+<div id="page-content" class="page-content">
+  <div class="page-header">
+    <div class="page-title" id="page-title-riwayat">Riwayat Presensi</div>
+    <div class="page-subtitle" id="page-sub-riwayat">Filter dan export data kehadiran siswa</div>
+  </div>
+
+  <div class="card-modern">
+    <div class="card-modern-header flex-wrap gap-2">
+      <div class="d-flex gap-2 flex-wrap align-items-end">
+        <div>
+          <label class="form-label-modern" style="margin-bottom:4px;font-size:12px;">Dari Tanggal</label>
+          <input type="date" id="tgl1" class="form-control-modern" style="width:160px;">
+        </div>
+        <div>
+          <label class="form-label-modern" style="margin-bottom:4px;font-size:12px;">Sampai Tanggal</label>
+          <input type="date" id="tgl2" class="form-control-modern" style="width:160px;">
+        </div>
+        <div id="kelas-filter-wrap">
+          <label class="form-label-modern" style="margin-bottom:4px;font-size:12px;">Kelas</label>
+          <select id="filterKelas" class="form-control-modern" style="width:145px;" onchange="loadRiwayat()">
+            <option value="">Semua Kelas</option>
+          </select>
+        </div>
+        <button class="btn-primary-custom" onclick="loadRiwayat()">
+          <i class="bi bi-search"></i> Filter
+        </button>
+      </div>
+      <div class="d-flex gap-2 align-self-end flex-wrap">
+        <button class="btn-success-custom" onclick="exportCSVData()" style="padding:8px 14px;font-size:13px;">
+          <i class="bi bi-filetype-csv"></i> Export CSV
+        </button>
+        <button onclick="exportExcel()" style="background:linear-gradient(135deg,#16A34A,#15803D);color:white;border:none;padding:8px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:var(--transition);" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform=''">
+          <i class="bi bi-file-earmark-excel-fill"></i> Export Excel
+        </button>
+      </div>
+    </div>
+
+    <!-- Ringkasan -->
+    <div id="ringkasan" style="padding:11px 20px;background:#F8FAFF;border-bottom:1px solid rgba(0,0,0,0.05);display:none;">
+      <div class="d-flex gap-4 flex-wrap">
+        <div style="font-size:13px;color:var(--gray)">Total: <strong id="r-total" style="color:var(--dark)">0</strong></div>
+        <div style="font-size:13px;color:var(--gray)">Hadir: <strong id="r-tepat" style="color:#059669">0</strong></div>
+        <div style="font-size:13px;color:var(--gray)">Terlambat: <strong id="r-terlambat" style="color:#D97706">0</strong></div>
+        <div style="font-size:13px;color:var(--gray)">Izin: <strong id="r-izin" style="color:#2563EB">0</strong></div>
+        <div style="font-size:13px;color:var(--gray)">Sakit: <strong id="r-sakit" style="color:#7C3AED">0</strong></div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table-modern">
+        <thead>
+          <tr><th>#</th><th>Tanggal</th><th>NISN</th><th>Nama Siswa</th><th>Kelas</th><th>Jenis Kelamin</th><th>Jam Masuk</th><th>Status</th></tr>
+        </thead>
+        <tbody id="tblRiwayat">
+          <tr><td colspan="8" class="text-center py-4"><div class="loading-spinner"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div id="paginationRiwayat" class="pagination-bar d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3" style="display:none;"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/app.js?v=5"></script>
+<script>
+let allData = [], _riwayatPage = 1, _riwayatPerPage = 5;
+const BULAN = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const STATUS_BADGE = {
+  'Hadir'    :'<span class="badge-hadir"><i class="bi bi-check-circle-fill"></i> Hadir</span>',
+  'Terlambat':'<span class="badge-terlambat"><i class="bi bi-clock-fill"></i> Terlambat</span>',
+  'Izin'     :'<span class="badge-izin"><i class="bi bi-file-text-fill"></i> Izin</span>',
+  'Sakit'    :'<span class="badge-sakit"><i class="bi bi-heart-pulse-fill"></i> Sakit</span>',
+  'Alpha'    :'<span class="badge-alpha"><i class="bi bi-x-circle-fill"></i> Alpha</span>',
+};
+
+function renderRiwayatRow(d, i) {
+  return `<tr>
+    <td style="color:var(--gray)">${i+1}</td>
+    <td>${d.tanggal}</td>
+    <td style="font-weight:600">${d.nisn}</td>
+    <td style="font-weight:700;color:var(--dark)">${d.nama}</td>
+    <td>${d.kelas}</td>
+    <td style="font-size:12px">${d.jenis_kelamin||'-'}</td>
+    <td style="font-weight:600">${d.jam_masuk?d.jam_masuk.slice(0,5):'-'}</td>
+    <td>${STATUS_BADGE[d.status]||d.status}</td>
+  </tr>`;
+}
+
+function renderRiwayatPage(){
+  const tbody = document.getElementById('tblRiwayat');
+  if(!allData.length){
+    tbody.innerHTML='<tr><td colspan="8"><div class="empty-state"><i class="bi bi-inbox"></i><p>Tidak ada data untuk filter ini</p></div></td></tr>';
+    document.getElementById('paginationRiwayat').style.display='none';
+    return;
+  }
+  const pp=_riwayatPerPage;
+  const totalPages=Math.ceil(allData.length/pp);
+  if(_riwayatPage>totalPages) _riwayatPage=totalPages;
+  const start=(_riwayatPage-1)*pp;
+  const end=Math.min(start+pp,allData.length);
+  tbody.innerHTML=allData.slice(start,end).map((r,i)=>renderRiwayatRow(r,start+i)).join('');
+  buildPaginationUI('paginationRiwayat',{
+    currentPage:_riwayatPage, totalPages, currentSize:_riwayatPerPage,
+    sizes:[5,10,15,20,25,50],
+    onPageChange:p=>{_riwayatPage=p;renderRiwayatPage();},
+    onSizeChange:s=>{_riwayatPerPage=s;_riwayatPage=1;renderRiwayatPage();}
+  });
+}
+
+async function loadRiwayat(){
+  const t1    = document.getElementById('tgl1').value;
+  const t2    = document.getElementById('tgl2').value;
+  const kelas = document.getElementById('filterKelas').value.trim();
+  const tbody = document.getElementById('tblRiwayat');
+  tbody.innerHTML='<tr><td colspan="8" class="text-center py-4"><div class="loading-spinner"></div></td></tr>';
+
+  const params = new URLSearchParams({tanggal:t1, tanggal2:t2, kelas});
+  const res    = await fetchAPI(`/api/presensi?${params}`);
+  if(!res) return;
+  allData = res.data || [];
+
+  const hadir    = allData.filter(d=>d.status==='Hadir').length;
+  const terlambat= allData.filter(d=>d.status==='Terlambat').length;
+  const izin     = allData.filter(d=>d.status==='Izin').length;
+  const sakit    = allData.filter(d=>d.status==='Sakit').length;
+  document.getElementById('r-total').textContent    = allData.length;
+  document.getElementById('r-tepat').textContent    = hadir;
+  document.getElementById('r-terlambat').textContent= terlambat;
+  document.getElementById('r-izin').textContent     = izin;
+  document.getElementById('r-sakit').textContent    = sakit;
+  document.getElementById('ringkasan').style.display= 'block';
+
+  _riwayatPage = 1;
+  renderRiwayatPage();
+}
+
+function exportCSVData(){
+  if(!allData.length){showToast('Tidak ada data!','warning');return;}
+  const t1=document.getElementById('tgl1').value, t2=document.getElementById('tgl2').value;
+  const kelas=document.getElementById('filterKelas').value.trim();
+  const kelasLabel=kelas?kelas.replace(/\s/g,''):'Semua';
+  exportCSV(allData.map(d=>({'Tanggal':d.tanggal,'NISN':d.nisn,'Nama Siswa':d.nama,'Kelas':d.kelas,'Jenis Kelamin':d.jenis_kelamin,'Jam Masuk':d.jam_masuk?.slice(0,5)||'-','Status':d.status,'Keterangan':d.keterangan||''})),
+    `Presensi_${t1}_${kelasLabel}.csv`);
+}
+
+function exportExcel(){
+  if(!allData.length){showToast('Tidak ada data!','warning');return;}
+  const t1=document.getElementById('tgl1').value, t2=document.getElementById('tgl2').value;
+  const kelas=document.getElementById('filterKelas').value.trim();
+  window.location.href=`/api/presensi/export-excel?tanggal=${t1}&tanggal2=${t2}&kelas=${encodeURIComponent(kelas)}`;
+  showToast('Mengunduh file Excel...','info');
+}
+
+async function init(){
+  await loadLayout('riwayat','Riwayat Presensi');
+  await loadKelasOptions('filterKelas', true);
+  const session = window._session || {};
+  const pengampu= session.pengampuKelas || 'Semua';
+  const role    = session.role || 'operator';
+
+  const today = new Date().toLocaleDateString('sv-SE');
+  document.getElementById('tgl1').value = today;
+  document.getElementById('tgl2').value = today;
+
+  if(role !== 'operator' && pengampu !== 'Semua'){
+    document.getElementById('page-title-riwayat').textContent = `Riwayat Presensi - Pengampu ${pengampu}`;
+    document.getElementById('page-sub-riwayat').textContent   = `Filter dan export data kehadiran siswa ${pengampu}`;
+    const fk = document.getElementById('filterKelas');
+    if(pengampu.includes(',')){
+      const list = pengampu.split(',').map(k=>k.trim()).filter(Boolean);
+      fk.innerHTML = '<option value="">Semua Kelas</option>' + list.map(k=>`<option value="${k}">${k}</option>`).join('');
+      fk.value = '';
+    } else {
+      fk.value = pengampu;
+      fk.disabled = true;
+      fk.style.opacity = '0.6';
+    }
+  }
+
+  loadRiwayat();
+}
+init();
+</script>
+</body>
+</html>

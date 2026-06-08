@@ -1,0 +1,672 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Data GTK</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .foto-circle-lg{width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid #E2E8F0;display:block;margin:0 auto;}
+    .foto-ini-lg{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-family:var(--font-main);font-size:28px;font-weight:800;color:#2563EB;border:3px solid #E2E8F0;margin:0 auto;}
+    .foto-sm-img{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;cursor:pointer;}
+    .foto-sm-ini{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#2563EB;border:2px solid #E2E8F0;cursor:pointer;flex-shrink:0;}
+    .btn-foto-edit{display:block;margin:8px auto 0;background:var(--primary-light);color:var(--primary);border:none;border-radius:8px;padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;}
+    .btn-foto-edit:hover{background:var(--primary);color:white;}
+    .btn-grad{width:32px;height:32px;border:none;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;font-size:14px;color:white;}
+    .btn-grad:hover{transform:translateY(-1px);}
+    .btn-grad.view{background:linear-gradient(135deg,#0EA5E9,#0284C7);}
+    .btn-grad.view:hover{box-shadow:0 4px 12px rgba(14,165,233,0.35);}
+    .btn-grad.edit{background:linear-gradient(135deg,#F59E0B,#D97706);}
+    .btn-grad.edit:hover{box-shadow:0 4px 12px rgba(245,158,11,0.35);}
+    .btn-grad.hapus{background:linear-gradient(135deg,#EF4444,#DC2626);}
+    .btn-grad.hapus:hover{box-shadow:0 4px 12px rgba(239,68,68,0.35);}
+    .btn-batal{background:#1E293B;color:white;border:none;font-weight:600;padding:8px 18px;font-size:13px;border-radius:8px;transition:all 0.2s linear;cursor:pointer;display:inline-flex;align-items:center;gap:7px;}
+    .btn-batal:hover{background:#334155;transform:translateY(-1px);box-shadow:0 4px 10px rgba(30,41,59,0.3);}
+    #modalTambah .form-control-modern,
+    #modalEdit .form-control-modern{padding:6px 10px;font-size:12px;}
+    #modalTambah .form-label-modern,
+    #modalEdit .form-label-modern{font-size:11px;margin-bottom:2px;}
+
+  </style>
+</head>
+<body>
+<div id="page-content" class="page-content">
+  <div class="page-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+    <div><div class="page-title">Data Guru dan Tenaga Kependidikan (GTK)</div><div class="page-subtitle">Kelola Data Guru dan Tenaga Kependidikan</div></div>
+    <button class="btn-primary-custom" onclick="bukaTambah()"><i class="bi bi-person-plus"></i> Tambah Pengguna</button>
+  </div>
+
+  <!-- Tombol Hapus Massal -->
+  <div id="bulkActionsUser" style="display:none;margin-bottom:12px;padding:10px 16px;background:#FEF2F2;border:1.5px solid #FCA5A5;border-radius:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+    <span style="font-size:13px;color:#991B1B;font-weight:600;"><i class="bi bi-check2-square me-1"></i> <span id="selectedCountUser">0</span> pengguna dipilih</span>
+    <button class="btn-danger-custom" onclick="hapusMassalUser()" style="padding:6px 14px;font-size:12.5px;">Hapus</button>
+  </div>
+
+  <!-- Role Info Cards (dynamic) -->
+  <div id="roleCards" class="d-flex gap-2 mb-3 flex-wrap" style="font-size:12px;"></div>
+
+  <div class="card-modern">
+    <div class="card-modern-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+      <div class="card-modern-title"><i class="bi bi-people-fill" style="color:var(--primary)"></i> Daftar Pengguna <span id="totalUsersBadge" style="display:inline-flex;align-items:center;justify-content:center;background:#2563EB;color:white;border-radius:50%;width:22px;height:22px;font-size:11px;font-weight:700;line-height:1;"></span></div>
+      <div style="position:relative;">
+        <input type="text" id="searchUsers" class="form-control-modern" placeholder="Cari Nama, Username, Role..." style="width:240px;padding-right:30px;padding:5px 30px 5px 10px;font-size:12px;" oninput="clearTimeout(window._dU);window._dU=setTimeout(()=>loadUsers(),300);document.getElementById('clearSearchUsers').style.display=this.value?'block':'none'">
+        <button id="clearSearchUsers" type="button" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94A3B8;cursor:pointer;display:none;font-size:16px;padding:2px 4px;line-height:1;" onclick="document.getElementById('searchUsers').value='';loadUsers();this.style.display='none'">&times;</button>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table-modern">
+        <thead><tr>
+          <th style="width:36px;"><input type="checkbox" id="selectAllUser" onchange="toggleSelectAllUser()" style="cursor:pointer;accent-color:var(--primary);"></th>
+          <th>#</th><th>Foto</th><th>Nama</th><th>Username</th><th>Role</th><th>Pengampu Kelas</th><th>NIP</th><th>Email</th><th>No HP</th><th>Aksi</th></tr></thead>
+        <tbody id="tblUsers"><tr><td colspan="11" class="text-center py-4"><div class="loading-spinner"></div></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  <div id="pagination" class="px-3 pb-3 pt-2" style="margin-top:8px;"></div>
+</div>
+
+<!-- Modal View Detail -->
+<div class="modal fade" id="modalViewUser" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
+      <div class="modal-header" style="background:linear-gradient(135deg,#0EA5E9,#0284C7);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
+        <h5 class="modal-title text-white fw-bold">Detail Pengguna</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4" id="viewUserBody"><div class="loading-spinner"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- OPTIONS: Daftar kelas (loaded dynamically from database) -->
+
+<!-- Modal Tambah -->
+<div class="modal fade" id="modalTambah" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:500px;">
+    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
+      <div class="modal-header" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
+        <h5 class="modal-title text-white fw-bold">Tambah Pengguna</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div id="alertTambah"></div>
+        <div class="text-center mb-3">
+          <div id="tambah-foto-preview"><div class="foto-ini-lg"><i class="bi bi-person-fill" style="font-size:32px;"></i></div></div>
+          <button type="button" class="btn-foto-edit" id="tambah-foto-btn" onclick="bukaFotoTambahUser()">
+            <i class="bi bi-camera me-1"></i>Tambah Foto
+          </button>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label-modern">Nama Lengkap *</label><input type="text" id="u_nama" class="form-control-modern" placeholder="Nama pengguna"></div>
+          <div class="col-md-6"><label class="form-label-modern">Username *</label><input type="text" id="u_username" class="form-control-modern" placeholder="Username login"></div>
+          <div class="col-md-6">
+            <label class="form-label-modern">Role *</label>
+            <select id="u_role" class="form-control-modern" onchange="toggleKelasSelect('u_pengampu','u_role')">
+              <option value="operator">Operator</option>
+              <option value="guru">Guru</option>
+              <option value="guru_bidang">Guru Bidang</option>
+              <option value="kepala_sekolah">Kepala Sekolah</option>
+              <option value="penjaga_sekolah">Penjaga Sekolah</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-modern">Pengampu Kelas</label>
+            <select id="u_pengampu" class="form-control-modern" disabled style="opacity:0.5;">
+              <!-- diisi dari template -->
+            </select>
+            <div id="u_pengampu_checkboxes" style="display:none;max-height:150px;overflow-y:auto;border:1px solid #E2E8F0;border-radius:8px;padding:8px 10px;"></div>
+          </div>
+          <div class="col-md-6"><label class="form-label-modern">Password *</label><input type="password" id="u_password" class="form-control-modern" placeholder="Min. 6 karakter"></div>
+          <div class="col-md-6"><label class="form-label-modern">No HP</label><input type="text" id="u_nohp" class="form-control-modern" placeholder="08xx"></div>
+          <div class="col-md-6"><label class="form-label-modern">NIP</label><input type="text" id="u_nip" class="form-control-modern" placeholder="Nomor Induk Pegawai"></div>
+          <div class="col-md-6"><label class="form-label-modern">Email</label><input type="email" id="u_email" class="form-control-modern" placeholder="email@sekolah.com"></div>
+          <div class="col-md-6"><label class="form-label-modern">Bidang Keahlian</label>
+            <select id="u_bidang" class="form-control-modern" style="display:none;">
+              <option value="">Pilih Bidang</option>
+              <option>Guru Bahasa Inggris</option><option>Guru Agama</option><option>Guru Olahraga</option><option>Guru Seni</option>
+            </select>
+          </div>
+          <div class="col-md-6"><label class="form-label-modern">Alamat</label><input type="text" id="u_alamat" class="form-control-modern" placeholder="Alamat lengkap"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-batal" data-bs-dismiss="modal">Batal</button>
+        <button class="btn-primary-custom" onclick="simpanUser()">Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Edit -->
+<div class="modal fade" id="modalEdit" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:500px;">
+    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
+      <div class="modal-header" style="background:linear-gradient(135deg,#F59E0B,#D97706);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
+        <h5 class="modal-title text-white fw-bold">Edit Pengguna</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div id="alertEdit"></div>
+        <input type="hidden" id="eu_id">
+        <div class="text-center mb-3">
+          <div id="edit-foto-preview"></div>
+          <button type="button" class="btn-foto-edit" onclick="bukaFotoEditUser()">
+            <i class="bi bi-camera me-1"></i>Ubah Foto
+          </button>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label-modern">Nama Lengkap *</label><input type="text" id="eu_nama" class="form-control-modern"></div>
+          <div class="col-md-6"><label class="form-label-modern">Username *</label><input type="text" id="eu_username" class="form-control-modern"></div>
+          <div class="col-md-6">
+            <label class="form-label-modern">Role *</label>
+            <select id="eu_role" class="form-control-modern" onchange="toggleKelasSelect('eu_pengampu','eu_role')">
+              <option value="operator">Operator</option>
+              <option value="guru">Guru</option>
+              <option value="guru_bidang">Guru Bidang</option>
+              <option value="kepala_sekolah">Kepala Sekolah</option>
+              <option value="penjaga_sekolah">Penjaga Sekolah</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-modern">Pengampu Kelas</label>
+            <select id="eu_pengampu" class="form-control-modern" disabled style="opacity:0.5;">
+              <!-- diisi dari template -->
+            </select>
+            <div id="eu_pengampu_checkboxes" style="display:none;max-height:150px;overflow-y:auto;border:1px solid #E2E8F0;border-radius:8px;padding:8px 10px;"></div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-modern">Password Baru</label>
+            <div style="position:relative;">
+              <input type="password" id="eu_password" class="form-control-modern" placeholder="Kosongkan jika tidak diubah" style="padding-right:36px;">
+              <i class="bi bi-eye" id="eu_pwdToggle" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;color:#64748B;" onclick="toggleEuPassword()"></i>
+            </div>
+          </div>
+          <div class="col-md-6"><label class="form-label-modern">No HP</label><input type="text" id="eu_nohp" class="form-control-modern"></div>
+          <div class="col-md-6"><label class="form-label-modern">NIP</label><input type="text" id="eu_nip" class="form-control-modern"></div>
+          <div class="col-md-6"><label class="form-label-modern">Email</label><input type="email" id="eu_email" class="form-control-modern"></div>
+          <div class="col-md-6"><label class="form-label-modern">Bidang Keahlian</label>
+            <select id="eu_bidang" class="form-control-modern" style="display:none;">
+              <option value="">Pilih Bidang</option>
+              <option>Guru Bahasa Inggris</option><option>Guru Agama</option><option>Guru Olahraga</option><option>Guru Seni</option>
+            </select>
+          </div>
+          <div class="col-md-6"><label class="form-label-modern">Alamat</label><input type="text" id="eu_alamat" class="form-control-modern"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-batal" data-bs-dismiss="modal">Batal</button>
+        <button class="btn-edit-custom" style="padding:8px 18px;font-size:13px;" onclick="updateUser()">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/app.js?v=5"></script>
+<script>
+const ROLE_BADGE={
+  kepala_sekolah:`<span style="background:#EDE9FE;color:#7C3AED;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;">Kepala Sekolah</span>`,
+  guru:`<span style="background:#D1FAE5;color:#059669;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;">Guru</span>`,
+  operator:`<span style="background:#DBEAFE;color:#2563EB;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;">Operator</span>`,
+  penjaga_sekolah:`<span style="background:#FEF3C7;color:#D97706;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;">Penjaga Sekolah</span>`,
+  guru_bidang:`<span style="background:#CFFAFE;color:#0891B2;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap;">Guru Bidang</span>`,
+};
+
+let tambahUserBlob=null;
+let editUserBlob=null, editUserFotoSrc='', editUserId=null;
+
+// Isi dropdown kelas dari database
+async function isiKelasOptions(selectId){
+  const sel=document.getElementById(selectId);
+  sel.innerHTML='<option value="Semua">Semua Kelas</option>';
+  try {
+    const res=await fetch('/api/kelas');
+    const json=await res.json();
+    (json.data||[]).forEach(k=>{
+      sel.innerHTML+=`<option value="Kelas ${k.nama}">Kelas ${k.nama}</option>`;
+    });
+  } catch(e){}
+}
+
+// Enable/disable kelas berdasarkan role
+function toggleKelasSelect(kelasId, roleId){
+  const role=document.getElementById(roleId).value;
+  const sel =document.getElementById(kelasId);
+  const wrap=sel.closest('.col-md-6');
+  const checkboxId = kelasId === 'u_pengampu' ? 'u_pengampu_checkboxes' : 'eu_pengampu_checkboxes';
+  const cbContainer = document.getElementById(checkboxId);
+  const bidangId = kelasId === 'u_pengampu' ? 'u_bidang' : 'eu_bidang';
+  const bidangSel = document.getElementById(bidangId);
+  const bidangWrap = bidangSel ? bidangSel.closest('.col-md-6') : null;
+
+  // Sembunyikan checkboxes dulu
+  if(cbContainer) cbContainer.style.display='none';
+  
+  const isTambah = kelasId === 'u_pengampu';
+  const usernameId = isTambah ? 'u_username' : 'eu_username';
+  const passwordId = isTambah ? 'u_password' : 'eu_password';
+  const usernameWrap = document.getElementById(usernameId)?.closest('.col-md-6');
+  const passwordWrap = document.getElementById(passwordId)?.closest('.col-md-6');
+
+  // Remove toggle button if exists (when switching away from guru_bidang)
+  const existingToggle = document.getElementById(kelasId+'_toggle');
+  if(existingToggle) existingToggle.remove();
+  sel.style.display='';
+
+  if(role==='operator' || role==='penjaga_sekolah'){
+    sel.disabled=true; sel.style.opacity='0.5'; sel.value='Semua';
+    if(wrap) wrap.style.display='none';
+    if(bidangSel){ bidangSel.style.display='none'; bidangSel.value=''; }
+    if(bidangWrap) bidangWrap.style.display='none';
+    if(role==='penjaga_sekolah'){
+      if(usernameWrap) usernameWrap.style.display='none';
+      if(passwordWrap) passwordWrap.style.display='none';
+    } else {
+      if(usernameWrap) usernameWrap.style.display='';
+      if(passwordWrap) passwordWrap.style.display='';
+    }
+  } else if(role==='guru_bidang'){
+    if(wrap) wrap.style.display='';
+    sel.style.display='none'; // hide the select entirely
+    // Populate checkboxes dari select options
+    if(cbContainer){
+      cbContainer.innerHTML='';
+      [...sel.options].forEach(opt=>{
+        if(opt.value==='Semua') return;
+        const cbId=checkboxId+'_'+opt.value.replace(/\s+/g,'_');
+        cbContainer.innerHTML+=`<label style="display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:6px;cursor:pointer;font-size:13px;user-select:none;">
+          <input type="checkbox" value="${opt.value}" id="${cbId}" style="accent-color:var(--primary);width:16px;height:16px;cursor:pointer;">
+          ${opt.value}
+        </label>`;
+      });
+      cbContainer.style.display='none';
+    }
+    // Toggle button
+    const toggleId = kelasId+'_toggle';
+    let toggleBtn = document.getElementById(toggleId);
+    if(!toggleBtn){
+      toggleBtn = document.createElement('button');
+      toggleBtn.id = toggleId;
+      toggleBtn.type='button';
+      toggleBtn.style.cssText = 'display:block;background:white;border:1.5px solid #E2E8F0;border-radius:8px;padding:6px 10px;font-size:12px;color:#475569;cursor:pointer;width:100%;text-align:left;';
+      toggleBtn.innerHTML = '<i class="bi bi-plus-circle me-1"></i> Pilih Kelas';
+      toggleBtn.onclick = function(){
+        const cb = document.getElementById(checkboxId);
+        if(cb.style.display==='none'){
+          cb.style.display='';
+          toggleBtn.innerHTML = '<i class="bi bi-dash-circle me-1"></i> Tutup Kelas';
+        } else {
+          cb.style.display='none';
+          toggleBtn.innerHTML = '<i class="bi bi-plus-circle me-1"></i> Pilih Kelas';
+        }
+      };
+      sel.parentNode.insertBefore(toggleBtn, cbContainer);
+    } else {
+      toggleBtn.innerHTML = '<i class="bi bi-plus-circle me-1"></i> Pilih Kelas';
+      document.getElementById(checkboxId).style.display='none';
+    }
+    if(bidangSel){ bidangSel.style.display=''; bidangSel.disabled=false; }
+    if(bidangWrap) bidangWrap.style.display='';
+    if(usernameWrap) usernameWrap.style.display='';
+    if(passwordWrap) passwordWrap.style.display='';
+  } else {
+    sel.disabled=false; sel.style.opacity='1';
+    sel.multiple = false;
+    sel.removeAttribute('size');
+    if(wrap) wrap.style.display='';
+    if(bidangSel){ bidangSel.style.display='none'; bidangSel.value=''; }
+    if(bidangWrap) bidangWrap.style.display='none';
+    if(usernameWrap) usernameWrap.style.display='';
+    if(passwordWrap) passwordWrap.style.display='';
+  }
+}
+
+function bukaFotoTambahUser(){
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+  inp.onchange=function(){
+    const file=this.files[0]; if(!file) return;
+    showCropper(file,(blob,url)=>{
+      tambahUserBlob=blob;
+      document.getElementById('tambah-foto-preview').innerHTML=
+        `<img src="${url}" class="foto-circle-lg">`;
+      document.getElementById('tambah-foto-btn').innerHTML='<i class="bi bi-camera me-1"></i>Ganti Foto';
+    });
+  };
+  inp.click();
+}
+
+function bukaFotoEditUser(){
+  showFotoDialog({
+    fotoSrc:editUserFotoSrc,
+    onGanti:(blob,url)=>{ editUserBlob=blob; editUserFotoSrc=url;
+      document.getElementById('edit-foto-preview').innerHTML=`<img src="${url}" class="foto-circle-lg">`;},
+    onHapus:async()=>{
+      if(editUserId){ const r=await fetchAPI('/api/users/hapus-foto','POST',{id:editUserId}); if(r?.success) showToast('Foto dihapus','success'); }
+      editUserBlob=null; editUserFotoSrc='';
+      const ini=document.getElementById('eu_nama').value.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?';
+      document.getElementById('edit-foto-preview').innerHTML=`<div class="foto-ini-lg">${ini}</div>`;
+    },
+    onUnduh:editUserFotoSrc||null
+  });
+}
+
+function bukaTabelFotoUser(u){
+  showFotoDialog({
+    fotoSrc:u.foto||'',
+    onGanti:async(blob,url)=>{
+      const fd=new FormData();fd.append('id',u.id);fd.append('nama',u.nama);fd.append('username',u.username);fd.append('role',u.role);fd.append('foto',blob,'foto.png');
+      const r=await fetchAPI('/api/users/edit','POST',fd);
+      if(r?.success){showToast('Foto diperbarui!','success');loadUsers();}else showToast(r?.message||'Gagal','error');
+    },
+    onHapus:async()=>{
+      const r=await fetchAPI('/api/users/hapus-foto','POST',{id:u.id});
+      if(r?.success){showToast('Foto dihapus','success');loadUsers();}else showToast(r?.message||'Gagal','error');
+    },
+    onUnduh:u.foto||null
+  });
+}
+
+let _usersData=[], _usersPage=1, _usersPerPage=5, _usersFiltered=[];
+
+function renderUsersRow(d, i) {
+  const ini = d.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  const fotoHtml = d.foto
+    ? `<img src="${d.foto}" class="foto-sm-img" onclick="bukaTabelFotoUser(_usersFiltered[${i}])">`
+    : `<div class="foto-sm-ini" onclick="bukaTabelFotoUser(_usersFiltered[${i}])">${ini}</div>`;
+  const roleBadge = d.role==='guru_bidang'
+    ? `<span style="background:#CFFAFE;color:#0891B2;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap;">${d.bidang_keahlian||'Guru Bidang'}</span>`
+    : (ROLE_BADGE[d.role] || d.role);
+  return `<tr>
+    <td>${d.role!=='operator'?`<input type="checkbox" class="user-check" value="${d.id}" onchange="updateBulkUser()" style="cursor:pointer;accent-color:var(--primary);">`:''}</td>
+    <td style="color:var(--gray)">${i+1}</td>
+    <td>${fotoHtml}</td>
+    <td style="font-weight:700;color:var(--dark)">${d.nama}</td>
+    <td style="font-weight:600">${d.username}</td>
+    <td>${roleBadge}</td>
+    <td style="font-size:12px;color:var(--gray)">${d.pengampu_kelas||'-'}</td>
+    <td style="font-size:12px;color:var(--gray)">${d.nip||'-'}</td>
+    <td style="font-size:12px;color:var(--gray)">${d.email||'-'}</td>
+    <td style="font-size:12px;color:var(--gray)">${d.no_hp||'-'}</td>
+    <td>
+      <div class="d-flex gap-1">
+        <button class="btn-grad view" title="View" onclick="viewUser(_usersFiltered[${i}])"><i class="bi bi-eye-fill"></i></button>
+        <button class="btn-grad edit" title="Edit" onclick="bukaEdit(_usersFiltered[${i}])"><i class="bi bi-pencil-fill"></i></button>
+        ${d.role!=='operator'?`<button class="btn-grad hapus" title="Hapus" onclick="hapusUser(${d.id},_usersFiltered[${i}].nama)"><i class="bi bi-trash3-fill"></i></button>`:''}
+      </div>
+    </td>
+  </tr>`;
+}
+
+function renderUsersPage(){
+  const search = (document.getElementById('searchUsers').value||'').toLowerCase();
+  document.getElementById('totalUsersBadge').textContent=_usersData.length;
+  _usersFiltered = _usersData;
+  if(search){
+    _usersFiltered = _usersData.filter(u=>
+      (u.nama||'').toLowerCase().includes(search) ||
+      (u.username||'').toLowerCase().includes(search) ||
+      (u.role||'').toLowerCase().includes(search) ||
+      (u.pengampu_kelas||'').toLowerCase().includes(search) ||
+      (u.nip||'').toLowerCase().includes(search) ||
+      (u.email||'').toLowerCase().includes(search) ||
+      (u.no_hp||'').toLowerCase().includes(search)
+    );
+  }
+  const tbody=document.getElementById('tblUsers');
+  if(!_usersFiltered.length){
+    tbody.innerHTML=search
+      ? '<tr><td colspan="11"><div class="empty-state"><i class="bi bi-people"></i><p>Tidak ditemukan</p></div></td></tr>'
+      : '<tr><td colspan="11"><div class="empty-state"><i class="bi bi-people"></i><p>Belum ada pengguna</p></div></td></tr>';
+    document.getElementById('pagination').style.display='none';
+    return;
+  }
+  const pp=_usersPerPage;
+  const totalPages=Math.ceil(_usersFiltered.length/pp);
+  if(_usersPage>totalPages) _usersPage=totalPages;
+  const start=(_usersPage-1)*pp;
+  const end=Math.min(start+pp,_usersFiltered.length);
+  tbody.innerHTML=_usersFiltered.slice(start,end).map((u,i)=>renderUsersRow(u,start+i)).join('');
+  document.getElementById('selectAllUser').checked=false;
+  updateBulkUser();
+  buildPaginationUI('pagination',{
+    currentPage:_usersPage, totalPages, currentSize:_usersPerPage,
+    sizes:[5,10,15,20,25,50],
+    onPageChange:p=>{_usersPage=p;renderUsersPage();},
+    onSizeChange:s=>{_usersPerPage=s;_usersPage=1;renderUsersPage();}
+  });
+}
+
+async function loadUsers(){
+  const res=await fetchAPI('/api/users');
+  if(!res) return;
+  _usersData=res.data||[];
+  renderRoleCards(_usersData);
+  _usersPage=1;
+  renderUsersPage();
+}
+
+function renderRoleCards(data){
+  const roles=[
+    {key:'operator',       icon:'bi-person-badge-fill',    label:'Operator',    color:'#2563EB'},
+    {key:'guru',           icon:'bi-mortarboard-fill',     label:'Guru',        color:'#059669'},
+    {key:'kepala_sekolah', icon:'bi-shield-fill-check',    label:'Kepala Sekolah',      color:'#7C3AED'},
+    {key:'penjaga_sekolah',icon:'bi-shield-fill',          label:'Penjaga',     color:'#D97706'},
+    {key:'guru_bidang',    icon:'bi-book-half',            label:'Guru Bidang', color:'#0891B2'},
+  ];
+  const counts={};
+  (data||[]).forEach(u=>{ counts[u.role]=(counts[u.role]||0)+1; });
+  document.getElementById('roleCards').innerHTML=roles.map(r=>
+    `<div style="background:white;border:1.5px solid ${r.color}33;border-radius:8px;padding:4px 10px;display:flex;align-items:center;gap:6px;">
+      <i class="bi ${r.icon}" style="color:${r.color};font-size:14px;"></i>
+      <span style="font-weight:700;color:${r.color};">${counts[r.key]||0}</span>
+      <span style="color:var(--gray);font-size:11px;">${r.label}</span>
+    </div>`
+  ).join('');
+}
+
+async function bukaTambah(){
+  tambahUserBlob=null;
+  document.getElementById('tambah-foto-preview').innerHTML=`<div class="foto-ini-lg"><i class="bi bi-person-fill" style="font-size:32px;"></i></div>`;
+  document.getElementById('tambah-foto-btn').innerHTML='<i class="bi bi-camera me-1"></i>Tambah Foto';
+  ['u_nama','u_username','u_password','u_nohp','u_email'].forEach(id=>document.getElementById(id).value='');
+  ['u_nip','u_alamat'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('u_bidang').value='';
+  document.getElementById('u_role').value='operator';
+  document.getElementById('alertTambah').innerHTML='';
+  await isiKelasOptions('u_pengampu');
+  toggleKelasSelect('u_pengampu','u_role');
+  openModal('modalTambah');
+}
+
+async function simpanUser(){
+  const alertEl=document.getElementById('alertTambah');
+  const fd=new FormData();
+  fd.append('nama',document.getElementById('u_nama').value.trim());
+  fd.append('username',document.getElementById('u_username').value.trim());
+  fd.append('password',document.getElementById('u_password').value);
+  fd.append('role',document.getElementById('u_role').value);
+  const cbContainer = document.getElementById('u_pengampu_checkboxes');
+  let pengampuVal;
+  if(document.getElementById('u_role').value==='guru_bidang'){
+    const checked=[...cbContainer.querySelectorAll('input[type="checkbox"]:checked')].map(cb=>cb.value);
+    pengampuVal=checked.length?checked.join(','):'Semua';
+  } else if(cbContainer && cbContainer.style.display!=='none'){
+    const checked=[...cbContainer.querySelectorAll('input[type="checkbox"]:checked')].map(cb=>cb.value);
+    pengampuVal=checked.length?checked.join(','):'Semua';
+  } else {
+    const pengampuSel = document.getElementById('u_pengampu');
+    pengampuVal = pengampuSel.value||'Semua';
+  }
+  fd.append('pengampu_kelas',pengampuVal);
+  fd.append('no_hp',document.getElementById('u_nohp').value);
+  fd.append('email',document.getElementById('u_email').value);
+  fd.append('nip',document.getElementById('u_nip').value.trim());
+  fd.append('alamat',document.getElementById('u_alamat').value.trim());
+  fd.append('bidang_keahlian',document.getElementById('u_bidang').value);
+  if(tambahUserBlob) fd.append('foto',tambahUserBlob,'foto.png');
+  const res=await fetchAPI('/api/users/tambah','POST',fd);
+  if(res?.success){closeModal('modalTambah');showToast('Pengguna ditambahkan!','success');tambahUserBlob=null;loadUsers();alertEl.innerHTML='';}
+  else alertEl.innerHTML=`<div class="alert-msg error">${res?.message||'Gagal'}</div>`;
+}
+
+let _viewUserData=null;
+
+function viewUser(d){
+  _viewUserData=d;
+  const ini = d.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  const fotoHtml = d.foto
+    ? `<img src="${d.foto}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;display:block;margin:0 auto;cursor:pointer;" onclick="bukaTabelFotoUser(_viewUserData)">`
+    : `<div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#2563EB;border:2px solid #E2E8F0;margin:0 auto;cursor:pointer;" onclick="bukaTabelFotoUser(_viewUserData)">${ini}</div>`;
+  const roleLabel = {kepala_sekolah:'Kepala Sekolah',guru:'Guru',operator:'Operator',penjaga_sekolah:'Penjaga Sekolah',guru_bidang:'Guru Bidang'}[d.role]||d.role;
+  const r = (label, val) => `<div style="padding:4px 0;border-bottom:1px solid #F1F5F9;"><div style="color:var(--gray);font-size:10.5px;font-weight:500;">${label}</div><div style="font-weight:600;font-size:12.5px;">${val||'-'}</div></div>`;
+  const sessionRole = window._session?.role || '';
+  const pwdHtml = sessionRole==='operator'
+    ? `<div style="padding:4px 0;border-bottom:1px solid #F1F5F9;"><div style="color:var(--gray);font-size:10.5px;font-weight:500;">Password</div><div style="font-weight:600;font-size:12.5px;display:flex;align-items:center;gap:6px;"><span id="viewUserPwdText" style="-webkit-text-security:disc;">${d.password_plain||'-'}</span><i class="bi bi-eye-slash" id="viewUserPwdToggle" style="cursor:pointer;font-size:14px;color:#64748B;" onclick="toggleViewUserPwd()"></i></div></div>`
+    : '';
+  document.getElementById('viewUserBody').innerHTML=`
+    <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:12px;">${fotoHtml}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+      <div>${r('Nama Lengkap',d.nama)}${r('Username',d.username)}${pwdHtml}${r('NIP',d.nip)}</div>
+      <div>${r('No. HP',d.no_hp)}${r('Email',d.email)}${r('Pengampu Kelas',d.pengampu_kelas||'-')}${r('Role',roleLabel)}</div>
+    </div>
+    ${r('Alamat',d.alamat)}`;
+  openModal('modalViewUser');
+}
+
+function toggleViewUserPwd(){
+  const txt=document.getElementById('viewUserPwdText');
+  const icon=document.getElementById('viewUserPwdToggle');
+  if(txt.style.webkitTextSecurity==='disc'||txt.style.webkitTextSecurity==='disc'){
+    txt.style.webkitTextSecurity='none';
+    icon.className='bi bi-eye-slash';
+  } else {
+    txt.style.webkitTextSecurity='disc';
+    icon.className='bi bi-eye';
+  }
+}
+
+async function bukaEdit(u){
+  editUserId=u.id;editUserBlob=null;editUserFotoSrc=u.foto||'';
+  document.getElementById('eu_id').value=u.id;
+  document.getElementById('eu_nama').value=u.nama;
+  document.getElementById('eu_username').value=u.username;
+  document.getElementById('eu_role').value=u.role;
+  document.getElementById('eu_nohp').value=u.no_hp||'';
+  document.getElementById('eu_email').value=u.email||'';
+  document.getElementById('eu_nip').value=u.nip||'';
+  document.getElementById('eu_alamat').value=u.alamat||'';
+  document.getElementById('eu_bidang').value=u.bidang_keahlian||'';
+  const pwdPlain = u.password_plain || '';
+  document.getElementById('eu_password').value = pwdPlain ? '********' : '';
+  document.getElementById('eu_password').dataset.plain = pwdPlain;
+  document.getElementById('alertEdit').innerHTML='';
+  await isiKelasOptions('eu_pengampu');
+  toggleKelasSelect('eu_pengampu','eu_role');
+  const cbContainer = document.getElementById('eu_pengampu_checkboxes');
+  const role = document.getElementById('eu_role').value;
+  if(role==='guru_bidang' || (cbContainer && cbContainer.style.display!=='none')){
+    const vals = (u.pengampu_kelas||'').split(',').map(v=>v.trim());
+    cbContainer.querySelectorAll('input[type="checkbox"]').forEach(cb=>{
+      cb.checked = vals.includes(cb.value);
+    });
+  } else {
+    const pengampuSel = document.getElementById('eu_pengampu');
+    if(u.pengampu_kelas && u.pengampu_kelas!=='Semua'){
+      pengampuSel.value = u.pengampu_kelas;
+    }
+  }
+  const ini=u.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  document.getElementById('edit-foto-preview').innerHTML=u.foto
+    ?`<img src="${u.foto}" class="foto-circle-lg" onerror="this.outerHTML='<div class=\\'foto-ini-lg\\'>${ini}</div>'">`
+    :`<div class="foto-ini-lg">${ini}</div>`;
+  openModal('modalEdit');
+}
+
+async function updateUser(){
+  const alertEl=document.getElementById('alertEdit');
+  const fd=new FormData();
+  fd.append('id',document.getElementById('eu_id').value);
+  fd.append('nama',document.getElementById('eu_nama').value.trim());
+  fd.append('username',document.getElementById('eu_username').value.trim());
+  fd.append('role',document.getElementById('eu_role').value);
+  const cbContainer = document.getElementById('eu_pengampu_checkboxes');
+  let pengampuVal;
+  if(document.getElementById('eu_role').value==='guru_bidang'){
+    const checked=[...cbContainer.querySelectorAll('input[type="checkbox"]:checked')].map(cb=>cb.value);
+    pengampuVal=checked.length?checked.join(','):'Semua';
+  } else if(cbContainer && cbContainer.style.display!=='none'){
+    const checked=[...cbContainer.querySelectorAll('input[type="checkbox"]:checked')].map(cb=>cb.value);
+    pengampuVal=checked.length?checked.join(','):'Semua';
+  } else {
+    const pengampuSel = document.getElementById('eu_pengampu');
+    pengampuVal = pengampuSel.value||'Semua';
+  }
+  fd.append('pengampu_kelas',pengampuVal);
+  fd.append('no_hp',document.getElementById('eu_nohp').value);
+  fd.append('email',document.getElementById('eu_email').value);
+  fd.append('nip',document.getElementById('eu_nip').value.trim());
+  fd.append('alamat',document.getElementById('eu_alamat').value.trim());
+  fd.append('bidang_keahlian',document.getElementById('eu_bidang').value);
+  fd.append('password',document.getElementById('eu_password').value);
+  if(editUserBlob) fd.append('foto',editUserBlob,'foto.png');
+  const res=await fetchAPI('/api/users/edit','POST',fd);
+  if(res?.success){closeModal('modalEdit');showToast('Pengguna diperbarui!','success');editUserBlob=null;loadUsers();}
+  else alertEl.innerHTML=`<div class="alert-msg error">${res?.message||'Gagal'}</div>`;
+}
+
+function toggleEuPassword(){
+  const el=document.getElementById('eu_password');
+  const icon=document.getElementById('eu_pwdToggle');
+  if(el.dataset.show==='true'){
+    el.value='********';
+    el.type='password';
+    icon.className='bi bi-eye';
+    el.dataset.show='false';
+  } else {
+    el.value=el.dataset.plain||'';
+    el.type='text';
+    icon.className='bi bi-eye-slash';
+    el.dataset.show='true';
+  }
+}
+
+function hapusUser(id,nama){
+  konfirmasiHapus('Hapus Pengguna?',`Akun <strong>${nama}</strong> akan dihapus permanen.`,async()=>{
+    const res=await fetchAPI('/api/users/hapus','POST',{id});
+    if(res?.success){showToast('Pengguna dihapus','success');loadUsers();}
+    else showToast(res?.message||'Gagal','error');
+  });
+}
+
+function toggleSelectAllUser(){
+  const checked=document.getElementById('selectAllUser').checked;
+  document.querySelectorAll('.user-check:not(:disabled)').forEach(cb=>cb.checked=checked);
+  updateBulkUser();
+}
+
+function updateBulkUser(){
+  const checked=document.querySelectorAll('.user-check:checked');
+  const count=checked.length;
+  document.getElementById('selectedCountUser').textContent=count;
+  const bar=document.getElementById('bulkActionsUser');
+  bar.style.display=count>0?'flex':'none';
+}
+
+function hapusMassalUser(){
+  const checked=[...document.querySelectorAll('.user-check:checked')].map(cb=>parseInt(cb.value));
+  if(!checked.length) return;
+  konfirmasiHapus('Hapus Massal Pengguna?',`${checked.length} pengguna akan dihapus. Akun Operator akan dilewati.`,async()=>{
+    const res=await fetchAPI('/api/users/hapus-massal','POST',{ids:checked});
+    if(res?.success){showToast(res.message,'success');loadUsers();}
+    else showToast(res?.message||'Gagal','error');
+  });
+}
+
+async function init(){await loadLayout('users','Data Guru dan Tenaga Kependidikan (GTK)');loadUsers();}
+init();
+</script>
+</body>
+</html>

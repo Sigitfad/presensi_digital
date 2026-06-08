@@ -1,0 +1,366 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Backup Database</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .backup-card{border:2px solid #E2E8F0;border-radius:14px;padding:20px;background:white;transition:all 0.2s;}
+    .backup-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);}
+    .fmt-db  {background:#DBEAFE;color:#1E40AF;padding:2px 9px;border-radius:8px;font-size:11.5px;font-weight:800;}
+    .fmt-json{background:#D1FAE5;color:#065F46;padding:2px 9px;border-radius:8px;font-size:11.5px;font-weight:800;}
+    .import-zone{border:2px dashed #CBD5E1;border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:all 0.2s;background:#FAFAFA;}
+    .import-zone:hover,.import-zone.dragover{border-color:var(--primary);background:#EFF6FF;}
+  </style>
+</head>
+<body>
+<div id="page-content" class="page-content">
+  <div class="page-header">
+    <div class="page-title">Backup Database</div>
+    <div class="page-subtitle">Buat, import, dan kelola backup data sekolah</div>
+  </div>
+
+  <div class="row g-2">
+    <!-- Kiri: Backup .db + Backup .json -->
+    <div class="col-lg-4 d-flex">
+      <div class="d-flex flex-column gap-2 w-100">
+        <div class="backup-card py-3 px-3 flex-fill d-flex flex-column">
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <div style="width:36px;height:36px;background:#DBEAFE;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="bi bi-database-fill" style="font-size:16px;color:#2563EB;"></i>
+              </div>
+              <div>
+                <div class="d-flex align-items-center gap-2 mb-0">
+                  <span style="font-weight:700;font-size:13px;">Backup .db</span>
+                  <span class="fmt-db">SQLite</span>
+                </div>
+                <div style="font-size:11px;color:var(--gray);">Format asli, dapat di-restore langsung</div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-auto">
+            <button class="btn-primary-custom w-100 justify-content-center" id="btnBackupDB" onclick="buatBackupDB()" style="padding:6px 14px;font-size:12.5px;">
+              <i class="bi bi-database-fill-up"></i> Buat Backup .db
+            </button>
+          </div>
+        </div>
+
+        <div class="backup-card py-3 px-3 flex-fill d-flex flex-column">
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <div style="width:36px;height:36px;background:#D1FAE5;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="bi bi-filetype-json" style="font-size:16px;color:#059669;"></i>
+              </div>
+              <div>
+                <div class="d-flex align-items-center gap-2 mb-0">
+                  <span style="font-weight:700;font-size:13px;">Backup .json</span>
+                  <span class="fmt-json">JSON</span>
+                </div>
+                <div style="font-size:11px;color:var(--gray);">Format teks, mudah dibaca dan dianalisis</div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-auto">
+            <button class="btn-success-custom w-100 justify-content-center" id="btnBackupJSON" onclick="buatBackupJSON()" style="padding:6px 14px;font-size:12.5px;">
+              <i class="bi bi-filetype-json"></i> Buat Backup .json
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kanan: Import Backup + Daftar File Backup -->
+    <div class="col-lg-8 d-flex">
+      <div class="d-flex flex-column gap-2 w-100">
+        <div class="backup-card py-3 px-3 flex-fill d-flex flex-column">
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <div style="width:36px;height:36px;background:#EDE9FE;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="bi bi-cloud-arrow-up-fill" style="font-size:16px;color:#7C3AED;"></i>
+              </div>
+              <div class="flex-fill">
+                <div style="font-weight:700;font-size:13px;margin-bottom:1px;">Import Backup</div>
+                <div style="font-size:11px;color:var(--gray);">Upload file .db / .json</div>
+              </div>
+              <div id="importStatus" style="display:none;"></div>
+            </div>
+          </div>
+          <div class="import-zone" id="importZone" onclick="document.getElementById('importFileInput').click()"
+               ondragover="event.preventDefault();this.classList.add('dragover')"
+               ondragleave="this.classList.remove('dragover')"
+               ondrop="handleDrop(event)" style="padding:14px;">
+            <i class="bi bi-cloud-upload" style="font-size:24px;color:var(--gray);margin-bottom:4px;display:block;"></i>
+            <div style="font-size:12px;font-weight:600;color:var(--dark);">Klik atau drag & drop</div>
+            <div style="font-size:11px;color:var(--gray);margin-top:2px;">.db / .json (maks 50MB)</div>
+          </div>
+          <input type="file" id="importFileInput" accept=".db,.json" style="display:none;" onchange="uploadBackup(this.files[0])">
+        </div>
+
+        <div class="card-modern flex-fill d-flex flex-column" style="min-height:0;">
+        <div class="card-modern-header" style="padding:8px 14px;flex-shrink:0;">
+          <div class="card-modern-title" style="font-size:13px;">
+            <i class="bi bi-archive" style="color:var(--primary)"></i> Daftar File Backup
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <button id="btnHapusMassal" onclick="hapusMassalBackup()" style="display:none;background:#FEE2E2;border:none;border-radius:6px;font-size:11px;font-weight:600;color:#991B1B;padding:4px 10px;cursor:pointer;">
+              <i class="bi bi-trash3"></i> Hapus
+            </button>
+            <button onclick="loadBackup()" style="background:var(--gray-light);border:none;border-radius:6px;font-size:11px;font-weight:600;color:var(--gray);padding:4px 10px;cursor:pointer;">
+              <i class="bi bi-arrow-clockwise"></i> Refresh
+            </button>
+          </div>
+        </div>
+        <div id="backupBulkBar" style="display:none;padding:6px 14px;background:#FEF2F2;border-bottom:1px solid #FCA5A5;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;">
+          <span style="font-size:12px;color:#991B1B;font-weight:600;"><i class="bi bi-check2-square me-1"></i> <span id="selectedCountBackup">0</span> file</span>
+        </div>
+          <div id="backup-list" style="overflow-y:auto;flex:1;min-height:0;">
+            <div class="text-center py-3"><div class="loading-spinner"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Baris 2: Peringatan Restore full width -->
+  <div class="row mt-2">
+    <div class="col-12">
+      <div class="card-modern" style="border:2px solid #FCA5A5;">
+        <div class="card-modern-body d-flex align-items-center gap-3 py-3">
+          <i class="bi bi-exclamation-triangle-fill" style="font-size:20px;color:#DC2626;flex-shrink:0;"></i>
+          <div>
+            <div style="font-weight:700;color:#DC2626;font-size:13px;margin-bottom:2px;">Peringatan Restore</div>
+            <div style="font-size:12px;color:#7F1D1D;line-height:1.6;">
+              Restore dari file <strong>.db</strong> atau <strong>.json</strong>. Data saat ini <strong>diganti</strong> seluruhnya.
+              Server akan restart otomatis &mdash; tunggu 5 detik lalu refresh browser.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/app.js?v=5"></script>
+<script>
+async function loadBackup(){
+  const res = await fetchAPI('/api/backup');
+  const el  = document.getElementById('backup-list');
+  if(!res?.data?.length){
+    el.innerHTML='<div class="empty-state" style="padding:30px;"><i class="bi bi-archive"></i><p>Belum ada file backup</p></div>';
+    document.getElementById('backupBulkBar').style.display='none';
+    document.getElementById('btnHapusMassal').style.display='none';
+    document.getElementById('selectedCountBackup').textContent='0';
+    return;
+  }
+  el.innerHTML=`<div class="table-responsive"><table class="table-modern">
+    <thead><tr><th style="width:36px;"><input type="checkbox" id="selectAllBackup" onchange="toggleSelectAllBackup()" style="cursor:pointer;accent-color:var(--primary);"></th><th>#</th><th>Nama File</th><th>Format</th><th>Ukuran</th><th>Tanggal</th><th>Aksi</th></tr></thead>
+    <tbody>${res.data.map((f,i)=>`
+      <tr>
+        <td><input type="checkbox" class="backup-check" value="${encodeURIComponent(f.nama)}" onchange="updateBulkBackup()" style="cursor:pointer;accent-color:var(--primary);"></td>
+        <td style="color:var(--gray)">${i+1}</td>
+        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${f.nama}">
+          <i class="bi ${f.format==='DB'?'bi-database-fill':'bi-filetype-json'}" style="color:${f.format==='DB'?'#2563EB':'#059669'};margin-right:5px;"></i>
+          <span style="font-family:monospace;font-size:11.5px;">${f.nama}</span>
+        </td>
+        <td>
+          ${f.format==='DB'
+            ? `<span class="fmt-db">.db</span>`
+            : `<span class="fmt-json">.json</span>`}
+        </td>
+        <td style="font-size:12px;color:var(--gray);">${f.ukuran}</td>
+        <td style="font-size:11.5px;color:var(--gray);white-space:nowrap;">${f.tanggal}</td>
+        <td>
+          <div class="d-flex gap-1 flex-nowrap">
+            <a href="/api/backup/download/${encodeURIComponent(f.nama)}"
+               class="btn btn-sm" style="background:var(--primary-light);color:var(--primary);border:none;border-radius:6px;font-size:11.5px;font-weight:600;padding:3px 8px;" title="Download">
+              <i class="bi bi-download"></i>
+            </a>
+            ${f.format==='DB'
+              ? `<button class="btn btn-sm" style="background:#D1FAE5;color:#065F46;border:none;border-radius:6px;font-size:11.5px;font-weight:600;padding:3px 8px;"
+                         onclick="restoreBackup('${f.nama}')" title="Restore">
+                  <i class="bi bi-cloud-arrow-down"></i>
+                </button>`
+              : `<button class="btn btn-sm" style="background:#EDE9FE;color:#5B21B6;border:none;border-radius:6px;font-size:11.5px;font-weight:600;padding:3px 8px;"
+                         onclick="restoreBackupJSON('${f.nama}')" title="Restore dari JSON">
+                  <i class="bi bi-cloud-arrow-down"></i>
+                </button>`}
+            <button class="btn btn-sm btn-danger" style="border-radius:6px;font-size:11.5px;padding:3px 8px;"
+                    onclick="hapusBackup('${f.nama}')" title="Hapus">
+              <i class="bi bi-trash3"></i>
+            </button>
+          </div>
+        </td>
+      </tr>`).join('')}
+    </tbody>
+  </table></div>`;
+  // Batasi agar hanya 3 baris terlihat, sisanya scroll
+  const thead = el.querySelector('thead');
+  const row  = el.querySelector('tbody tr');
+  let h = thead?.offsetHeight||38;
+  if(row) h += row.offsetHeight * 3;
+  el.style.maxHeight = h + 'px';
+  el.style.overflowY = 'auto';
+  document.getElementById('backupBulkBar').style.display='none';
+  document.getElementById('selectAllBackup').checked=false;
+  updateBulkBackup();
+}
+
+function updateBulkBackup(){
+  const checked=document.querySelectorAll('.backup-check:checked');
+  const count=checked.length;
+  document.getElementById('selectedCountBackup').textContent=count;
+  document.getElementById('backupBulkBar').style.display=count>0?'flex':'none';
+  document.getElementById('btnHapusMassal').style.display=count>0?'inline-flex':'none';
+}
+
+function toggleSelectAllBackup(){
+  const checked=document.getElementById('selectAllBackup').checked;
+  document.querySelectorAll('.backup-check').forEach(cb=>cb.checked=checked);
+  updateBulkBackup();
+}
+
+function hapusMassalBackup(){
+  const checked=[...document.querySelectorAll('.backup-check:checked')];
+  if(!checked.length) return;
+  const names=checked.map(cb=>decodeURIComponent(cb.value)).filter(Boolean);
+  if(!names.length) return;
+  konfirmasiHapus('Hapus File Terpilih?',`${names.length} file backup akan dihapus permanen.`,async()=>{
+    let success=0;
+    for(const n of names){
+      const r=await fetchAPI('/api/backup/hapus','POST',{nama:n});
+      if(r?.success) success++;
+    }
+    if(success>0){showToast(`${success} file dihapus`,'success');loadBackup();}
+    else showToast('Gagal menghapus','error');
+  },'Hapus','btn-danger');
+}
+
+async function buatBackupDB(){
+  const btn=document.getElementById('btnBackupDB');
+  btn.disabled=true;
+  btn.innerHTML='<span class="loading-spinner" style="width:14px;height:14px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span>Membuat...';
+  const res=await fetchAPI('/api/backup/buat-db','POST');
+  if(res?.success){showToast(`Backup .db berhasil: ${res.nama}`,'success');loadBackup();}
+  else showToast(res?.message||'Gagal membuat backup','error');
+  btn.disabled=false;
+  btn.innerHTML='<i class="bi bi-database-fill-up"></i> Buat Backup .db Sekarang';
+}
+
+async function buatBackupJSON(){
+  const btn=document.getElementById('btnBackupJSON');
+  btn.disabled=true;
+  btn.innerHTML='<span class="loading-spinner" style="width:14px;height:14px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;border-top-color:#10B981;"></span>Membuat...';
+  const res=await fetchAPI('/api/backup/buat-json','POST');
+  if(res?.success){
+    showToast(`Backup .json berhasil! ${res.jumlah?.siswa||0} siswa, ${res.jumlah?.presensi||0} presensi`,'success');
+    loadBackup();
+  } else showToast(res?.message||'Gagal membuat backup JSON','error');
+  btn.disabled=false;
+  btn.innerHTML='<i class="bi bi-filetype-json"></i> Buat Backup .json Sekarang';
+}
+
+// â”€â”€ Import / Upload file backup â”€â”€
+function handleDrop(e){
+  e.preventDefault();
+  document.getElementById('importZone').classList.remove('dragover');
+  const file=e.dataTransfer.files[0];
+  if(file) uploadBackup(file);
+}
+
+async function uploadBackup(file){
+  if(!file) return;
+  const ext=file.name.split('.').pop().toLowerCase();
+  if(ext!=='db'&&ext!=='json'){showToast('Hanya file .db atau .json yang diizinkan','error');return;}
+
+  const statusEl=document.getElementById('importStatus');
+  statusEl.style.display='inline-flex';
+  statusEl.innerHTML=`<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#1E40AF;font-weight:600;white-space:nowrap;">
+    <span class="loading-spinner" style="width:12px;height:12px;border-width:2px;border-top-color:#2563EB;display:inline-block;"></span>
+    Upload...
+  </span>`;
+
+  const fd=new FormData();
+  fd.append('file',file);
+  const res=await fetchAPI('/api/backup/import','POST',fd);
+  if(res?.success){
+    const detail = res.format==='DB' ? 'siap di-restore' : 'tersimpan';
+    statusEl.innerHTML=`<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#065F46;font-weight:600;white-space:nowrap;">
+      <i class="bi bi-check-circle-fill" style="font-size:12px;"></i> Import ${res.nama} (${detail})
+    </span>`;
+    loadBackup();
+  } else {
+    statusEl.innerHTML=`<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#DC2626;font-weight:600;white-space:nowrap;">
+      <i class="bi bi-x-circle-fill" style="font-size:12px;"></i> ${res?.message||'Import gagal'}
+    </span>`;
+  }
+  // Reset input
+  document.getElementById('importFileInput').value='';
+  setTimeout(()=>{ statusEl.style.display='none'; },5000);
+}
+
+function restoreBackup(nama){
+  konfirmasiHapus(
+    'Restore Database?',
+    `Restore dari: <br><code style="font-size:11px;background:#F1F5F9;padding:2px 6px;border-radius:4px;">${nama}</code><br><br>
+     Semua data saat ini akan <strong>diganti</strong>.<br>
+     Server restart otomatis â€” refresh browser setelah 5 detik.`,
+    async()=>{
+      showToast('Sedang me-restore database...','info');
+      const res=await fetchAPI('/api/backup/restore','POST',{nama});
+      if(res?.success){
+        showToast('Restore berhasil! Refresh browser dalam 5 detik...','success');
+        let count=5;
+        const interval=setInterval(()=>{
+          count--;
+          if(count<=0){ clearInterval(interval); window.location.reload(); }
+        },1000);
+      } else showToast(res?.message||'Restore gagal','error');
+    }
+  ,'Restore DB','btn-primary');
+}
+
+function hapusBackup(nama){
+  konfirmasiHapus(
+    'Hapus File Backup?',
+    `File <strong>${nama}</strong> akan dihapus permanen.`,
+    async()=>{
+      const res=await fetchAPI('/api/backup/hapus','POST',{nama});
+      if(res?.success){showToast('Backup dihapus','success');loadBackup();}
+      else showToast(res?.message||'Gagal','error');
+    }
+  );
+}
+
+function restoreBackupJSON(nama){
+  konfirmasiHapus(
+    'Restore dari JSON?',
+    `Restore dari: <br><code style="font-size:11px;background:#F1F5F9;padding:2px 6px;border-radius:4px;">${nama}</code><br><br>
+     Data siswa, presensi, dan settings akan <strong>dipulihkan</strong>.<br>
+     Akun operator yang sudah ada tidak akan terduplikasi.<br>
+     Server restart otomatis â€” refresh browser setelah 5 detik.`,
+    async()=>{
+      showToast('Sedang me-restore dari JSON...','info');
+      const res=await fetchAPI('/api/backup/restore-json','POST',{nama});
+      if(res?.success){
+        showToast('Restore berhasil! Refresh browser dalam 5 detik...','success');
+        let count=5;
+        const interval=setInterval(()=>{
+          count--;
+          if(count<=0){ clearInterval(interval); window.location.reload(); }
+        },1000);
+      } else showToast(res?.message||'Restore gagal','error');
+    }
+  ,'Restore JSON','btn-primary');
+}
+
+async function init(){ await loadLayout('backup','Backup Database'); loadBackup(); }
+init();
+</script>
+</body>
+</html>

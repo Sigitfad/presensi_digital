@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Data Pindahan</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+  .foto-sm-img{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;cursor:pointer;}
+  .foto-sm-ini{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#2563EB;border:2px solid #E2E8F0;cursor:pointer;flex-shrink:0;}
+  #detailTab .nav-link{background:#fff;color:var(--gray);border:none!important;border-radius:0!important;transition:all 0.2s;font-weight:500;}
+  #detailTab .nav-link.active{background:var(--primary)!important;color:#fff!important;font-weight:700!important;}
+  #detailTab .nav-link:not(.active):hover{background:#F1F5F9;color:var(--dark);}
+  .btn-grad{width:32px;height:32px;border:none;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;font-size:14px;color:white;}
+  .btn-grad:hover{transform:translateY(-1px);}
+  .btn-grad.view{background:linear-gradient(135deg,#0EA5E9,#0284C7);}
+  .btn-grad.view:hover{box-shadow:0 4px 12px rgba(14,165,233,0.35);}
+  .btn-grad.edit{background:linear-gradient(135deg,#F59E0B,#D97706);}
+  .btn-grad.edit:hover{box-shadow:0 4px 12px rgba(245,158,11,0.35);}
+  .btn-grad.hapus{background:linear-gradient(135deg,#EF4444,#DC2626);}
+  .btn-grad.hapus:hover{box-shadow:0 4px 12px rgba(239,68,68,0.35);}
+  .btn-grad.surat{background:linear-gradient(135deg,#10B981,#059669);}
+  .btn-grad.surat:hover{box-shadow:0 4px 12px rgba(16,185,129,0.35);}
+  </style>
+</head>
+<body>
+<div id="page-content" class="page-content">
+  <div class="page-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+    <div>
+      <div class="page-title">Data Pindahan</div>
+      <div class="page-subtitle">Kelola data siswa yang telah pindah sekolah</div>
+    </div>
+    <button class="btn-primary-custom" onclick="bukaTambahPindahan()"><i class="bi bi-plus-circle"></i> Masukkan Siswa Pindahan</button>
+  </div>
+
+  <!-- Tombol Hapus Massal -->
+  <div id="bulkActionsPindahan" style="display:none;margin-bottom:12px;padding:10px 16px;background:#FEF2F2;border:1.5px solid #FCA5A5;border-radius:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+    <span style="font-size:13px;color:#991B1B;font-weight:600;"><i class="bi bi-check2-square me-1"></i> <span id="selectedCountPindahan">0</span> pindahan dipilih</span>
+    <div class="d-flex gap-2">
+      <button class="btn" onclick="batalPilihPindahan()" style="background:#1E293B;border:none;color:#fff;border-radius:8px;font-size:14px;padding:6px 10px;transition:all 0.2s;line-height:1;" onmouseover="this.style.background='#334155';this.style.boxShadow='0 4px 12px rgba(30,41,59,0.3)';this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#1E293B';this.style.boxShadow='none';this.style.transform='';"><i class="bi bi-x-lg"></i></button>
+      <button class="btn-danger-custom" onclick="hapusMassalPindahan()" style="padding:6px 10px;font-size:14px;line-height:1;"><i class="bi bi-trash3"></i></button>
+    </div>
+  </div>
+
+  <div class="card-modern">
+    <div class="card-modern-header flex-wrap gap-2">
+      <div class="d-flex gap-2 flex-wrap">
+        <div style="position:relative;">
+          <input type="text" id="searchPindahan" class="form-control-modern" placeholder="Cari nama / NISN..." style="width:210px;padding-right:30px;" oninput="clearTimeout(window._dP);window._dP=setTimeout(()=>loadPindahan(),300);document.getElementById('clearSearchPindahan').style.display=this.value?'block':'none'">
+          <button id="clearSearchPindahan" type="button" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94A3B8;cursor:pointer;display:none;font-size:16px;padding:2px 4px;line-height:1;" onclick="document.getElementById('searchPindahan').value='';loadPindahan();this.style.display='none'">&times;</button>
+        </div>
+      </div>
+      <span id="totalLabel" style="font-size:12px;font-weight:700;color:#fff;background:var(--primary);padding:4px 12px;border-radius:20px;display:inline-block;"></span>
+    </div>
+    <div class="table-responsive">
+      <table class="table-modern">
+        <thead><tr>
+          <th style="width:36px;"><input type="checkbox" id="selectAllPindahan" onchange="toggleSelectAllPindahan()" style="cursor:pointer;accent-color:var(--primary);"></th>
+          <th>#</th><th>Foto</th><th>Nama</th><th>NISN</th><th>Kelas</th><th>Surat</th><th>Aksi</th>
+        </tr></thead>
+        <tbody id="pindahanBody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div id="paginationPindahan" class="pagination-bar d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3" style="display:none;"></div>
+</div>
+
+<!-- Modal Tambah (pilih dari Data Siswa dengan checkbox) -->
+<div class="modal fade" id="modalTambah" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
+    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
+      <div class="modal-header" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
+        <h5 class="modal-title text-white fw-bold">Daftarkan Siswa Pindahan</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div id="alertTambah"></div>
+        <div class="mb-3">
+          <input type="text" id="p_searchSiswa" class="form-control-modern" placeholder="Cari siswa..." oninput="clearTimeout(window._dPS);window._dPS=setTimeout(()=>loadSiswaForPindahan(),300)">
+        </div>
+        <div id="siswaPindahanContainer" style="max-height:245px;overflow-y:auto;border:1px solid #E2E8F0;border-radius:8px;padding:8px;">
+          <div class="text-center py-4"><div class="loading-spinner"></div></div>
+        </div>
+        <div class="mt-3 d-flex flex-column gap-2">
+          <div>
+            <label class="form-label-modern">Tanggal Pindah</label>
+            <input type="date" id="pt_tanggal" class="form-control-modern">
+          </div>
+          <div>
+            <label class="form-label-modern">Alasan Pindah</label>
+            <textarea id="pt_alasan" class="form-control-modern" rows="2" placeholder="Alasan pindah (opsional)"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-bs-dismiss="modal" style="background:#1E293B;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;transition:all 0.2s;" onmouseover="this.style.background='#334155';this.style.boxShadow='0 4px 12px rgba(30,41,59,0.3)';this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#1E293B';this.style.boxShadow='none';this.style.transform='';">Batal</button>
+        <button class="btn-primary-custom" onclick="simpanPindahan()">Pindahkan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Edit Surat Pindah -->
+<div class="modal fade" id="modalEdit" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
+      <div class="modal-header" style="background:linear-gradient(135deg,#F59E0B,#D97706);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
+        <h5 class="modal-title text-white fw-bold">Edit Surat Pindah</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div id="alertEdit"></div>
+        <input type="hidden" id="pe_id">
+        <div class="mb-3">
+          <div style="background:#F8FAFC;border-radius:10px;padding:16px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+              <div><strong id="pe_nama_display" style="font-size:15px;"></strong><br><span id="pe_info_display" style="font-size:12px;color:var(--gray);"></span></div>
+              <div id="pe_foto_display" style="flex-shrink:0;"></div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;">
+          <div style="flex:1;">
+            <div class="mb-3">
+              <label class="form-label-modern">Sekolah Tujuan</label>
+              <input type="text" id="pe_sekolah_tujuan" class="form-control-modern" placeholder="Nama sekolah">
+            </div>
+            <div class="mb-3">
+              <label class="form-label-modern">Tanggal Surat Pindah</label>
+              <input type="date" id="pe_tanggal_surat" class="form-control-modern">
+            </div>
+          </div>
+          <div style="flex:1;">
+            <div class="mb-3">
+              <label class="form-label-modern">Nomor Surat Pindah</label>
+              <input type="text" id="pe_nomor_surat" class="form-control-modern" placeholder="Contoh: 421/123/SKP/2026">
+            </div>
+            <div class="mb-3">
+              <label class="form-label-modern" style="display:inline-flex;align-items:center;gap:6px;">Upload Surat Pindah <i class="bi bi-info-circle-fill" style="cursor:pointer;color:#1E293B;font-size:13px;" onclick="var e=document.getElementById('pe_formatMsg');e.textContent='Format: JPG, PNG, atau PDF (maks 10MB)';setTimeout(function(){e.textContent='';},3000)"></i></label>
+              <input type="file" id="pe_surat_pindah" class="form-control-modern" accept=".jpg,.jpeg,.png,.pdf">
+              <div id="pe_suratInfo" style="font-size:11px;color:var(--gray);margin-top:4px;"></div>
+              <div id="pe_formatMsg" style="font-size:11px;color:var(--gray);margin-top:4px;min-height:16px;"></div>
+            </div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
+            <button class="btn" data-bs-dismiss="modal" style="background:#1E293B;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;transition:all 0.2s;" onmouseover="this.style.background='#334155';this.style.boxShadow='0 4px 12px rgba(30,41,59,0.3)';this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#1E293B';this.style.boxShadow='none';this.style.transform='';">Batal</button>
+            <button class="btn-edit-custom" style="padding:8px 18px;font-size:13px;" onclick="updatePindahan()">Simpan Surat</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="suratOverlay" onclick="tutupSuratOverlay(event)" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:1070;justify-content:center;align-items:center;padding:20px;">
+  <div onclick="event.stopPropagation()" style="background:#fff;border-radius:var(--radius-lg);max-width:700px;width:100%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 10px 40px rgba(0,0,0,0.3);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:linear-gradient(135deg,#7C3AED,#6D28D9);border-radius:var(--radius-lg) var(--radius-lg) 0 0;">
+      <h5 class="text-white fw-bold" style="margin:0;font-size:14px;">Surat Pindah</h5>
+      <button onclick="tutupSuratOverlay()" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;line-height:1;">&times;</button>
+    </div>
+    <div style="padding:20px;text-align:center;overflow-y:auto;flex:1;">
+      <div id="suratPreview"></div>
+      <div id="suratInfo" class="mt-2"></div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:10px;padding:12px 20px;border-top:1px solid #E2E8F0;">
+      <button class="btn" onclick="tutupSuratOverlay()" style="background:#1E293B;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;transition:all 0.2s;" onmouseover="this.style.background='#334155';this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 12px rgba(30,41,59,0.3)';" onmouseout="this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='';">Batal</button>
+      <a id="suratDownload" href="#" target="_blank" class="btn-primary-custom" style="padding:6px 16px;font-size:12px;">Download</a>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Detail -->
+<div class="modal fade" id="modalDetail" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
+      <div class="modal-header" style="background:linear-gradient(135deg,#6366F1,#4F46E5);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
+        <h5 class="modal-title text-white fw-bold">Detail Siswa Pindahan</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-0">
+        <ul class="nav nav-tabs" id="detailTab" role="tablist" style="display:flex;border-bottom:2px solid #E2E8F0;">
+          <li class="nav-item" role="presentation" style="flex:1;">
+            <button class="nav-link active" id="tab-data-diri" data-bs-toggle="tab" data-bs-target="#tabDiri" type="button" role="tab" style="width:100%;font-size:12.5px;font-weight:600;color:var(--gray);border:none;padding:10px 12px;">
+              <i class="bi bi-person me-1"></i>Data Diri Lengkap
+            </button>
+          </li>
+          <li class="nav-item" role="presentation" style="flex:1;">
+            <button class="nav-link" id="tab-pindah" data-bs-toggle="tab" data-bs-target="#tabPindah" type="button" role="tab" style="width:100%;font-size:12.5px;font-weight:600;color:var(--gray);border:none;padding:10px 12px;">
+              <i class="bi bi-arrow-right-circle me-1"></i>Data Pindahan
+            </button>
+          </li>
+        </ul>
+        <div class="tab-content p-4" id="detailTabContent">
+          <div class="tab-pane fade show active" id="tabDiri" role="tabpanel"><div id="detailBodyDiri"></div></div>
+          <div class="tab-pane fade" id="tabPindah" role="tabpanel"><div id="detailBodyPindah"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/app.js?v=6"></script>
+<script>
+let _pindahanData=[], _pindahanPage=1, _pindahanPerPage=5;
+
+function renderPindahanRow(d,i){
+  const hasFoto=d.foto&&d.foto!=='';
+  const fotoHTML=hasFoto
+    ? `<img src="${d.foto}" class="foto-sm-img" onclick="bukaFotoPindahanById(${d.id})">`
+    : `<div class="foto-sm-ini" onclick="bukaFotoPindahanById(${d.id})">${d.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()}</div>`;
+  const suratText=d.surat_pindah
+    ? `<span style="font-size:11px;color:#059669;font-weight:600;"><i class="bi bi-check-circle-fill" style="font-size:12px;"></i> Ada</span>`
+    : '<span class="text-muted">-</span>';
+  return `<tr>
+    <td><input type="checkbox" class="pindahan-check" value="${d.id}" onchange="updateBulkPindahan()"></td>
+    <td class="text-muted fw-semibold">${i+1}</td>
+    <td>${fotoHTML}</td>
+    <td class="fw-semibold">${d.nama}</td>
+    <td><span style="font-weight:700;color:var(--primary);">${d.nisn}</span></td>
+    <td>${d.kelas}</td>
+    <td>${suratText}</td>
+    <td style="white-space:nowrap;">
+      <button class="btn-grad edit" onclick="bukaEditPindahanById(${d.id})"><i class="bi bi-pencil-fill"></i></button>
+      <button class="btn-grad hapus" onclick="hapusPindahan(${d.id})"><i class="bi bi-trash3-fill"></i></button>
+    </td>
+  </tr>`;
+}
+function renderPindahanPage(){
+  const tbody=document.getElementById('pindahanBody');
+  if(!_pindahanData.length){
+    tbody.innerHTML='<tr><td colspan="8"><div class="empty-state"><i class="bi bi-arrow-right-circle"></i><p>Belum ada data pindahan</p></div></td></tr>';
+    const pc=document.getElementById('paginationPindahan'); if(pc) pc.style.display='none';
+    return;
+  }
+  const pp=_pindahanPerPage, totalPages=Math.ceil(_pindahanData.length/pp);
+  if(_pindahanPage>totalPages) _pindahanPage=totalPages;
+  const start=(_pindahanPage-1)*pp, end=Math.min(start+pp,_pindahanData.length);
+  tbody.innerHTML=_pindahanData.slice(start,end).map((d,i)=>renderPindahanRow(d,start+i)).join('');
+  document.getElementById('selectAllPindahan').checked=false;
+  updateBulkPindahan();
+  buildPaginationUI('paginationPindahan',{
+    currentPage:_pindahanPage, totalPages, currentSize:_pindahanPerPage,
+    sizes:[5,10,15,20,25,50],
+    onPageChange:p=>{_pindahanPage=p;renderPindahanPage();},
+    onSizeChange:s=>{_pindahanPerPage=s;_pindahanPage=1;renderPindahanPage();}
+  });
+}
+
+async function loadPindahan(){
+  const search=document.getElementById('searchPindahan').value;
+  const tbody=document.getElementById('pindahanBody');
+  tbody.innerHTML='<tr><td colspan="8" class="text-center py-4"><div class="loading-spinner"></div></td></tr>';
+  const res=await fetchAPI('/api/pindahan?search='+encodeURIComponent(search));
+  if(!res) return;
+  _pindahanData=res.data||[];
+  document.getElementById('totalLabel').textContent=`Total: ${_pindahanData.length} pindahan`;
+  _pindahanPage=1;
+  renderPindahanPage();
+}
+
+function bukaTabelFotoPindahan(d){
+  const old=document.getElementById('_mFotoPreview'); if(old) old.remove();
+  const hasPhoto = d.foto && d.foto !== '';
+  const avatarHTML = hasPhoto
+    ? `<img src="${d.foto}" style="width:240px;height:240px;border-radius:50%;object-fit:cover;border:4px solid #E2E8F0;display:block;margin:0 auto;">`
+    : `<div style="width:240px;height:240px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;margin:0 auto;border:4px solid #E2E8F0;"><i class="bi bi-person-fill" style="font-size:76px;color:#2563EB;"></i></div>`;
+  const el=document.createElement('div');
+  el.id='_mFotoPreview';
+  el.innerHTML=`<div class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:380px;">
+      <div class="modal-content" style="border-radius:20px;border:none;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+        <div class="modal-header" style="border:none;padding:20px 24px 10px;position:relative;">
+          <h5 style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;color:#1E293B;margin:0;font-size:18px;">Foto Profil</h5>
+          <button type="button" data-bs-dismiss="modal" style="background:none;border:none;font-size:22px;color:#94A3B8;cursor:pointer;position:absolute;right:20px;top:14px;line-height:1;">&times;</button>
+        </div>
+        <hr style="margin:0 24px;opacity:0.1;">
+        <div class="modal-body" style="padding:24px 24px 16px;">${avatarHTML}</div>
+      </div>
+    </div>
+  </div>`;
+  document.body.appendChild(el);
+  new bootstrap.Modal(el.querySelector('.modal'),{backdrop:true,keyboard:true}).show();
+}
+
+function updateBulkPindahan(){
+  const checked=document.querySelectorAll('.pindahan-check:checked');
+  const count=checked.length;
+  document.getElementById('bulkActionsPindahan').style.display=count>0?'flex':'none';
+  document.getElementById('selectedCountPindahan').textContent=count;
+}
+
+function toggleSelectAllPindahan(){
+  const checked=document.getElementById('selectAllPindahan').checked;
+  document.querySelectorAll('.pindahan-check').forEach(cb=>cb.checked=checked);
+  updateBulkPindahan();
+}
+
+function bukaTambahPindahan(){
+  document.getElementById('alertTambah').innerHTML='';
+  document.getElementById('pt_alasan').value='';
+  document.getElementById('pt_tanggal').value=new Date().toISOString().split('T')[0];
+  document.getElementById('p_searchSiswa').value='';
+  loadSiswaForPindahan();
+  openModal('modalTambah');
+}
+
+async function loadSiswaForPindahan(){
+  const search=document.getElementById('p_searchSiswa').value.trim();
+  const container=document.getElementById('siswaPindahanContainer');
+  container.innerHTML='<div class="text-center py-4"><div class="loading-spinner"></div></div>';
+  const res=await fetchAPI(`/api/siswa?search=${encodeURIComponent(search)}`);
+  if(!res?.data?.length){
+    container.innerHTML='<div class="empty-state" style="padding:20px;"><i class="bi bi-people"></i><p>Tidak ada siswa tersedia</p></div>';
+    return;
+  }
+  container.innerHTML=res.data.map(s=>`
+    <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;transition:background 0.15s;"
+           onmouseover="this.style.background='#F1F5F9'" onmouseout="this.style.background=''">
+      <input type="checkbox" class="siswa-pindahan-check" value="${s.id}" style="accent-color:var(--primary);width:16px;height:16px;cursor:pointer;">
+      <span style="font-weight:600;font-size:13px;">${s.nama}</span>
+      <span style="color:var(--gray);font-size:11px;">${s.nisn} &middot; ${s.kelas}</span>
+    </label>
+  `).join('');
+}
+
+async function simpanPindahan(){
+  const alertEl=document.getElementById('alertTambah');
+  const checked=[...document.querySelectorAll('.siswa-pindahan-check:checked')].map(cb=>parseInt(cb.value));
+  if(!checked.length){alertEl.innerHTML='<div class="alert-msg error">Pilih siswa yang akan dipindahkan!</div>';return;}
+  const tanggal_pindah=document.getElementById('pt_tanggal').value;
+  const alasan=document.getElementById('pt_alasan').value.trim();
+  const res=await fetchAPI('/api/siswa/pindah-massal','POST',{ids:checked,tanggal_pindah,alasan});
+  if(res?.success){closeModal('modalTambah');showToast(res.message,'success');loadPindahan();}
+  else alertEl.innerHTML=`<div class="alert-msg error">${res?.message||'Gagal'}</div>`;
+}
+
+let _editPindahanData=null;
+
+function editPindahan(d){
+  _editPindahanData=d;
+  document.getElementById('pe_id').value=d.id;
+  document.getElementById('pe_surat_pindah').value='';
+  document.getElementById('pe_suratInfo').innerHTML=d.surat_pindah
+    ? `<i class="bi bi-file-earmark-check"></i> Surat saat ini: <a href="javascript:void(0)" onclick="lihatSuratPindah('${d.nama.replace(/'/g,"\\'")}','${d.surat_pindah}')" style="color:var(--primary);">Lihat</a>`
+    : 'Belum ada surat pindah';
+  document.getElementById('pe_sekolah_tujuan').value=d.sekolah_tujuan||'';
+  document.getElementById('pe_nomor_surat').value=d.nomor_surat||'';
+  document.getElementById('pe_tanggal_surat').value=d.tanggal_surat||'';
+  document.getElementById('alertEdit').innerHTML='';
+  const ini=d.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  document.getElementById('pe_nama_display').textContent=d.nama;
+  document.getElementById('pe_foto_display').innerHTML= d.foto
+    ? `<img src="${d.foto}" style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;cursor:pointer;" onclick="bukaTabelFotoPindahan(_editPindahanData)">`
+    : `<div style="width:90px;height:90px;border-radius:50%;background:${d.jenis_kelamin==='Perempuan'?'#FCE7F3':'#DBEAFE'};display:inline-flex;align-items:center;justify-content:center;font-size:1.7rem;font-weight:800;color:${d.jenis_kelamin==='Perempuan'?'#BE185D':'#1E40AF'};cursor:pointer;" onclick="bukaTabelFotoPindahan(_editPindahanData)">${ini}</div>`;
+  document.getElementById('pe_info_display').innerHTML=
+    `<div style="display:table;font-size:12px;color:var(--gray);">
+      <div style="display:table-row;"><span style="display:table-cell;font-weight:600;padding-right:12px;white-space:nowrap;">NISN</span><span style="display:table-cell;">: ${d.nisn}</span></div>
+      <div style="display:table-row;"><span style="display:table-cell;font-weight:600;padding-right:12px;white-space:nowrap;">Kelas</span><span style="display:table-cell;">: ${d.kelas}</span></div>
+      <div style="display:table-row;"><span style="display:table-cell;font-weight:600;padding-right:12px;white-space:nowrap;">Tgl Pindah</span><span style="display:table-cell;">: ${d.tanggal_pindah}</span></div>
+      <div style="display:table-row;"><span style="display:table-cell;font-weight:600;padding-right:12px;white-space:nowrap;">Alasan</span><span style="display:table-cell;">: ${d.alasan||'-'}</span></div>
+    </div>`;
+  openModal('modalEdit');
+}
+
+async function updatePindahan(){
+  const alertEl=document.getElementById('alertEdit');
+  if(!_editPindahanData){alertEl.innerHTML='<div class="alert-msg error">Data tidak valid</div>';return;}
+  const fd=new FormData();
+  fd.append('id',_editPindahanData.id);
+  fd.append('sekolah_tujuan',document.getElementById('pe_sekolah_tujuan').value.trim());
+  fd.append('nomor_surat',document.getElementById('pe_nomor_surat').value.trim());
+  fd.append('tanggal_surat',document.getElementById('pe_tanggal_surat').value);
+  const file=document.getElementById('pe_surat_pindah').files[0];
+  if(file) fd.append('surat_pindah',file);
+  const res=await fetchAPI('/api/pindahan/edit','POST',fd);
+  if(res?.success){closeModal('modalEdit');showToast('Surat pindah diperbarui!','success');loadPindahan();}
+  else alertEl.innerHTML=`<div class="alert-msg error">${res?.message||'Gagal'}</div>`;
+}
+
+function lihatSuratPindah(nama,url){
+  if(!nama||!url){showToast('Data surat tidak valid','error');return;}
+  const el=document.getElementById('suratPreview');
+  const info=document.getElementById('suratInfo');
+  const dl=document.getElementById('suratDownload');
+  dl.href=url;
+  dl.download=`surat_pindah_${nama.replace(/\s+/g,'_')}`;
+  info.innerHTML=`<div style="font-weight:600;color:var(--dark);margin-top:8px;">Surat_Pindah_${nama}</div>`;
+  if(url.match(/\.pdf$/i)){
+    el.innerHTML=`<embed src="${url}" type="application/pdf" style="width:100%;height:55vh;border-radius:8px;">`;
+  } else {
+    el.innerHTML=
+      `<div style="position:relative;">
+        <div style="display:flex;justify-content:center;gap:8px;margin-bottom:8px;">
+          <button class="btn" style="background:#1E293B;border:none;color:#fff;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;" onclick="var i=document.getElementById('_zoomImg');var s=parseFloat(i.dataset.scale||1);if(s<4){s=Math.min(s+0.25,4);i.dataset.scale=s;i.style.transform='scale('+s+')';document.getElementById('_zoomLabel').textContent=Math.round(s*100)+'%';}"><i class="bi bi-plus-lg"></i></button>
+          <span id="_zoomLabel" style="font-size:11px;font-weight:600;color:var(--gray);display:flex;align-items:center;">100%</span>
+          <button class="btn" style="background:#1E293B;border:none;color:#fff;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;" onclick="var i=document.getElementById('_zoomImg');var s=parseFloat(i.dataset.scale||1);if(s>0.25){s=Math.max(s-0.25,0.25);i.dataset.scale=s;i.style.transform='scale('+s+')';document.getElementById('_zoomLabel').textContent=Math.round(s*100)+'%';}"><i class="bi bi-dash-lg"></i></button>
+        </div>
+        <div id="_zoomContainer" style="width:100%;height:55vh;overflow:hidden;border-radius:8px;position:relative;cursor:grab;">
+          <img id="_zoomImg" src="${url}" data-scale="1" style="position:relative;left:0;top:0;max-width:none;width:100%;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.1);transform-origin:0 0;transform:scale(1);" onerror="this.closest('#_zoomContainer').outerHTML='<div class=\\'empty-state\\'><i class=\\'bi bi-exclamation-triangle\\'></i><p>Gagal memuat surat</p></div>'">
+        </div>
+      </div>`;
+    setTimeout(function(){
+      var c=document.getElementById('_zoomContainer'),img=document.getElementById('_zoomImg');
+      if(!c||!img)return;
+      var sx,sy,cx,cy,drag=false;
+      function mv(e){
+        if(!drag)return;
+        e.preventDefault();
+        img.style.left=(cx+e.clientX-sx)+'px';
+        img.style.top=(cy+e.clientY-sy)+'px';
+      }
+      function up(){
+        if(!drag)return;
+        drag=false;c.style.cursor='grab';
+        document.removeEventListener('mousemove',mv);
+        document.removeEventListener('mouseup',up);
+      }
+      c.addEventListener('mousedown',function(e){
+        e.preventDefault();
+        sx=e.clientX;sy=e.clientY;
+        cx=parseInt(img.style.left)||0;cy=parseInt(img.style.top)||0;
+        drag=true;c.style.cursor='grabbing';
+        document.addEventListener('mousemove',mv);
+        document.addEventListener('mouseup',up);
+      });
+    },0);
+  }
+  document.getElementById('suratOverlay').style.setProperty('display','flex','important');
+}
+
+function tutupSuratOverlay(ev){
+  if(ev && ev.target!==ev.currentTarget) return;
+  document.getElementById('suratOverlay').style.display='none';
+  document.getElementById('suratPreview').innerHTML='';
+}
+
+function fmtDate(d){ if(!d) return '-'; const p=d.split('-'); return p.length===3?`${p[2]}-${p[1]}-${p[0]}`:d; }
+
+function detailPindahan(d){
+  if(!d||!d.nama){showToast('Data tidak valid','error');return;}
+  const ini=d.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  document.getElementById('detailBodyDiri').innerHTML=`
+    <div style="text-align:center;margin-bottom:16px;">
+      ${d.foto
+        ? `<img src="${d.foto}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;" onerror="this.outerHTML='<div style=\\'width:72px;height:72px;border-radius:50%;background:#DBEAFE;display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800;color:#1E40AF;\\'>${ini}</div>'">`
+        : `<div style="width:72px;height:72px;border-radius:50%;background:${d.jenis_kelamin==='Perempuan'?'#FCE7F3':'#DBEAFE'};display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800;color:${d.jenis_kelamin==='Perempuan'?'#BE185D':'#1E40AF'};margin:0 auto;">${ini}</div>`}
+    </div>
+    <table style="width:100%;font-size:12.5px;">
+      <tr><td style="padding:5px 0;color:var(--gray);">Nama Lengkap</td><td style="padding:5px 0;font-weight:600;">${d.nama}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gray);">NISN</td><td style="padding:5px 0;font-weight:600;">${d.nisn}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gray);">Kelas</td><td style="padding:5px 0;font-weight:600;">${d.kelas}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gray);">Tempat Lahir</td><td style="padding:5px 0;font-weight:600;">${d.tempat_lahir||'-'}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gray);">Tanggal Lahir</td><td style="padding:5px 0;font-weight:600;">${fmtDate(d.tanggal_lahir)}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gray);">Agama</td><td style="padding:5px 0;">${d.agama||'-'}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gray);">Jenis Kelamin</td><td style="padding:5px 0;">${d.jenis_kelamin||'-'}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gray);">NIK</td><td style="padding:5px 0;font-weight:600;">${d.nik||'-'}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gray);">Alamat</td><td style="padding:5px 0;font-weight:600;">${d.alamat||'-'}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gray);">No. HP Orang Tua</td><td style="padding:5px 0;">${d.no_hp_ortu||'-'}</td></tr>
+    </table>`;
+  document.getElementById('detailBodyPindah').innerHTML=`
+    <div style="text-align:center;margin-bottom:12px;">
+      ${d.foto
+        ? `<img src="${d.foto}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;" onerror="this.outerHTML='<div style=\\'width:72px;height:72px;border-radius:50%;background:#DBEAFE;display:inline-flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:800;color:#1E40AF;\\'>${ini}</div>'">`
+        : `<div style="width:72px;height:72px;border-radius:50%;background:${d.jenis_kelamin==='Perempuan'?'#FCE7F3':'#DBEAFE'};display:inline-flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:800;color:${d.jenis_kelamin==='Perempuan'?'#BE185D':'#1E40AF'};">${ini}</div>`}
+    </div>
+    <table style="width:100%;font-size:12.5px;">
+      <tr><td style="padding:5px 0;color:var(--gray);">Nama Lengkap</td><td style="padding:5px 0;font-weight:600;">${d.nama}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gray);">NISN</td><td style="padding:5px 0;font-weight:600;">${d.nisn}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gray);">Kelas</td><td style="padding:5px 0;font-weight:600;">${d.kelas}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gray);">Tanggal Pindah</td><td style="padding:5px 0;font-weight:600;">${fmtDate(d.tanggal_pindah)}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gray);">Alasan</td><td style="padding:5px 0;font-weight:600;">${d.alasan||'-'}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gray);">Sekolah Tujuan</td><td style="padding:5px 0;font-weight:600;">${d.sekolah_tujuan||'-'}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gray);">Nomor Surat</td><td style="padding:5px 0;font-weight:600;">${d.nomor_surat||'-'}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gray);">Tgl Surat</td><td style="padding:5px 0;font-weight:600;">${fmtDate(d.tanggal_surat)}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gray);">Surat Pindah</td><td style="padding:5px 0;">${d.surat_pindah
+        ? `<button class="btn-grad view" onclick="lihatSuratPindah('${d.nama.replace(/'/g,"\\'")}','${d.surat_pindah}')" title="Lihat Surat"><i class="bi bi-file-earmark-text-fill"></i></button>`
+        : '<span style="color:var(--gray);font-size:12px;">-</span>'}</td></tr>
+    </table>`;
+  try{const t=new bootstrap.Tab(document.getElementById('tab-data-diri'));t.show();}catch(e){}
+  openModal('modalDetail');
+}
+
+function hapusPindahan(id){
+  konfirmasiHapus('Hapus Data Pindahan?','Data akan dihapus permanen.',async function(){
+    const res=await fetchAPI('/api/pindahan/hapus','POST',{id});
+    if(res?.success){showToast('Data dihapus','success');loadPindahan();}
+    else showToast(res?.message||'Gagal','error');
+  });
+}
+
+function batalPilihPindahan(){
+  document.querySelectorAll('.pindahan-check').forEach(cb=>cb.checked=false);
+  document.getElementById('selectAllPindahan').checked=false;
+  document.getElementById('bulkActionsPindahan').style.display='none';
+}
+
+function hapusMassalPindahan(){
+  const checked=[...document.querySelectorAll('.pindahan-check:checked')];
+  if(!checked.length) return;
+  const ids=checked.map(cb=>parseInt(cb.value)).filter(n=>!isNaN(n));
+  if(!ids.length) return;
+  konfirmasiHapus('Hapus',`${ids.length} data akan dihapus permanen.`,async()=>{
+    const res=await fetchAPI('/api/pindahan/hapus-massal','POST',{ids});
+    if(res?.success){showToast(`${res.message}`,'success');loadPindahan();}
+    else showToast('Gagal','error');
+  },'Hapus','btn-danger');
+}
+
+function bukaFotoPindahanById(id){var d=_pindahanData.find(function(x){return x.id==id;});if(d)bukaTabelFotoPindahan(d);}
+function bukaEditPindahanById(id){var d=_pindahanData.find(function(x){return x.id==id;});if(d)editPindahan(d);}
+
+async function init(){
+  await loadLayout('pindahan','Data Pindahan');
+  loadPindahan();
+}
+init();
+</script>
+</body>
+</html>

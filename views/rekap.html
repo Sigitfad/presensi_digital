@@ -1,0 +1,480 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Rekap Presensi</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .pct-bar{height:6px;background:#E2E8F0;border-radius:4px;overflow:hidden;margin-top:4px;}
+    .pct-fill{height:100%;border-radius:4px;}
+    .num-h{color:#059669;font-weight:800;}
+    .num-t{color:#D97706;font-weight:800;}
+    .num-i{color:#2563EB;font-weight:800;}
+    .num-s{color:#7C3AED;font-weight:800;}
+    .num-a{color:#DC2626;font-weight:800;}
+    .tab-btn{padding:8px 20px;border:1.5px solid #E2E8F0;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;background:white;color:var(--gray);transition:all 0.2s;}
+    .tab-btn.active{background:var(--primary);color:white;border-color:var(--primary);}
+    .kal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+    .kal-head{text-align:center;font-size:10px;font-weight:700;color:var(--gray);padding:4px 0;}
+    .kal-day{text-align:center;padding:4px 2px;border-radius:5px;font-size:11px;font-weight:600;line-height:1.4;}
+    .kal-day.hadir{background:#D1FAE5;color:#065F46;}
+    .kal-day.terlambat{background:#FEF3C7;color:#92400E;}
+    .kal-day.izin{background:#DBEAFE;color:#1E40AF;}
+    .kal-day.sakit{background:#EDE9FE;color:#5B21B6;}
+    .kal-day.alpha{background:#FEE2E2;color:#7F1D1D;}
+    .kal-day.libur{background:transparent;color:#CBD5E1;}
+    .kal-day.kosong{background:transparent;}
+    .btn-action-xs{padding:4px 10px;border:none;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:all 0.15s;}
+    .btn-action-xs:hover{transform:translateY(-1px);}
+  </style>
+</head>
+<body>
+<div id="page-content" class="page-content">
+  <div class="page-header">
+    <div class="page-title" id="page-title-rekap">Rekap Presensi</div>
+    <div class="page-subtitle">Rangkuman kehadiran siswa per bulan</div>
+  </div>
+
+  <!-- Filter -->
+  <div class="card-modern mb-3">
+    <div class="card-modern-body d-flex gap-2 flex-wrap align-items-end">
+      <div>
+        <label class="form-label-modern">Bulan</label>
+        <select id="filterBulan" class="form-control-modern" style="width:140px;">
+          <option value="01">Januari</option><option value="02">Februari</option>
+          <option value="03">Maret</option><option value="04">April</option>
+          <option value="05">Mei</option><option value="06">Juni</option>
+          <option value="07">Juli</option><option value="08">Agustus</option>
+          <option value="09">September</option><option value="10">Oktober</option>
+          <option value="11">November</option><option value="12">Desember</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label-modern">Tahun</label>
+        <input type="number" id="filterTahun" class="form-control-modern" style="width:100px;" min="2020" max="2099">
+      </div>
+      <div>
+        <label class="form-label-modern">Kelas</label>
+        <select id="filterKelas" class="form-control-modern" style="width:145px;" onchange="loadAktif()">
+          <option value="">Semua Kelas</option>
+        </select>
+      </div>
+      <button class="btn-primary-custom" onclick="loadAktif()">
+        <i class="bi bi-search"></i> Tampilkan
+      </button>
+      <div id="info-hari" style="font-size:12.5px;color:var(--gray);align-self:flex-end;padding-bottom:2px;"></div>
+    </div>
+  </div>
+
+  <!-- Tab -->
+  <div class="d-flex gap-2 mb-3">
+    <button class="tab-btn active" id="tab-siswa" onclick="setTab('siswa')">
+      <i class="bi bi-person-lines-fill me-2"></i>Per Siswa
+    </button>
+    <button class="tab-btn" id="tab-kelas" onclick="setTab('kelas')">
+      <i class="bi bi-building me-2"></i>Per Kelas
+    </button>
+  </div>
+
+  <!-- Card tabel -->
+  <div class="card-modern">
+    <div class="card-modern-header">
+      <div class="card-modern-title" id="tbl-title">
+        <i class="bi bi-bar-chart-fill" style="color:var(--primary)"></i>
+        <span id="tbl-title-text">Rekap Per Siswa</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        
+        <div id="export-siswa-btn">
+          <button onclick="exportExcelSiswa()" style="background:linear-gradient(135deg,#16A34A,#15803D);color:white;border:none;padding:6px 13px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;">
+            <i class="bi bi-file-earmark-excel-fill"></i> Export .xlsx
+          </button>
+        </div>
+        <!-- Legend -->
+        <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:11px;">
+          <span style="background:#D1FAE5;color:#065F46;padding:2px 7px;border-radius:10px;font-weight:700;">H=Hadir</span>
+          <span style="background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:10px;font-weight:700;">T=Terlambat</span>
+          <span style="background:#DBEAFE;color:#1E40AF;padding:2px 7px;border-radius:10px;font-weight:700;">I=Izin</span>
+          <span style="background:#EDE9FE;color:#5B21B6;padding:2px 7px;border-radius:10px;font-weight:700;">S=Sakit</span>
+          <span style="background:#FEE2E2;color:#7F1D1D;padding:2px 7px;border-radius:10px;font-weight:700;">A=Alpha</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabel Per Siswa -->
+    <div id="panel-siswa" class="table-responsive">
+      <table class="table-modern">
+        <thead>
+          <tr>
+            <th>#</th><th>Nama Siswa</th><th>Kelas</th>
+            <th style="color:#059669">H</th><th style="color:#D97706">T</th>
+            <th style="color:#2563EB">I</th><th style="color:#7C3AED">S</th>
+            <th style="color:#DC2626">A</th><th>Total</th><th>% Hadir</th><th>Detail</th>
+          </tr>
+        </thead>
+        <tbody id="tblRekap">
+          <tr><td colspan="11" class="text-center py-4"><div class="loading-spinner"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Tabel Per Kelas -->
+    <div id="panel-kelas" class="table-responsive" style="display:none;">
+      <table class="table-modern">
+        <thead>
+          <tr>
+            <th>#</th><th>Kelas</th><th>Total Siswa</th>
+            <th style="color:#059669">H</th><th style="color:#D97706">T</th>
+            <th style="color:#2563EB">I</th><th style="color:#7C3AED">S</th>
+            <th style="color:#DC2626">A</th><th>Hari Efektif</th><th>% Kehadiran</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tblRekapKelas">
+          <tr><td colspan="11" class="text-center py-4"><div class="loading-spinner"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- Pagination -->
+  <div id="paginationRekap" class="pagination-bar d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3" style="display:none;"></div>
+</div>
+
+<!-- Modal Detail Siswa (kalender) -->
+<div class="modal fade" id="modalDetail" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
+      <div class="modal-header" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
+        <h5 class="modal-title text-white fw-bold" id="detailTitle">
+          <i class="bi bi-calendar3 me-2"></i>Detail Presensi
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4" id="detailBody">
+        <div class="text-center py-4"><div class="loading-spinner"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal View Kelas -->
+<div class="modal fade" id="modalViewKelas" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
+      <div class="modal-header" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
+        <h5 class="modal-title text-white fw-bold" id="viewKelasTitle">
+          <i class="bi bi-people-fill me-2"></i>Detail Rekap Kelas
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-3" id="viewKelasBody">
+        <div class="text-center py-4"><div class="loading-spinner"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/app.js?v=5"></script>
+<script>
+let rekapKelasData=[], tabAktif='siswa';
+const BULAN_NAMA=['','Januari','Februari','Maret','April','Mei','Juni',
+                  'Juli','Agustus','September','Oktober','November','Desember'];
+
+function setTab(tab){
+  tabAktif=tab;
+  document.getElementById('tab-siswa').className='tab-btn'+(tab==='siswa'?' active':'');
+  document.getElementById('tab-kelas').className='tab-btn'+(tab==='kelas'?' active':'');
+  document.getElementById('panel-siswa').style.display = tab==='siswa'?'block':'none';
+  document.getElementById('panel-kelas').style.display = tab==='kelas'?'block':'none';
+  document.getElementById('tbl-title-text').textContent = tab==='siswa'?'Rekap Per Siswa':'Rekap Per Kelas';
+}
+
+function loadAktif(){
+  loadRekap();
+  loadRekapKelas();
+}
+
+// Filter kelas â€” langsung panggil loadAktif() via onchange di select
+
+let _rekapData=[], _rekapPage=1, _rekapPerPage=5;
+
+function renderRekapRow(d, i) {
+  const pct = d.persentase;
+  const color = pct>=80?'#10B981':pct>=60?'#F59E0B':'#EF4444';
+  return `<tr>
+    <td style="color:var(--gray)">${i+1}</td>
+    <td style="font-weight:600">${d.nama}</td>
+    <td style="font-weight:700;color:var(--primary);font-size:12px">${d.kelas}</td>
+    <td><span class="num-h">${d.hadir}</span></td>
+    <td><span class="num-t">${d.terlambat}</span></td>
+    <td><span class="num-i">${d.izin}</span></td>
+    <td><span class="num-s">${d.sakit}</span></td>
+    <td><span class="num-a">${d.alpha}</span></td>
+    <td style="font-weight:700">${d.total}</td>
+    <td style="min-width:90px;">
+      <div style="font-size:12px;font-weight:700;color:${color}">${pct}%</div>
+      <div class="pct-bar"><div class="pct-fill" style="width:${pct}%;background:${color}"></div></div>
+    </td>
+    <td>
+      <div class="d-flex gap-1 flex-nowrap">
+        <button class="btn-action-xs" style="background:var(--primary-light);color:var(--primary);"
+                onclick="lihatDetailSiswa(${d.id},_rekapData[${i}].nama)">
+          <i class="bi bi-calendar3"></i> Detail
+        </button>
+        <button class="btn-action-xs" style="background:linear-gradient(135deg,#16A34A,#15803D);color:white;"
+                onclick="exportSiswaExcel(${d.id},_rekapData[${i}].nama)">
+          <i class="bi bi-download"></i>
+        </button>
+      </div>
+    </td>
+  </tr>`;
+}
+
+function renderRekapPage(){
+  const tbody=document.getElementById('tblRekap');
+  if(!_rekapData.length){
+    tbody.innerHTML='<tr><td colspan="11"><div class="empty-state"><i class="bi bi-inbox"></i><p>Tidak ada data untuk filter ini</p></div></td></tr>';
+    document.getElementById('paginationRekap').style.display='none';
+    return;
+  }
+  const pp=_rekapPerPage;
+  const totalPages=Math.ceil(_rekapData.length/pp);
+  if(_rekapPage>totalPages) _rekapPage=totalPages;
+  const start=(_rekapPage-1)*pp;
+  const end=Math.min(start+pp,_rekapData.length);
+  tbody.innerHTML=_rekapData.slice(start,end).map((r,i)=>renderRekapRow(r,start+i)).join('');
+  buildPaginationUI('paginationRekap',{
+    currentPage:_rekapPage, totalPages, currentSize:_rekapPerPage,
+    sizes:[5,10,15,20,25,50],
+    onPageChange:p=>{_rekapPage=p;renderRekapPage();},
+    onSizeChange:s=>{_rekapPerPage=s;_rekapPage=1;renderRekapPage();}
+  });
+}
+
+async function loadRekap(){
+  const bulan=document.getElementById('filterBulan').value;
+  const tahun=document.getElementById('filterTahun').value;
+  const kelas=document.getElementById('filterKelas').value.trim();
+  const tbody=document.getElementById('tblRekap');
+  tbody.innerHTML='<tr><td colspan="11" class="text-center py-4"><div class="loading-spinner"></div></td></tr>';
+
+  const res=await fetchAPI(`/api/rekap?${new URLSearchParams({bulan,tahun,kelas})}`);
+  if(!res) return;
+  _rekapData=res.data||[];
+  document.getElementById('info-hari').textContent=`Hari efektif: ${res.hariEfektif} hari`;
+  _rekapPage=1;
+  renderRekapPage();
+}
+
+async function loadRekapKelas(){
+  const bulan=document.getElementById('filterBulan').value;
+  const tahun=document.getElementById('filterTahun').value;
+  const kelas=document.getElementById('filterKelas').value.trim();
+  const tbody=document.getElementById('tblRekapKelas');
+  tbody.innerHTML='<tr><td colspan="11" class="text-center py-4"><div class="loading-spinner"></div></td></tr>';
+
+  const res=await fetchAPI(`/api/rekap/perkelas?${new URLSearchParams({bulan,tahun,kelas})}`);
+  if(!res) return;
+  rekapKelasData=res.data||[];
+
+  if(!rekapKelasData.length){
+    tbody.innerHTML='<tr><td colspan="11"><div class="empty-state"><i class="bi bi-inbox"></i><p>Tidak ada data</p></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML=rekapKelasData.map((r,i)=>{
+    const pct=r.persentase;
+    const color=pct>=80?'#10B981':pct>=60?'#F59E0B':'#EF4444';
+    const bulan=document.getElementById('filterBulan').value;
+    const tahun=document.getElementById('filterTahun').value;
+    return `<tr>
+      <td style="color:var(--gray)">${i+1}</td>
+      <td style="font-weight:700;color:var(--primary)">${r.kelas}</td>
+      <td style="font-weight:600">${r.totalSiswa} siswa</td>
+      <td><span class="num-h">${r.hadir}</span></td>
+      <td><span class="num-t">${r.terlambat}</span></td>
+      <td><span class="num-i">${r.izin}</span></td>
+      <td><span class="num-s">${r.sakit}</span></td>
+      <td><span class="num-a">${r.alpha}</span></td>
+      <td style="font-weight:700">${r.total}</td>
+      <td style="min-width:90px;">
+        <div style="font-size:12px;font-weight:700;color:${color}">${pct}%</div>
+        <div class="pct-bar"><div class="pct-fill" style="width:${pct}%;background:${color}"></div></div>
+      </td>
+      <td>
+        <div class="d-flex gap-1 flex-nowrap">
+          <button class="btn-action-xs" style="background:#D1FAE5;color:#065F46;"
+                  onclick="viewKelas('${r.kelas.replace(/'/g,"\\'")}')">
+            <i class="bi bi-eye-fill"></i> View
+          </button>
+          <button class="btn-action-xs" style="background:linear-gradient(135deg,#16A34A,#15803D);color:white;"
+                  onclick="exportExcelKelas('${r.kelas.replace(/'/g,"\\'")}')">
+            <i class="bi bi-file-earmark-excel-fill"></i> Export
+          </button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// â”€â”€ Detail kalender per siswa â”€â”€
+async function lihatDetailSiswa(siswaId,nama){
+  const bulan=document.getElementById('filterBulan').value;
+  const tahun=document.getElementById('filterTahun').value;
+  document.getElementById('detailTitle').innerHTML=
+    `<i class="bi bi-calendar3 me-2"></i>${nama} &mdash; ${BULAN_NAMA[parseInt(bulan)]} ${tahun}`;
+  document.getElementById('detailBody').innerHTML='<div class="text-center py-4"><div class="loading-spinner"></div></div>';
+  openModal('modalDetail');
+
+  const res=await fetchAPI(`/api/rekap/detail/${siswaId}?bulan=${bulan}&tahun=${tahun}`);
+  if(!res?.success) return;
+  const map={}; res.data.forEach(p=>{map[p.tanggal]=p;});
+  const thn=parseInt(tahun),bln=parseInt(bulan)-1;
+  const dim=new Date(thn,bln+1,0).getDate();
+  const off=new Date(thn,bln,1).getDay();
+  let h=0,t=0,i=0,s=0,a=0;
+  res.data.forEach(p=>{if(p.status==='Hadir')h++;else if(p.status==='Terlambat'){h++;t++;}else if(p.status==='Izin')i++;else if(p.status==='Sakit')s++;else if(p.status==='Alpha')a++;});
+  const bStr=String(parseInt(bulan)).padStart(2,'0');
+
+  let html=`<div class="row g-2 mb-3">
+    ${[['#D1FAE5','#059669',h,'Hadir'],['#FEF3C7','#D97706',t,'Terlambat'],
+       ['#DBEAFE','#2563EB',i,'Izin'],['#EDE9FE','#7C3AED',s,'Sakit'],
+       ['#FEE2E2','#DC2626',a,'Alpha']].map(([bg,col,val,lbl])=>
+      `<div class="col"><div style="background:${bg};border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:20px;font-weight:800;color:${col}">${val}</div>
+        <div style="font-size:11px;color:${col};font-weight:600">${lbl}</div>
+      </div></div>`).join('')}
+  </div>
+  <div class="kal-grid mb-1">${['Min','Sen','Sel','Rab','Kam','Jum','Sab'].map(x=>`<div class="kal-head">${x}</div>`).join('')}</div>
+  <div class="kal-grid">`;
+  for(let x=0;x<off;x++) html+=`<div class="kal-day kosong"></div>`;
+  for(let d=1;d<=dim;d++){
+    const tgl=`${tahun}-${bStr}-${String(d).padStart(2,'0')}`;
+    const hw=new Date(thn,bln,d).getDay();
+    const p=map[tgl];
+    if(hw===0){html+=`<div class="kal-day libur">${d}<br><small>Libur</small></div>`;}
+    else if(p){
+      const cls=p.status==='Hadir'?'hadir':p.status==='Terlambat'?'terlambat':p.status==='Izin'?'izin':p.status==='Sakit'?'sakit':'alpha';
+      const lbl=p.status==='Terlambat'?'T':p.status[0];
+      html+=`<div class="kal-day ${cls}" title="${p.status}${p.jam_masuk?' '+p.jam_masuk.slice(0,5):''}">${d}<br><small>${lbl}</small></div>`;
+    } else {
+      html+=`<div class="kal-day alpha" title="Alpha">${d}<br><small>A</small></div>`;
+    }
+  }
+  html+='</div>';
+  document.getElementById('detailBody').innerHTML=html;
+}
+
+// â”€â”€ View detail siswa per kelas â”€â”€
+async function viewKelas(kelas){
+  const bulan=document.getElementById('filterBulan').value;
+  const tahun=document.getElementById('filterTahun').value;
+  document.getElementById('viewKelasTitle').innerHTML=
+    `<i class="bi bi-people-fill me-2"></i>${kelas} &mdash; ${BULAN_NAMA[parseInt(bulan)]} ${tahun}`;
+  document.getElementById('viewKelasBody').innerHTML='<div class="text-center py-4"><div class="loading-spinner"></div></div>';
+  openModal('modalViewKelas');
+
+  const res=await fetchAPI(`/api/rekap/kelas-detail?bulan=${bulan}&tahun=${tahun}&kelas=${encodeURIComponent(kelas)}`);
+  if(!res?.success) return;
+  const data=res.data||[];
+
+  if(!data.length){
+    document.getElementById('viewKelasBody').innerHTML=
+      '<div class="empty-state"><i class="bi bi-inbox"></i><p>Tidak ada data</p></div>'; return;
+  }
+
+  let html=`<div class="table-responsive"><table class="table-modern">
+    <thead><tr>
+      <th>#</th><th>NISN</th><th>Nama Siswa</th><th>J.K</th>
+      <th style="color:#059669">H</th><th style="color:#D97706">T</th>
+      <th style="color:#2563EB">I</th><th style="color:#7C3AED">S</th>
+      <th style="color:#DC2626">A</th><th>Total</th><th>%</th><th>Detail</th>
+    </tr></thead><tbody>`;
+  html+=data.map((r,i)=>{
+    const pct=r.persentase;
+    const color=pct>=80?'#10B981':pct>=60?'#F59E0B':'#EF4444';
+    return `<tr>
+      <td style="color:var(--gray)">${i+1}</td>
+      <td style="font-weight:700;color:var(--primary);font-size:12px">${r.nisn}</td>
+      <td style="font-weight:600">${r.nama}</td>
+      <td style="font-size:12px;color:${r.jenis_kelamin==='Laki-laki'?'#2563EB':'#DB2777'}">
+        <i class="bi bi-gender-${r.jenis_kelamin==='Laki-laki'?'male':'female'}"></i>
+      </td>
+      <td><span class="num-h">${r.hadir}</span></td>
+      <td><span class="num-t">${r.terlambat}</span></td>
+      <td><span class="num-i">${r.izin}</span></td>
+      <td><span class="num-s">${r.sakit}</span></td>
+      <td><span class="num-a">${r.alpha}</span></td>
+      <td style="font-weight:700">${r.total}</td>
+      <td><span style="font-size:12px;font-weight:700;color:${color}">${pct}%</span></td>
+      <td>
+        <button class="btn-action-xs" style="background:var(--primary-light);color:var(--primary);"
+                onclick="lihatDetailSiswa(${r.id},'${r.nama.replace(/'/g,"\\'")}');closeModal('modalViewKelas');">
+          <i class="bi bi-calendar3"></i>
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+  html+='</tbody></table></div>';
+  document.getElementById('viewKelasBody').innerHTML=html;
+}
+
+// â”€â”€ Export Excel Per Siswa â”€â”€
+function exportExcelSiswa(){
+  const bulan=document.getElementById('filterBulan').value;
+  const tahun=document.getElementById('filterTahun').value;
+  const kelas=document.getElementById('filterKelas').value.trim();
+  window.location.href=`/api/rekap/export-excel?bulan=${bulan}&tahun=${tahun}&kelas=${encodeURIComponent(kelas)}`;
+  showToast('Mengunduh file Excel...','info');
+}
+
+// â”€â”€ Export Excel Per Kelas spesifik â”€â”€
+function exportExcelKelas(kelas){
+  const bulan=document.getElementById('filterBulan').value;
+  const tahun=document.getElementById('filterTahun').value;
+  window.location.href=`/api/rekap/export-excel-kelas?bulan=${bulan}&tahun=${tahun}&kelas=${encodeURIComponent(kelas)}`;
+  showToast(`Mengunduh Excel ${kelas}...`,'info');
+}
+
+// â”€â”€ Export xlsx satu siswa â”€â”€
+function exportSiswaExcel(siswaId, nama){
+  const bulan=document.getElementById('filterBulan').value;
+  const tahun=document.getElementById('filterTahun').value;
+  window.location.href=`/api/rekap/export-excel-siswa/${siswaId}?bulan=${bulan}&tahun=${tahun}`;
+  showToast(`Mengunduh rekap ${nama}...`,'info');
+}
+
+// â”€â”€ Juga hapus setTab update export-siswa-btn karena sudah tidak ada â”€â”€
+async function init(){
+  await loadLayout('rekap','Rekap Presensi');
+  await loadKelasOptions('filterKelas', true);
+  const session=window._session||{};
+  const pengampu=session.pengampuKelas||'Semua';
+  const role=session.role||'operator';
+  const now=new Date();
+  document.getElementById('filterBulan').value=String(now.getMonth()+1).padStart(2,'0');
+  document.getElementById('filterTahun').value=now.getFullYear();
+  if(role!=='operator' && pengampu!=='Semua'){
+    document.getElementById('page-title-rekap').textContent=`Rekap Presensi - Pengampu ${pengampu}`;
+    const fk=document.getElementById('filterKelas');
+    if(pengampu.includes(',')){
+      const list=pengampu.split(',').map(k=>k.trim()).filter(Boolean);
+      fk.innerHTML='<option value="">Semua Kelas</option>'+list.map(k=>`<option value="${k}">${k}</option>`).join('');
+      fk.value='';
+    } else {
+      fk.value=pengampu;
+      fk.disabled=true;
+      fk.style.opacity='0.6';
+    }
+  }
+  loadRekap();
+  loadRekapKelas();
+}
+init();
+</script>
+</body>
+</html>

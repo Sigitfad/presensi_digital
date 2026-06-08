@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Detail Pengguna â€” Presensi SDN Karangpawitan 1</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .info-row{display:flex;padding:11px 0;border-bottom:1px solid rgba(0,0,0,0.06);}
+    .info-row:last-child{border-bottom:none;}
+    .info-label{width:160px;font-size:13px;font-weight:600;color:var(--gray);flex-shrink:0;}
+    .info-value{font-size:13.5px;color:var(--dark);font-weight:500;}
+    .foto-profil{width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid #E2E8F0;}
+    .foto-profil-ini{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-family:var(--font-main);font-size:42px;font-weight:800;color:#2563EB;border:4px solid #E2E8F0;}
+  </style>
+</head>
+<body>
+<div id="page-content" class="page-content">
+  <div class="page-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+    <div>
+      <div class="page-title" id="page-nama">Detail Pengguna</div>
+      <div class="page-subtitle">Informasi lengkap data pengguna sistem</div>
+    </div>
+    <a href="/pages/users" class="btn-primary-custom">
+      <i class="bi bi-arrow-left"></i> Kembali
+    </a>
+  </div>
+  <div class="row g-3" id="content-area">
+    <div class="col-12 text-center py-4"><div class="loading-spinner"></div></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/app.js?v=5"></script>
+<script>
+const ROLE_INFO = {
+  operator      : { label:'Operator',       color:'#2563EB', bg:'#DBEAFE', icon:'bi-person-badge-fill',  desc:'Akses penuh ke semua fitur sistem' },
+  guru          : { label:'Guru',           color:'#059669', bg:'#D1FAE5', icon:'bi-mortarboard-fill',    desc:'Dapat melihat rekap dan riwayat presensi' },
+  kepala_sekolah: { label:'Kepala Sekolah', color:'#7C3AED', bg:'#EDE9FE', icon:'bi-shield-fill-check',  desc:'Dapat melihat rekap dan riwayat presensi' },
+  penjaga_sekolah:{ label:'Penjaga Sekolah',color:'#D97706', bg:'#FEF3C7', icon:'bi-shield-fill',        desc:'Dapat melihat rekap dan riwayat presensi' },
+  guru_bidang   : { label:'Guru Bidang',    color:'#0891B2', bg:'#CFFAFE', icon:'bi-book-half',          desc:'Guru bidang tertentu, multi kelas' },
+};
+
+async function init(){
+  await loadLayout('users','Detail Pengguna');
+  const params = new URLSearchParams(window.location.search);
+  const id     = params.get('id');
+  if(!id){ showToast('ID pengguna tidak ditemukan','error'); return; }
+
+  const res = await fetchAPI('/api/users');
+  if(!res?.data) return;
+  const user = res.data.find(u => String(u.id)===String(id));
+  if(!user){ showToast('Pengguna tidak ditemukan','error'); return; }
+
+  document.getElementById('page-nama').textContent = user.nama;
+  const ini  = user.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  const role = ROLE_INFO[user.role] || { label:user.role, color:'#64748B', bg:'#F1F5F9', icon:'bi-person', desc:'' };
+
+  // Ambil aktivitas log user ini (5 terakhir)
+  const logRes = await fetchAPI(`/api/log?user=${encodeURIComponent(user.nama)}&limit=5`);
+  const logs   = logRes?.data || [];
+
+  document.getElementById('content-area').innerHTML = `
+    <div class="col-lg-4">
+      <div class="card-modern text-center p-4">
+        ${user.foto
+          ? `<img src="${user.foto}" class="foto-profil" style="display:block;margin:0 auto 16px;" onerror="this.outerHTML='<div class=\\'foto-profil-ini\\' style=\\'margin:0 auto 16px;\\'>${ini}</div>'">`
+          : `<div class="foto-profil-ini" style="margin:0 auto 16px;">${ini}</div>`
+        }
+        <div style="font-family:var(--font-main);font-size:20px;font-weight:800;color:var(--dark);">${user.nama}</div>
+        <div style="font-size:13px;color:var(--gray);margin-top:4px;">@${user.username}</div>
+        <div style="margin-top:12px;">
+          <span style="background:${role.bg};color:${role.color};padding:5px 16px;border-radius:20px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:6px;">
+            <i class="bi ${role.icon}"></i>${role.label}
+          </span>
+        </div>
+        <div style="margin-top:10px;font-size:12px;color:var(--gray);">${role.desc}</div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="card-modern mb-3">
+        <div class="card-modern-header">
+          <div class="card-modern-title"><i class="bi bi-person-lines-fill" style="color:var(--primary)"></i> Data Pengguna</div>
+        </div>
+        <div class="card-modern-body">
+          <div class="info-row"><div class="info-label">Nama Lengkap</div><div class="info-value"><strong>${user.nama}</strong></div></div>
+          <div class="info-row"><div class="info-label">Username</div><div class="info-value">@${user.username}</div></div>
+          <div class="info-row">
+            <div class="info-label">Password</div>
+            <div class="info-value">
+              <span style="display:inline-flex;align-items:center;gap:6px;">
+                <span id="pwdDisplay" style="font-family:monospace;">${user.password_plain?'â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢':'-'}</span>
+                ${user.password_plain?`<i class="bi bi-eye" id="pwdToggle" style="cursor:pointer;font-size:14px;color:var(--gray);" onclick="togglePassword()"></i>`:''}
+              </span>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Role / Jabatan</div>
+            <div class="info-value">
+              <span style="background:${role.bg};color:${role.color};padding:2px 10px;border-radius:10px;font-size:12px;font-weight:700;">${role.label}</span>
+            </div>
+          </div>
+          <div class="info-row"><div class="info-label">No HP</div><div class="info-value">${user.no_hp||'-'}</div></div>
+          <div class="info-row"><div class="info-label">Email</div><div class="info-value">${user.email||'-'}</div></div>
+          <div class="info-row"><div class="info-label">NIP</div><div class="info-value">${user.nip||'-'}</div></div>
+          <div class="info-row"><div class="info-label">Alamat</div><div class="info-value">${user.alamat||'-'}</div></div>
+          <div class="info-row"><div class="info-label">Pengampu Kelas</div><div class="info-value">${user.pengampu_kelas&&user.pengampu_kelas!=='Semua'?`<span style="background:var(--primary-light);color:var(--primary);padding:2px 10px;border-radius:10px;font-size:12px;font-weight:600;">${user.pengampu_kelas}</span>`:'Semua Kelas'}</div></div>
+          ${user.bidang_keahlian?`<div class="info-row"><div class="info-label">Bidang Keahlian</div><div class="info-value"><span style="background:#CFFAFE;color:#0891B2;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:600;">${user.bidang_keahlian}</span></div></div>`:''}
+          <div class="info-row"><div class="info-label">Terdaftar</div><div class="info-value">${user.created_at?.slice(0,10)||'-'}</div></div>
+        </div>
+      </div>
+
+      <!-- Log Aktivitas Terakhir -->
+      <div class="card-modern">
+        <div class="card-modern-header">
+          <div class="card-modern-title"><i class="bi bi-journal-text" style="color:var(--primary)"></i> Aktivitas Terakhir</div>
+          <a href="/pages/actlog" style="font-size:12px;color:var(--primary);font-weight:600;text-decoration:none;">Lihat Semua</a>
+        </div>
+        <div class="card-modern-body" style="padding:0;">
+          ${logs.length===0
+            ? `<div class="empty-state" style="padding:24px;"><i class="bi bi-journal"></i><p>Belum ada aktivitas tercatat</p></div>`
+            : logs.map(l=>`
+              <div style="display:flex;align-items:center;gap:12px;padding:11px 20px;border-bottom:1px solid rgba(0,0,0,0.05);">
+                <div style="width:36px;height:36px;border-radius:50%;background:${l.aksi.includes('Hapus')?'#FEE2E2':l.aksi==='Login'?'#D1FAE5':'#DBEAFE'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                  <i class="bi bi-activity" style="font-size:14px;color:${l.aksi.includes('Hapus')?'#DC2626':l.aksi==='Login'?'#059669':'#2563EB'};"></i>
+                </div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-weight:600;font-size:13px">${l.aksi}</div>
+                  <div style="font-size:11.5px;color:var(--gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.detail||'-'}</div>
+                </div>
+                <div style="font-size:11px;color:var(--gray);white-space:nowrap;flex-shrink:0;">${l.created_at?.slice(0,16)||'-'}</div>
+              </div>`).join('')
+          }
+        </div>
+      </div>
+    </div>`;
+  // Define password toggle
+  window.togglePassword=function(){
+    const el=document.getElementById('pwdDisplay');
+    const icon=document.getElementById('pwdToggle');
+    if(!el||!icon) return;
+    if(el.dataset.visible==='true'){
+      el.textContent='â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢';
+      icon.className='bi bi-eye';
+      el.dataset.visible='false';
+    } else {
+      el.textContent=user.password_plain||'';
+      icon.className='bi bi-eye-slash';
+      el.dataset.visible='true';
+    }
+  };
+}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,441 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Data Lulusan / Alumni</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .foto-circle-lg{width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid #E2E8F0;display:block;margin:0 auto;}
+    .foto-ini-lg{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-family:var(--font-main);font-size:28px;font-weight:800;color:#2563EB;border:3px solid #E2E8F0;margin:0 auto;}
+    .foto-sm-img{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;cursor:pointer;}
+    .foto-sm-ini{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#2563EB;border:2px solid #E2E8F0;cursor:pointer;flex-shrink:0;}
+    .btn-foto-edit{display:block;margin:8px auto 0;background:var(--primary-light);color:var(--primary);border:none;border-radius:8px;padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;}
+    .btn-foto-edit:hover{background:var(--primary);color:white;}
+    .ijazah-badge{background:var(--primary);color:#fff;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:none;}
+    .ijazah-badge:hover{background:var(--primary-dark);}
+    .btn-grad{width:32px;height:32px;border:none;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;font-size:14px;color:white;}
+    .btn-grad:hover{transform:translateY(-1px);}
+    .btn-grad.view{background:linear-gradient(135deg,#0EA5E9,#0284C7);}
+    .btn-grad.view:hover{box-shadow:0 4px 12px rgba(14,165,233,0.35);}
+    .btn-grad.edit{background:linear-gradient(135deg,#F59E0B,#D97706);}
+    .btn-grad.edit:hover{box-shadow:0 4px 12px rgba(245,158,11,0.35);}
+    .btn-grad.hapus{background:linear-gradient(135deg,#EF4444,#DC2626);}
+    .btn-grad.hapus:hover{box-shadow:0 4px 12px rgba(239,68,68,0.35);}
+
+  </style>
+</head>
+<body>
+<div id="page-content" class="page-content">
+  <div class="page-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+    <div>
+      <div class="page-title">Data Lulusan / Alumni</div>
+      <div class="page-subtitle">Kelola data siswa yang telah lulus</div>
+    </div>
+    <button class="btn-primary-custom" onclick="bukaTambah()"><i class="bi bi-plus-circle"></i> Tambah Alumni</button>
+  </div>
+
+  <!-- Tombol Hapus Massal -->
+  <div id="bulkActionsAlumni" style="display:none;margin-bottom:12px;padding:10px 16px;background:#FEF2F2;border:1.5px solid #FCA5A5;border-radius:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+    <span style="font-size:13px;color:#991B1B;font-weight:600;"><i class="bi bi-check2-square me-1"></i> <span id="selectedCountAlumni">0</span> alumni dipilih</span>
+    <button class="btn-danger-custom" onclick="hapusMassalAlumni()" style="padding:6px 14px;font-size:12.5px;">Hapus</button>
+  </div>
+
+  <div class="card-modern">
+    <div class="card-modern-header flex-wrap gap-2">
+      <div class="d-flex gap-2 flex-wrap">
+        <div style="position:relative;">
+          <input type="text" id="searchInput" class="form-control-modern" placeholder="Cari nama / NISN..." style="width:210px;padding-right:30px;" oninput="clearTimeout(window._dA);window._dA=setTimeout(()=>loadAlumni(),300);document.getElementById('clearSearch').style.display=this.value?'block':'none'">
+          <button id="clearSearch" type="button" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94A3B8;cursor:pointer;display:none;font-size:16px;padding:2px 4px;line-height:1;" onclick="document.getElementById('searchInput').value='';loadAlumni();this.style.display='none'">&times;</button>
+        </div>
+        <select id="filterTahun" class="form-control-modern" style="width:145px;" onchange="loadAlumni()">
+          <option value="">Semua Tahun</option>
+        </select>
+      </div>
+      <span id="totalLabel" style="font-size:13px;color:white;background:#2563EB;border-radius:8px;padding:4px 14px;display:inline-block;font-weight:700;"></span>
+    </div>
+    <div class="table-responsive">
+      <table class="table-modern">
+        <thead><tr>
+          <th style="width:36px;"><input type="checkbox" id="selectAllAlumni" onchange="toggleSelectAllAlumni()" style="cursor:pointer;accent-color:var(--primary);"></th>
+          <th>#</th><th>Foto</th><th>NISN</th><th>Nama</th><th>Kelas</th><th>Tahun Lulus</th><th>Ijazah</th><th>Aksi</th></tr></thead>
+        <tbody id="tblAlumni"><tr><td colspan="9" class="text-center py-4"><div class="loading-spinner"></div></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  <div id="paginationAlumni" class="pagination-bar d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3" style="display:none;"></div>
+</div>
+
+<!-- Modal Tambah Alumni -->
+<div class="modal fade" id="modalTambah" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
+    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
+      <div class="modal-header" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
+        <h5 class="modal-title text-white fw-bold">Tambah Alumni</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div id="alertTambah"></div>
+        <div class="mb-3">
+          <input type="text" id="a_searchSiswa" class="form-control-modern" placeholder="Cari siswa..." oninput="clearTimeout(window._dA);window._dA=setTimeout(()=>loadSiswaForAlumni(),300)">
+        </div>
+        <div id="siswaListContainer" style="max-height:245px;overflow-y:auto;border:1px solid #E2E8F0;border-radius:8px;padding:8px;">
+          <div class="text-center py-4"><div class="loading-spinner"></div></div>
+        </div>
+        <div class="mt-3">
+          <label class="form-label-modern">Tahun Lulus *</label>
+          <input type="number" id="a_tahunLulus" class="form-control-modern" placeholder="Contoh: 2025">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-batal" data-bs-dismiss="modal" style="background:#1E293B;color:white;border:none;font-weight:600;padding:8px 18px;font-size:13px;border-radius:8px;transition:all 0.2s linear;cursor:pointer;display:inline-flex;align-items:center;gap:7px;" onmouseover="this.style.background='#334155';this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 10px rgba(30,41,59,0.3)';" onmouseout="this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';">Batal</button>
+        <button class="btn-primary-custom" onclick="simpanAlumni()">Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Detail Alumni -->
+<div class="modal fade" id="modalDetail" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
+      <div class="modal-header" style="background:linear-gradient(135deg,#0EA5E9,#0284C7);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
+        <h5 class="modal-title text-white fw-bold">Detail Alumni</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4" id="detailContent"><div class="loading-spinner"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Edit Ijazah -->
+<div class="modal fade" id="modalEdit" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
+      <div class="modal-header" style="background:linear-gradient(135deg,#F59E0B,#D97706);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
+        <h5 class="modal-title text-white fw-bold">Edit Ijazah</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div id="alertEdit"></div>
+        <input type="hidden" id="ea_id">
+        <div style="background:#F8FAFC;border-radius:10px;padding:16px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+            <div><strong id="ea_nama_display" style="font-size:15px;"></strong><br><span id="ea_info_display" style="font-size:12px;color:var(--gray);"></span></div>
+            <div id="edit-foto-preview" style="flex-shrink:0;"></div>
+          </div>
+        </div>
+        <div class="mt-3">
+          <label class="form-label-modern">Upload Ijazah *</label>
+          <input type="file" id="ea_ijazah" class="form-control-modern" accept=".pdf,.jpg,.jpeg,.png">
+          <div id="ea_ijazahInfo" class="mt-1" style="font-size:12px;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-batal" data-bs-dismiss="modal" style="background:#1E293B;color:white;border:none;font-weight:600;padding:8px 18px;font-size:13px;border-radius:8px;transition:all 0.2s linear;cursor:pointer;" onmouseover="this.style.background='#334155';this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 10px rgba(30,41,59,0.3)';" onmouseout="this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';">Batal</button>
+        <button class="btn-primary-custom" onclick="updateAlumni()">Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Lihat Ijazah -->
+<div class="modal fade" id="modalIjazah" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:600px;">
+    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
+      <div class="modal-header" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
+        <h5 class="modal-title text-white fw-bold">Ijazah</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div id="ijazahPreview" class="text-center"><div class="loading-spinner"></div></div>
+        <div id="ijazahInfo"></div>
+        <div class="d-flex justify-content-center gap-2 mt-3">
+          <button type="button" data-bs-dismiss="modal" style="background:#1E293B;color:white;border:none;font-weight:600;padding:8px 18px;font-size:13px;border-radius:8px;transition:all 0.2s linear;cursor:pointer;display:inline-flex;align-items:center;gap:7px;" onmouseover="this.style.background='#334155';this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 10px rgba(30,41,59,0.3)';" onmouseout="this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';">Batal</button>
+          <a id="ijazahDownload" class="btn-primary-custom" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;" download>Download</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/app.js?v=5"></script>
+<script>
+function bukaTabelFotoAlumni(a){
+  const old=document.getElementById('_mFotoPreview'); if(old) old.remove();
+  const hasPhoto = a.foto && a.foto !== '';
+  const avatarHTML = hasPhoto
+    ? `<img src="${a.foto}" style="width:240px;height:240px;border-radius:50%;object-fit:cover;border:4px solid #E2E8F0;display:block;margin:0 auto;">`
+    : `<div style="width:240px;height:240px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;margin:0 auto;border:4px solid #E2E8F0;"><i class="bi bi-person-fill" style="font-size:76px;color:#2563EB;"></i></div>`;
+  const el=document.createElement('div');
+  el.id='_mFotoPreview';
+  el.innerHTML=`<div class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:380px;">
+      <div class="modal-content" style="border-radius:20px;border:none;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+        <div class="modal-header" style="border:none;padding:20px 24px 10px;position:relative;">
+          <h5 style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;color:#1E293B;margin:0;font-size:18px;">Foto Profil</h5>
+          <button type="button" data-bs-dismiss="modal" style="background:none;border:none;font-size:22px;color:#94A3B8;cursor:pointer;position:absolute;right:20px;top:14px;line-height:1;">&times;</button>
+        </div>
+        <hr style="margin:0 24px;opacity:0.1;">
+        <div class="modal-body" style="padding:24px 24px 16px;">${avatarHTML}</div>
+      </div>
+    </div>
+  </div>`;
+  document.body.appendChild(el);
+  new bootstrap.Modal(el.querySelector('.modal'),{backdrop:true,keyboard:true}).show();
+}
+
+async function loadTahunFilter(){
+  const res=await fetchAPI('/api/alumni/tahun');
+  const sel=document.getElementById('filterTahun');
+  const current=sel.value;
+  sel.innerHTML='<option value="">Semua Tahun</option>';
+  if(res?.data){res.data.forEach(t=>{sel.innerHTML+=`<option value="${t}">${t}</option>`;});}
+  sel.value=current;
+}
+
+let _alumniData=[], _alumniPage=1, _alumniPerPage=5; let _viewAlumniData=null;
+
+function renderAlumniRow(d, i) {
+  const ini = d.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  const fotoHtml = d.foto
+    ? `<img src="${d.foto}" class="foto-sm-img" onclick="bukaTabelFotoAlumni(_alumniData[${i}])">`
+    : `<div class="foto-sm-ini" onclick="bukaTabelFotoAlumni(_alumniData[${i}])">${ini}</div>`;
+  const ijazahHtml = d.ijazah
+    ? `<button class="btn-grad view" title="Lihat Ijazah" onclick="lihatIjazah(_alumniData[${i}].nama,_alumniData[${i}].ijazah)"><i class="bi bi-file-earmark-text-fill"></i></button>`
+    : '<span style="color:var(--gray);font-size:12px;">-</span>';
+  return `<tr>
+    <td><input type="checkbox" class="alumni-check" value="${d.id}" onchange="updateBulkAlumni()" style="cursor:pointer;accent-color:var(--primary);"></td>
+    <td style="color:var(--gray)">${i+1}</td>
+    <td>${fotoHtml}</td>
+    <td style="font-weight:600">${d.nisn}</td>
+    <td style="font-weight:700;color:var(--dark)">${d.nama}</td>
+    <td>${d.kelas_lulus}</td>
+    <td><span style="background:#EDE9FE;color:#7C3AED;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:700;">${d.tahun_lulus}</span></td>
+    <td>${ijazahHtml}</td>
+    <td>
+      <div class="d-flex gap-1">
+        <button class="btn-grad view" title="Lihat Detail" onclick="bukaViewAlumni(_alumniData[${i}])"><i class="bi bi-eye-fill"></i></button>
+        <button class="btn-grad edit" title="Edit Ijazah" onclick="bukaEditAlumni(_alumniData[${i}])"><i class="bi bi-pencil-fill"></i></button>
+        <button class="btn-grad hapus" title="Hapus" onclick="hapusAlumni(${d.id},_alumniData[${i}].nama)"><i class="bi bi-trash3-fill"></i></button>
+      </div>
+    </td>
+  </tr>`;
+}
+
+function renderAlumniPage(){
+  const tbody=document.getElementById('tblAlumni');
+  if(!_alumniData.length){
+    tbody.innerHTML='<tr><td colspan="9"><div class="empty-state"><i class="bi bi-mortarboard"></i><p>Belum ada data alumni</p></div></td></tr>';
+    document.getElementById('paginationAlumni').style.display='none';
+    return;
+  }
+  const pp=_alumniPerPage;
+  const totalPages=Math.ceil(_alumniData.length/pp);
+  if(_alumniPage>totalPages) _alumniPage=totalPages;
+  const start=(_alumniPage-1)*pp;
+  const end=Math.min(start+pp,_alumniData.length);
+  tbody.innerHTML=_alumniData.slice(start,end).map((a,i)=>renderAlumniRow(a,start+i)).join('');
+  document.getElementById('selectAllAlumni').checked=false;
+  updateBulkAlumni();
+  buildPaginationUI('paginationAlumni',{
+    currentPage:_alumniPage, totalPages, currentSize:_alumniPerPage,
+    sizes:[5,10,15,20,25,50],
+    onPageChange:p=>{_alumniPage=p;renderAlumniPage();},
+    onSizeChange:s=>{_alumniPerPage=s;_alumniPage=1;renderAlumniPage();}
+  });
+}
+
+async function loadAlumni(){
+  const search=document.getElementById('searchInput').value;
+  const tahun=document.getElementById('filterTahun').value;
+  const tbody=document.getElementById('tblAlumni');
+  tbody.innerHTML='<tr><td colspan="9" class="text-center py-4"><div class="loading-spinner"></div></td></tr>';
+  const res=await fetchAPI(`/api/alumni?${new URLSearchParams({search,tahun_lulus:tahun})}`);
+  if(!res) return;
+  _alumniData=res.data||[];
+  document.getElementById('totalLabel').textContent=`Total: ${_alumniData.length} alumni`;
+  _alumniPage=1;
+  renderAlumniPage();
+}
+
+async function loadTahunFilter(){
+  const res=await fetchAPI('/api/alumni/tahun');
+  const sel=document.getElementById('filterTahun');
+  const current=sel.value;
+  sel.innerHTML='<option value="">Semua Tahun</option>';
+  if(res?.data){res.data.forEach(t=>{sel.innerHTML+=`<option value="${t}">${t}</option>`;});}
+  sel.value=current;
+}
+
+async function bukaTambah(){
+  document.getElementById('alertTambah').innerHTML='';
+  document.getElementById('a_tahunLulus').value='';
+  openModal('modalTambah');
+  await loadSiswaForAlumni();
+}
+
+async function loadSiswaForAlumni(){
+  const search=document.getElementById('a_searchSiswa').value.trim();
+  const container=document.getElementById('siswaListContainer');
+  container.innerHTML='<div class="text-center py-4"><div class="loading-spinner"></div></div>';
+  const res=await fetchAPI(`/api/siswa?search=${encodeURIComponent(search)}`);
+  if(!res?.data?.length){
+    container.innerHTML='<div class="empty-state" style="padding:20px;"><i class="bi bi-people"></i><p>Tidak ada siswa tersedia</p></div>';
+    return;
+  }
+  container.innerHTML=res.data.map(s=>`
+    <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;transition:background 0.15s;"
+           onmouseover="this.style.background='#F1F5F9'" onmouseout="this.style.background=''">
+      <input type="checkbox" class="siswa-alumni-check" value="${s.id}" style="accent-color:var(--primary);width:16px;height:16px;cursor:pointer;">
+      <span style="font-weight:600;font-size:13px;">${s.nama}</span>
+      <span style="color:var(--gray);font-size:11px;">${s.nisn} &middot; ${s.kelas}</span>
+    </label>
+  `).join('');
+}
+
+async function simpanAlumni(){
+  const alertEl=document.getElementById('alertTambah');
+  const checked=[...document.querySelectorAll('.siswa-alumni-check:checked')].map(cb=>parseInt(cb.value));
+  if(!checked.length){alertEl.innerHTML='<div class="alert-msg error">Pilih siswa yang akan diluluskan!</div>';return;}
+  const tahun=document.getElementById('a_tahunLulus').value.trim();
+  if(!tahun){alertEl.innerHTML='<div class="alert-msg error">Masukkan tahun lulus!</div>';return;}
+  const res=await fetchAPI('/api/siswa/lulus-massal','POST',{ids:checked,tahun_lulus:tahun});
+  if(res?.success){closeModal('modalTambah');showToast(res.message,'success');loadAlumni();loadTahunFilter();alertEl.innerHTML='';}
+  else alertEl.innerHTML=`<div class="alert-msg error">${res?.message||'Gagal'}</div>`;
+}
+
+let _editAlumniData=null;
+
+function bukaEditAlumni(a){
+  _editAlumniData=a;
+  document.getElementById('ea_id').value=a.id;
+  document.getElementById('ea_ijazah').value='';
+  document.getElementById('ea_ijazahInfo').innerHTML=a.ijazah?`<i class="bi bi-file-earmark-check"></i> Ijazah saat ini: <a href="javascript:void(0)" onclick="lihatIjazah('${a.nama.replace(/'/g,"\\'")}','${a.ijazah}')" style="color:var(--primary);">Lihat</a>`:'Belum ada ijazah';
+  document.getElementById('alertEdit').innerHTML='';
+  const ini=a.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  document.getElementById('edit-foto-preview').innerHTML= a.foto
+    ? `<img src="${a.foto}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;cursor:pointer;" onclick="bukaTabelFotoAlumni(_editAlumniData)" onerror="this.outerHTML='<div style=\\'width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;color:#2563EB;border:2px solid #E2E8F0;cursor:pointer;\\' onclick=\\'bukaTabelFotoAlumni(_editAlumniData)\\'>${ini}</div>'">`
+    : `<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;color:#2563EB;border:2px solid #E2E8F0;cursor:pointer;" onclick="bukaTabelFotoAlumni(_editAlumniData)">${ini}</div>`;
+  document.getElementById('ea_nama_display').textContent=a.nama;
+  document.getElementById('ea_info_display').innerHTML=
+    `<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray);line-height:1.8;"><span style="display:inline-block;min-width:90px;font-weight:600;color:var(--gray);">NISN</span><span style="color:#94A3B8;">:</span> ${a.nisn}</div>`+
+    `<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray);line-height:1.8;"><span style="display:inline-block;min-width:90px;font-weight:600;color:var(--gray);">Kelas</span><span style="color:#94A3B8;">:</span> ${a.kelas_lulus}</div>`+
+    `<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray);line-height:1.8;"><span style="display:inline-block;min-width:90px;font-weight:600;color:var(--gray);">Tahun Lulus</span><span style="color:#94A3B8;">:</span> ${a.tahun_lulus}</div>`;
+  openModal('modalEdit');
+}
+
+async function updateAlumni(){
+  const alertEl=document.getElementById('alertEdit');
+  if(!_editAlumniData){alertEl.innerHTML='<div class="alert-msg error">Data tidak valid</div>';return;}
+  const ijazahFile=document.getElementById('ea_ijazah').files[0];
+  if(!ijazahFile && !_editAlumniData.ijazah){
+    alertEl.innerHTML='<div class="alert-msg error">Wajib upload file ijazah!</div>';
+    return;
+  }
+  const fd=new FormData();
+  fd.append('id',_editAlumniData.id);
+  fd.append('nama',_editAlumniData.nama);
+  fd.append('nisn',_editAlumniData.nisn);
+  fd.append('kelas_lulus',_editAlumniData.kelas_lulus);
+  fd.append('tahun_lulus',_editAlumniData.tahun_lulus);
+  if(ijazahFile) fd.append('ijazah',ijazahFile);
+  const res=await fetchAPI('/api/alumni/edit','POST',fd);
+  if(res?.success){closeModal('modalEdit');showToast('Ijazah diperbarui!','success');loadAlumni();}
+  else alertEl.innerHTML=`<div class="alert-msg error">${res?.message||'Gagal'}</div>`;
+}
+
+function fmtDate(d){ if(!d) return '-'; const p=d.split('-'); return p.length===3?`${p[2]}-${p[1]}-${p[0]}`:d; }
+
+function bukaViewAlumni(a){
+  _viewAlumniData = a;
+  const fotoHtml=a.foto
+    ? `<img src="${a.foto}" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:4px solid #E2E8F0;box-shadow:0 4px 12px rgba(0,0,0,0.08);display:block;margin:0 auto;cursor:pointer;" onclick="bukaTabelFotoAlumni(_viewAlumniData)">`
+    : `<div style="width:100px;height:100px;border-radius:50%;background:#F1F5F9;display:flex;align-items:center;justify-content:center;font-size:2.2rem;font-weight:700;color:var(--primary);margin:0 auto;cursor:pointer;" onclick="bukaTabelFotoAlumni(_viewAlumniData)">${a.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()}</div>`;
+  const jk=a.jenis_kelamin||'';
+  const label=(l,v)=>`<div style="margin-bottom:10px;"><div style="font-size:10.5px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px;">${l}</div><div style="font-size:13px;font-weight:600;color:#1E293B;">${v||'-'}</div></div>`;
+  const ijazahBtn=a.ijazah
+    ? `<button class="btn-grad view" title="Lihat Ijazah" onclick="lihatIjazah('${a.nama.replace(/'/g,"\\'")}','${a.ijazah}')"><i class="bi bi-file-earmark-text-fill"></i></button>`
+    : '<span style="color:var(--gray);font-size:12px;">-</span>';
+  document.getElementById('detailContent').innerHTML=`
+    <div class="text-center mb-3">${fotoHtml}</div>
+    <div class="row g-2">
+      <div class="col-md-6">
+        ${label('NISN',a.nisn)}
+        ${label('Nama Lengkap',a.nama)}
+        ${label('Jenis Kelamin',jk==='L'?'Laki-laki':jk==='P'?'Perempuan':jk||'-')}
+        ${label('NIK',a.nik)}
+        ${label('Tempat Lahir',a.tempat_lahir)}
+        ${label('Tanggal Lahir',fmtDate(a.tanggal_lahir))}
+      </div>
+      <div class="col-md-6">
+        ${label('Agama',a.agama)}
+        ${label('No. HP Orang Tua',a.no_hp_ortu)}
+        ${label('Alamat',`<div style="word-wrap:break-word;overflow-wrap:break-word;max-width:100%;">${a.alamat||'-'}</div>`)}
+        ${label('Kelas',`<span style="background:var(--primary-light);color:var(--primary);padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;">${a.kelas_lulus}</span>`)}
+        ${label('Tahun Lulus',`<span style="background:#EDE9FE;color:#7C3AED;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:700;">${a.tahun_lulus}</span>`)}
+        ${label('Ijazah',ijazahBtn)}
+      </div>
+    </div>`;
+  openModal('modalDetail');
+}
+
+function lihatIjazah(nama,url){
+  const el=document.getElementById('ijazahPreview');
+  const info=document.getElementById('ijazahInfo');
+  const dl=document.getElementById('ijazahDownload');
+  dl.href=url;
+  dl.download=`ijazah_${nama.replace(/\s+/g,'_')}`;
+  info.innerHTML=`<div style="font-weight:600;color:var(--dark);margin-top:8px;">File_Ijazah_${nama}</div>`;
+  if(url.match(/\.pdf$/i)){
+    el.innerHTML=`<embed src="${url}" type="application/pdf" style="width:100%;height:55vh;border-radius:8px;">`;
+  } else {
+    el.innerHTML=`<img src="${url}" style="max-width:100%;max-height:55vh;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.1);" onerror="this.outerHTML='<div class=\\'empty-state\\'><i class=\\'bi bi-exclamation-triangle\\'></i><p>Gagal memuat ijazah</p></div>'">`;
+  }
+  openModal('modalIjazah');
+}
+
+function hapusAlumni(id,nama){
+  konfirmasiHapus('Hapus Alumni?',`Data alumni <strong>${nama}</strong> akan dihapus permanen.`,async()=>{
+    const res=await fetchAPI('/api/alumni/hapus','POST',{id});
+    if(res?.success){showToast('Alumni dihapus','success');loadAlumni();loadTahunFilter();}
+    else showToast(res?.message||'Gagal','error');
+  });
+}
+
+function toggleSelectAllAlumni(){
+  const checked=document.getElementById('selectAllAlumni').checked;
+  document.querySelectorAll('.alumni-check').forEach(cb=>cb.checked=checked);
+  updateBulkAlumni();
+}
+
+function updateBulkAlumni(){
+  const checked=document.querySelectorAll('.alumni-check:checked');
+  const count=checked.length;
+  document.getElementById('selectedCountAlumni').textContent=count;
+  document.getElementById('bulkActionsAlumni').style.display=count>0?'flex':'none';
+}
+
+function hapusMassalAlumni(){
+  const checked=[...document.querySelectorAll('.alumni-check:checked')].map(cb=>parseInt(cb.value));
+  if(!checked.length) return;
+  konfirmasiHapus('Hapus Alumni?',`${checked.length} data alumni akan dihapus permanen.`,async()=>{
+    const res=await fetchAPI('/api/alumni/hapus-massal','POST',{ids:checked});
+    if(res?.success){showToast(res.message,'success');loadAlumni();loadTahunFilter();}
+    else showToast(res?.message||'Gagal','error');
+  });
+}
+
+async function init(){
+  await loadLayout('alumni','Data Lulusan');
+  await loadTahunFilter();
+  loadAlumni();
+}
+init();
+</script>
+</body>
+</html>
