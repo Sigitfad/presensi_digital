@@ -27,6 +27,25 @@
   .btn-grad.hapus:hover{box-shadow:0 4px 12px rgba(239,68,68,0.35);}
   .btn-grad.surat{background:linear-gradient(135deg,#10B981,#059669);}
   .btn-grad.surat:hover{box-shadow:0 4px 12px rgba(16,185,129,0.35);}
+  #_myModalDetail{opacity:0;transition:opacity .15s linear;}
+  #_myModalDetail.show{opacity:1;}
+  #_myModalDetail .mDetail-backdrop{opacity:0;transition:opacity .15s linear;}
+  #_myModalDetail.show .mDetail-backdrop{opacity:1;}
+  #_myModalDetail .mDetail-card{transform:translate(0,-30px);transition:transform .3s ease-out;}
+  #_myModalDetail.show .mDetail-card{transform:none;}
+  .btn-tutup:hover{background:#334155!important;transform:translateY(-1px);box-shadow:0 4px 12px rgba(30,41,59,0.3)!important;}
+  #_suratPopup{opacity:0;transition:opacity .15s linear;}
+  #_suratPopup.show{opacity:1;}
+  #_suratPopup ._suratCard{transform:translateY(-50px);transition:transform .3s ease-out;}
+  #_suratPopup.show ._suratCard{transform:translateY(0);}
+  #_suratStandalone{opacity:0;transition:opacity .15s linear;}
+  #_suratStandalone.show{opacity:1;}
+  #_suratStandalone > div{transform:translateY(-50px);transition:transform .3s ease-out;}
+  #_suratStandalone.show > div{transform:translateY(0);}
+  #_suratPindahEditPopup{opacity:0;transition:opacity .15s linear;}
+  #_suratPindahEditPopup.show{opacity:1;}
+  #_suratPindahEditPopup > div{transform:translateY(-50px);transition:transform .3s ease-out;}
+  #_suratPindahEditPopup.show > div{transform:translateY(0);}
   </style>
 </head>
 <body>
@@ -56,7 +75,7 @@
           <button id="clearSearchPindahan" type="button" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94A3B8;cursor:pointer;display:none;font-size:16px;padding:2px 4px;line-height:1;" onclick="document.getElementById('searchPindahan').value='';loadPindahan();this.style.display='none'">&times;</button>
         </div>
       </div>
-      <span id="totalLabel" style="font-size:12px;font-weight:700;color:#fff;background:var(--primary);padding:4px 12px;border-radius:20px;display:inline-block;"></span>
+      <span id="totalLabel" style="font-size:12px;font-weight:700;color:#fff;background:var(--primary);padding:4px 12px;border-radius:6px;display:inline-block;"></span>
     </div>
     <div class="table-responsive">
       <table class="table-modern">
@@ -81,8 +100,9 @@
       </div>
       <div class="modal-body p-4">
         <div id="alertTambah"></div>
-        <div class="mb-3">
-          <input type="text" id="p_searchSiswa" class="form-control-modern" placeholder="Cari siswa..." oninput="clearTimeout(window._dPS);window._dPS=setTimeout(()=>loadSiswaForPindahan(),300)">
+        <div class="mb-3" style="position:relative;">
+          <input type="text" id="p_searchSiswa" class="form-control-modern" placeholder="Cari siswa..." style="padding-right:30px;" oninput="clearTimeout(window._dPS);window._dPS=setTimeout(()=>loadSiswaForPindahan(),300);document.getElementById('clearPSiswa').style.display=this.value?'block':'none'">
+          <span id="clearPSiswa" style="display:none;position:absolute;top:50%;right:8px;transform:translateY(-50%);cursor:pointer;font-size:14px;color:#94A3B8;line-height:1;z-index:2;" onclick="document.getElementById('p_searchSiswa').value='';document.getElementById('clearPSiswa').style.display='none';clearTimeout(window._dPS);window._dPS=setTimeout(()=>loadSiswaForPindahan(),0);"><i class="bi bi-x-lg"></i></span>
         </div>
         <div id="siswaPindahanContainer" style="max-height:245px;overflow-y:auto;border:1px solid #E2E8F0;border-radius:8px;padding:8px;">
           <div class="text-center py-4"><div class="loading-spinner"></div></div>
@@ -148,7 +168,7 @@
               <div id="pe_formatMsg" style="font-size:11px;color:var(--gray);margin-top:4px;min-height:16px;"></div>
             </div>
           <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
-            <button class="btn" data-bs-dismiss="modal" style="background:#1E293B;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;transition:all 0.2s;" onmouseover="this.style.background='#334155';this.style.boxShadow='0 4px 12px rgba(30,41,59,0.3)';this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#1E293B';this.style.boxShadow='none';this.style.transform='';">Batal</button>
+            <button class="btn" data-bs-dismiss="modal" style="background:#1E293B;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;transition:all 0.2s;" onmouseover="this.style.background='#334155';this.style.boxShadow='0 4px 12px rgba(30,41,59,0.3)';this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#1E293B';this.style.boxShadow='none';this.style.transform='';">Tutup</button>
             <button class="btn-edit-custom" style="padding:8px 18px;font-size:13px;" onclick="updatePindahan()">Simpan Surat</button>
           </div>
         </div>
@@ -157,7 +177,7 @@
   </div>
 </div>
 
-<div id="suratOverlay" onclick="tutupSuratOverlay(event)" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:1070;justify-content:center;align-items:center;padding:20px;">
+<div id="suratOverlay" onclick="tutupSuratOverlay(event)" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:100000;justify-content:center;align-items:center;padding:20px;">
   <div onclick="event.stopPropagation()" style="background:#fff;border-radius:var(--radius-lg);max-width:700px;width:100%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 10px 40px rgba(0,0,0,0.3);">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:linear-gradient(135deg,#7C3AED,#6D28D9);border-radius:var(--radius-lg) var(--radius-lg) 0 0;">
       <h5 class="text-white fw-bold" style="margin:0;font-size:14px;">Surat Pindah</h5>
@@ -168,7 +188,7 @@
       <div id="suratInfo" class="mt-2"></div>
     </div>
     <div style="display:flex;justify-content:center;gap:10px;padding:12px 20px;border-top:1px solid #E2E8F0;">
-      <button class="btn" onclick="tutupSuratOverlay()" style="background:#1E293B;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;transition:all 0.2s;" onmouseover="this.style.background='#334155';this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 12px rgba(30,41,59,0.3)';" onmouseout="this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='';">Batal</button>
+      <button class="btn" onclick="tutupSuratOverlay()" style="background:#1E293B;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;transition:all 0.2s;" onmouseover="this.style.background='#334155';this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 12px rgba(30,41,59,0.3)';" onmouseout="this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='';">Tutup</button>
       <a id="suratDownload" href="#" target="_blank" class="btn-primary-custom" style="padding:6px 16px;font-size:12px;">Download</a>
     </div>
   </div>
@@ -215,7 +235,7 @@ function renderPindahanRow(d,i){
     ? `<img src="${d.foto}" class="foto-sm-img" onclick="bukaFotoPindahanById(${d.id})">`
     : `<div class="foto-sm-ini" onclick="bukaFotoPindahanById(${d.id})">${d.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()}</div>`;
   const suratText=d.surat_pindah
-    ? `<span style="font-size:11px;color:#059669;font-weight:600;"><i class="bi bi-check-circle-fill" style="font-size:12px;"></i> Ada</span>`
+    ? `<button class="btn-grad view" onclick="lihatSuratPindahById(${d.id})" title="Lihat Surat"><i class="bi bi-file-earmark-text-fill"></i></button>`
     : '<span class="text-muted">-</span>';
   return `<tr>
     <td><input type="checkbox" class="pindahan-check" value="${d.id}" onchange="updateBulkPindahan()"></td>
@@ -226,6 +246,7 @@ function renderPindahanRow(d,i){
     <td>${d.kelas}</td>
     <td>${suratText}</td>
     <td style="white-space:nowrap;">
+      <button class="btn-grad view" onclick="bukaDetailPindahanById(${d.id})"><i class="bi bi-eye-fill"></i></button>
       <button class="btn-grad edit" onclick="bukaEditPindahanById(${d.id})"><i class="bi bi-pencil-fill"></i></button>
       <button class="btn-grad hapus" onclick="hapusPindahan(${d.id})"><i class="bi bi-trash3-fill"></i></button>
     </td>
@@ -385,53 +406,110 @@ async function updatePindahan(){
 
 function lihatSuratPindah(nama,url){
   if(!nama||!url){showToast('Data surat tidak valid','error');return;}
-  const el=document.getElementById('suratPreview');
-  const info=document.getElementById('suratInfo');
-  const dl=document.getElementById('suratDownload');
-  dl.href=url;
-  dl.download=`surat_pindah_${nama.replace(/\s+/g,'_')}`;
-  info.innerHTML=`<div style="font-weight:600;color:var(--dark);margin-top:8px;">Surat_Pindah_${nama}</div>`;
+  if(typeof window._tutupSuratPindahEdit === 'function') window._tutupSuratPindahEdit();
+  var old=document.getElementById('_suratPindahEditPopup');
+  if(old)old.remove();
+  var ov=document.createElement('div');
+  ov.id='_suratPindahEditPopup';
+  ov.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:100000;display:none;justify-content:center;align-items:center;padding:20px;';
+  function tutup(){
+    if(!ov.parentNode)return;
+    ov.classList.remove('show');
+    setTimeout(function(){if(ov.parentNode)ov.remove();},250);
+  }
+  window._tutupSuratPindahEdit=tutup;
+  ov.onclick=function(e){if(e.target===this)tutup();};
+  var cx=document.createElement('div');
+  cx.style.cssText='background:#fff;border-radius:16px;max-width:700px;width:95%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 10px 40px rgba(0,0,0,0.3);';
+  var hd=document.createElement('div');
+  hd.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:linear-gradient(135deg,#7C3AED,#6D28D9);border-radius:16px 16px 0 0;flex-shrink:0;';
+  hd.innerHTML='<h5 style="color:#fff;font-weight:700;margin:0;font-size:14px;">Surat Pindah - '+nama+'</h5><button style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;line-height:1;">&times;</button>';
+  hd.lastChild.onclick=tutup;
+  cx.appendChild(hd);
+  var bd=document.createElement('div');
   if(url.match(/\.pdf$/i)){
-    el.innerHTML=`<embed src="${url}" type="application/pdf" style="width:100%;height:55vh;border-radius:8px;">`;
+    bd.style.cssText='padding:20px;overflow-y:auto;flex:1;display:flex;flex-direction:column;align-items:center;';
+    bd.innerHTML='<embed src="'+url+'" type="application/pdf" style="width:100%;height:55vh;border-radius:8px;">';
   } else {
-    el.innerHTML=
-      `<div style="position:relative;">
-        <div style="display:flex;justify-content:center;gap:8px;margin-bottom:8px;">
-          <button class="btn" style="background:#1E293B;border:none;color:#fff;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;" onclick="var i=document.getElementById('_zoomImg');var s=parseFloat(i.dataset.scale||1);if(s<4){s=Math.min(s+0.25,4);i.dataset.scale=s;i.style.transform='scale('+s+')';document.getElementById('_zoomLabel').textContent=Math.round(s*100)+'%';}"><i class="bi bi-plus-lg"></i></button>
-          <span id="_zoomLabel" style="font-size:11px;font-weight:600;color:var(--gray);display:flex;align-items:center;">100%</span>
-          <button class="btn" style="background:#1E293B;border:none;color:#fff;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;" onclick="var i=document.getElementById('_zoomImg');var s=parseFloat(i.dataset.scale||1);if(s>0.25){s=Math.max(s-0.25,0.25);i.dataset.scale=s;i.style.transform='scale('+s+')';document.getElementById('_zoomLabel').textContent=Math.round(s*100)+'%';}"><i class="bi bi-dash-lg"></i></button>
-        </div>
-        <div id="_zoomContainer" style="width:100%;height:55vh;overflow:hidden;border-radius:8px;position:relative;cursor:grab;">
-          <img id="_zoomImg" src="${url}" data-scale="1" style="position:relative;left:0;top:0;max-width:none;width:100%;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.1);transform-origin:0 0;transform:scale(1);" onerror="this.closest('#_zoomContainer').outerHTML='<div class=\\'empty-state\\'><i class=\\'bi bi-exclamation-triangle\\'></i><p>Gagal memuat surat</p></div>'">
-        </div>
-      </div>`;
-    setTimeout(function(){
-      var c=document.getElementById('_zoomContainer'),img=document.getElementById('_zoomImg');
-      if(!c||!img)return;
-      var sx,sy,cx,cy,drag=false;
-      function mv(e){
-        if(!drag)return;
-        e.preventDefault();
-        img.style.left=(cx+e.clientX-sx)+'px';
-        img.style.top=(cy+e.clientY-sy)+'px';
+    bd.style.cssText='padding:0;overflow-y:auto;flex:1;display:flex;flex-direction:column;';
+    var tb=document.createElement('div');
+    tb.style.cssText='display:flex;gap:6px;align-items:center;justify-content:center;flex-shrink:0;padding:6px 12px;';
+    var zi=document.createElement('button');
+    zi.innerHTML='<i class="bi bi-plus-lg"></i>'; zi.title='Perbesar';
+    zi.style.cssText='background:#1E293B;border:none;color:#fff;border-radius:6px;width:28px;height:28px;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all 0.2s;';
+    tb.appendChild(zi);
+    var zl=document.createElement('span');
+    zl.style.cssText='font-size:12px;font-weight:600;color:#64748B;min-width:38px;text-align:center;';
+    zl.textContent='100%';
+    tb.appendChild(zl);
+    var zo=document.createElement('button');
+    zo.innerHTML='<i class="bi bi-dash-lg"></i>'; zo.title='Perkecil';
+    zo.style.cssText='background:#1E293B;border:none;color:#fff;border-radius:6px;width:28px;height:28px;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all 0.2s;';
+    tb.appendChild(zo);
+    bd.appendChild(tb);
+    var zc=document.createElement('div');
+    zc.style.cssText='flex:1;overflow:hidden;position:relative;cursor:grab;padding:12px;';
+    var im=document.createElement('img');
+    im.src=url;
+    im.dataset.scale='1'; im.dataset.dx='0'; im.dataset.dy='0';
+    im.style.cssText='display:block;margin:0 auto;max-width:100%;max-height:100%;border-radius:8px;transform-origin:center center;';
+    im.onerror=function(){this.outerHTML='<div class="empty-state" style="padding:40px;"><i class="bi bi-exclamation-triangle"></i><p>Gagal memuat surat</p></div>';};
+    zc.appendChild(im);
+    bd.appendChild(zc);
+    zc.addEventListener('mousedown',function(ev){
+      ev.preventDefault();
+      var sx=ev.clientX,sy=ev.clientY;
+      var cx=parseFloat(im.dataset.dx)||0,cy=parseFloat(im.dataset.dy)||0;
+      zc.style.cursor='grabbing';
+      function mv(ev2){
+        ev2.preventDefault();
+        im.dataset.dx=cx+ev2.clientX-sx;
+        im.dataset.dy=cy+ev2.clientY-sy;
+        im.style.transform='translate('+im.dataset.dx+'px,'+im.dataset.dy+'px) scale('+im.dataset.scale+')';
       }
       function up(){
-        if(!drag)return;
-        drag=false;c.style.cursor='grab';
+        zc.style.cursor='grab';
         document.removeEventListener('mousemove',mv);
         document.removeEventListener('mouseup',up);
       }
-      c.addEventListener('mousedown',function(e){
-        e.preventDefault();
-        sx=e.clientX;sy=e.clientY;
-        cx=parseInt(img.style.left)||0;cy=parseInt(img.style.top)||0;
-        drag=true;c.style.cursor='grabbing';
-        document.addEventListener('mousemove',mv);
-        document.addEventListener('mouseup',up);
-      });
-    },0);
+      document.addEventListener('mousemove',mv);
+      document.addEventListener('mouseup',up);
+    });
+    zi.onclick=function(){
+      var s=parseFloat(im.dataset.scale||1),ns=Math.round((s+0.05)*100)/100;
+      if(ns>=0&&ns<=4){im.dataset.scale=ns;im.style.transform='translate('+im.dataset.dx+'px,'+im.dataset.dy+'px) scale('+ns+')';zl.textContent=Math.round(ns*100)+'%';}
+    };
+    zi.onmouseover=function(){this.style.background='#334155';this.style.transform='scale(1.15)';this.style.boxShadow='0 3px 10px rgba(30,41,59,0.4)';};
+    zi.onmouseout=function(){this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';};
+    zo.onclick=function(){
+      var s=parseFloat(im.dataset.scale||1),ns=Math.round((s-0.05)*100)/100;
+      if(ns>=0&&ns<=4){im.dataset.scale=ns;im.style.transform='translate('+im.dataset.dx+'px,'+im.dataset.dy+'px) scale('+ns+')';zl.textContent=Math.round(ns*100)+'%';}
+    };
+    zo.onmouseover=function(){this.style.background='#334155';this.style.transform='scale(1.15)';this.style.boxShadow='0 3px 10px rgba(30,41,59,0.4)';};
+    zo.onmouseout=function(){this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';};
   }
-  document.getElementById('suratOverlay').style.setProperty('display','flex','important');
+  cx.appendChild(bd);
+  var ft=document.createElement('div');
+  ft.style.cssText='display:flex;justify-content:center;gap:10px;padding:12px 20px;border-top:1px solid #E2E8F0;flex-shrink:0;';
+  var bt=document.createElement('button');
+  bt.textContent='Tutup';
+  bt.style.cssText='background:#1E293B;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;cursor:pointer;transition:all 0.2s;';
+  bt.onmouseover=function(){this.style.background='#334155';this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 12px rgba(30,41,59,0.3)';};
+  bt.onmouseout=function(){this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';};
+  bt.onclick=tutup;
+  ft.appendChild(bt);
+  var dl=document.createElement('a');
+  dl.href=url; dl.download='surat_pindah_'+nama.replace(/\s+/g,'_');
+  dl.textContent='Download';
+  dl.style.cssText='background:#2563EB;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;text-decoration:none;display:inline-block;transition:all 0.2s;';
+  dl.onmouseover=function(){this.style.background='#1D4ED8';this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 12px rgba(37,99,235,0.35)';};
+  dl.onmouseout=function(){this.style.background='#2563EB';this.style.transform='';this.style.boxShadow='none';};
+  ft.appendChild(dl);
+  cx.appendChild(ft);
+  ov.appendChild(cx);
+  document.body.appendChild(ov);
+  ov.style.display='flex';
+  setTimeout(function(){ov.classList.add('show');},10);
 }
 
 function tutupSuratOverlay(ev){
@@ -444,46 +522,211 @@ function fmtDate(d){ if(!d) return '-'; const p=d.split('-'); return p.length===
 
 function detailPindahan(d){
   if(!d||!d.nama){showToast('Data tidak valid','error');return;}
-  const ini=d.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
-  document.getElementById('detailBodyDiri').innerHTML=`
-    <div style="text-align:center;margin-bottom:16px;">
-      ${d.foto
-        ? `<img src="${d.foto}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;" onerror="this.outerHTML='<div style=\\'width:72px;height:72px;border-radius:50%;background:#DBEAFE;display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800;color:#1E40AF;\\'>${ini}</div>'">`
-        : `<div style="width:72px;height:72px;border-radius:50%;background:${d.jenis_kelamin==='Perempuan'?'#FCE7F3':'#DBEAFE'};display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800;color:${d.jenis_kelamin==='Perempuan'?'#BE185D':'#1E40AF'};margin:0 auto;">${ini}</div>`}
-    </div>
-    <table style="width:100%;font-size:12.5px;">
-      <tr><td style="padding:5px 0;color:var(--gray);">Nama Lengkap</td><td style="padding:5px 0;font-weight:600;">${d.nama}</td></tr>
-      <tr><td style="padding:5px 0;color:var(--gray);">NISN</td><td style="padding:5px 0;font-weight:600;">${d.nisn}</td></tr>
-      <tr><td style="padding:5px 0;color:var(--gray);">Kelas</td><td style="padding:5px 0;font-weight:600;">${d.kelas}</td></tr>
-      <tr><td style="padding:5px 0;color:var(--gray);">Tempat Lahir</td><td style="padding:5px 0;font-weight:600;">${d.tempat_lahir||'-'}</td></tr>
-      <tr><td style="padding:5px 0;color:var(--gray);">Tanggal Lahir</td><td style="padding:5px 0;font-weight:600;">${fmtDate(d.tanggal_lahir)}</td></tr>
-      <tr><td style="padding:5px 0;color:var(--gray);">Agama</td><td style="padding:5px 0;">${d.agama||'-'}</td></tr>
-      <tr><td style="padding:5px 0;color:var(--gray);">Jenis Kelamin</td><td style="padding:5px 0;">${d.jenis_kelamin||'-'}</td></tr>
-      <tr><td style="padding:5px 0;color:var(--gray);">NIK</td><td style="padding:5px 0;font-weight:600;">${d.nik||'-'}</td></tr>
-      <tr><td style="padding:5px 0;color:var(--gray);">Alamat</td><td style="padding:5px 0;font-weight:600;">${d.alamat||'-'}</td></tr>
-      <tr><td style="padding:5px 0;color:var(--gray);">No. HP Orang Tua</td><td style="padding:5px 0;">${d.no_hp_ortu||'-'}</td></tr>
-    </table>`;
-  document.getElementById('detailBodyPindah').innerHTML=`
-    <div style="text-align:center;margin-bottom:12px;">
-      ${d.foto
-        ? `<img src="${d.foto}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;" onerror="this.outerHTML='<div style=\\'width:72px;height:72px;border-radius:50%;background:#DBEAFE;display:inline-flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:800;color:#1E40AF;\\'>${ini}</div>'">`
-        : `<div style="width:72px;height:72px;border-radius:50%;background:${d.jenis_kelamin==='Perempuan'?'#FCE7F3':'#DBEAFE'};display:inline-flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:800;color:${d.jenis_kelamin==='Perempuan'?'#BE185D':'#1E40AF'};">${ini}</div>`}
-    </div>
-    <table style="width:100%;font-size:12.5px;">
-      <tr><td style="padding:5px 0;color:var(--gray);">Nama Lengkap</td><td style="padding:5px 0;font-weight:600;">${d.nama}</td></tr>
-      <tr><td style="padding:5px 0;color:var(--gray);">NISN</td><td style="padding:5px 0;font-weight:600;">${d.nisn}</td></tr>
-      <tr><td style="padding:5px 0;color:var(--gray);">Kelas</td><td style="padding:5px 0;font-weight:600;">${d.kelas}</td></tr>
-      <tr><td style="padding:5px 0;color:var(--gray);">Tanggal Pindah</td><td style="padding:5px 0;font-weight:600;">${fmtDate(d.tanggal_pindah)}</td></tr>
-      <tr><td style="padding:5px 0;color:var(--gray);">Alasan</td><td style="padding:5px 0;font-weight:600;">${d.alasan||'-'}</td></tr>
-      <tr><td style="padding:5px 0;color:var(--gray);">Sekolah Tujuan</td><td style="padding:5px 0;font-weight:600;">${d.sekolah_tujuan||'-'}</td></tr>
-      <tr><td style="padding:5px 0;color:var(--gray);">Nomor Surat</td><td style="padding:5px 0;font-weight:600;">${d.nomor_surat||'-'}</td></tr>
-      <tr><td style="padding:5px 0;color:var(--gray);">Tgl Surat</td><td style="padding:5px 0;font-weight:600;">${fmtDate(d.tanggal_surat)}</td></tr>
-      <tr><td style="padding:5px 0;color:var(--gray);">Surat Pindah</td><td style="padding:5px 0;">${d.surat_pindah
-        ? `<button class="btn-grad view" onclick="lihatSuratPindah('${d.nama.replace(/'/g,"\\'")}','${d.surat_pindah}')" title="Lihat Surat"><i class="bi bi-file-earmark-text-fill"></i></button>`
-        : '<span style="color:var(--gray);font-size:12px;">-</span>'}</td></tr>
-    </table>`;
-  try{const t=new bootstrap.Tab(document.getElementById('tab-data-diri'));t.show();}catch(e){}
-  openModal('modalDetail');
+  var lama=document.getElementById('_myModalDetail');
+  if(lama) lama.remove();
+  var ini=d.nama.split(' ').map(function(w){return w[0];}).slice(0,2).join('').toUpperCase();
+  document.body.insertAdjacentHTML('beforeend',
+    '<div id="_myModalDetail" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;display:flex;align-items:center;justify-content:center;">'+
+    '<div class="mDetail-backdrop" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);" onclick="tutupModalDetail()"></div>'+
+    '<div class="mDetail-card" style="position:relative;background:#fff;border-radius:16px;max-width:480px;width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);z-index:1;">'+
+    '<div style="background:linear-gradient(135deg,#6366F1,#4F46E5);border-radius:16px 16px 0 0;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;">'+
+    '<h5 style="color:#fff;font-weight:700;margin:0;font-size:15px;">Detail Siswa Pindahan</h5>'+
+    '<button onclick="tutupModalDetail()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;line-height:1;">&times;</button>'+
+    '</div>'+
+    '<div style="padding:16px 20px;">'+
+    '<div style="display:flex;gap:12px;margin-bottom:14px;align-items:center;">'+
+    (d.foto
+      ? '<img src="'+d.foto+'" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;">'
+      : '<div style="width:56px;height:56px;border-radius:50%;background:'+(d.jenis_kelamin==='Perempuan'?'#FCE7F3':'#DBEAFE')+';display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:'+(d.jenis_kelamin==='Perempuan'?'#BE185D':'#1E40AF')+';">'+ini+'</div>')+
+    '<div><div style="font-weight:700;font-size:15px;">'+d.nama+'</div><div style="font-size:12px;color:#64748B;">NISN: '+d.nisn+' &middot; '+d.kelas+'</div></div>'+
+    '</div>'+
+    '<div style="display:flex;border-bottom:2px solid #E2E8F0;margin-bottom:14px;">'+
+    '<div id="_dt1" onclick="pilihTabDetail(1)" style="flex:1;text-align:center;padding:8px 16px;font-size:13px;font-weight:600;color:#6366F1;border-bottom:2px solid #6366F1;cursor:pointer;margin-bottom:-2px;transition:all 0.2s;">Data Diri Lengkap</div>'+
+    '<div id="_dt2" onclick="pilihTabDetail(2)" style="flex:1;text-align:center;padding:8px 16px;font-size:13px;font-weight:600;color:#94A3B8;cursor:pointer;margin-bottom:-2px;transition:all 0.2s;">Data Pindahan</div>'+
+    '</div>'+
+    '<div id="_dtBody1">'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;"><table style="width:100%;font-size:12.5px;border-collapse:collapse;" id="_dtKiri"></table><table style="width:100%;font-size:12.5px;border-collapse:collapse;" id="_dtKanan"></table></div>'+
+    '<div id="_dtAlamat" style="margin-top:6px;"></div>'+
+    '</div>'+
+    '<div id="_dtBody2" style="display:none;">'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;"><table style="width:100%;font-size:12.5px;border-collapse:collapse;" id="_dtPindahKiri"></table><table style="width:100%;font-size:12.5px;border-collapse:collapse;" id="_dtPindahKanan"></table></div>'+
+    '</div>'+
+    '</div>'+
+    '<div style="padding:12px 20px;border-top:1px solid #E2E8F0;text-align:right;">'+
+    '<button class="btn-tutup" onclick="tutupModalDetail()" style="background:#1E293B;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;cursor:pointer;transition:all 0.2s;">Tutup</button>'+
+    '</div>'+
+    '</div></div>');
+  var tr=(l,v)=>'<tr><td style="padding:1px 0;color:#64748B;font-size:11px;">'+l+'</td></tr><tr><td style="padding:0 0 2px 0;font-weight:600;font-size:12px;">'+(v||'-')+'</td></tr>';
+  document.getElementById('_dtKiri').innerHTML=
+    tr('Nama Lengkap',d.nama)+
+    tr('NISN',d.nisn)+
+    tr('Kelas',d.kelas)+
+    tr('NIK',d.nik)+
+    tr('Agama',d.agama);
+  document.getElementById('_dtKanan').innerHTML=
+    tr('Tempat Lahir',d.tempat_lahir)+
+    tr('Tanggal Lahir',fmtDate(d.tanggal_lahir))+
+    tr('Jenis Kelamin',d.jenis_kelamin)+
+    tr('No. HP Orang Tua',d.no_hp_ortu);
+  document.getElementById('_dtAlamat').innerHTML='<table style="width:100%;font-size:12.5px;border-collapse:collapse;">'+tr('Alamat',d.alamat)+'</table>';
+  document.getElementById('_dtPindahKiri').innerHTML=
+    tr('Nama Lengkap',d.nama)+
+    tr('NISN',d.nisn)+
+    tr('Kelas',d.kelas)+
+    tr('Tanggal Pindah',fmtDate(d.tanggal_pindah))+
+    tr('Sekolah Tujuan',d.sekolah_tujuan);
+  document.getElementById('_dtPindahKanan').innerHTML=
+    tr('Nomor Surat',d.nomor_surat)+
+    tr('Tgl Surat',fmtDate(d.tanggal_surat))+
+    tr('Alasan',d.alasan)+
+    tr('Surat Pindah','<span id="_suratCell"></span>');
+  if(d.surat_pindah){
+    (function(){
+      var sc=document.getElementById('_suratCell');
+      if(!sc) return;
+      var url=d.surat_pindah,_nm=d.nama;
+      var a=document.createElement('a');
+      a.className='btn-grad view';
+      a.href='javascript:void(0)';
+      a.title='Lihat Surat';
+      a.onclick=function(e){
+        e.preventDefault();
+        if(typeof window._tutupPreviewSurat === 'function') window._tutupPreviewSurat();
+        var old=document.getElementById('_suratStandalone');
+        if(old)old.remove();
+        var isPdf=url.match(/\.pdf$/i);
+        var ov=document.createElement('div');
+        ov.id='_suratStandalone';
+        ov.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:100000;display:none;justify-content:center;align-items:center;padding:20px;';
+        function tutup(){
+          if(!ov.parentNode)return;
+          ov.classList.remove('show');
+          setTimeout(function(){if(ov.parentNode)ov.remove();},250);
+        }
+        ov.onclick=function(ev){if(ev.target===this)tutup();};
+        var cx=document.createElement('div');
+        cx.style.cssText='background:#fff;border-radius:16px;max-width:700px;width:95%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 10px 40px rgba(0,0,0,0.3);';
+        window._suratCard=cx;
+        window._tutupPreviewSurat=tutup;
+        var hd=document.createElement('div');
+        hd.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:linear-gradient(135deg,#7C3AED,#6D28D9);border-radius:16px 16px 0 0;flex-shrink:0;';
+        hd.innerHTML='<h5 style="color:#fff;font-weight:700;margin:0;font-size:14px;">Surat Pindah - '+_nm+'</h5><button style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;line-height:1;">&times;</button>';
+        hd.lastChild.onclick=tutup;
+        cx.appendChild(hd);
+        var bd=document.createElement('div');
+        if(isPdf){
+          bd.style.cssText='padding:20px;overflow-y:auto;flex:1;display:flex;flex-direction:column;align-items:center;';
+          bd.innerHTML='<embed src="'+url+'" type="application/pdf" style="width:100%;height:55vh;border-radius:8px;">';
+        } else {
+          bd.style.cssText='padding:0;overflow-y:auto;flex:1;display:flex;flex-direction:column;';
+          var tb=document.createElement('div');
+          tb.style.cssText='display:flex;gap:6px;align-items:center;justify-content:center;flex-shrink:0;padding:6px 12px;';
+          var zi=document.createElement('button');
+          zi.innerHTML='<i class="bi bi-plus-lg"></i>'; zi.title='Perbesar';
+          zi.style.cssText='background:#1E293B;border:none;color:#fff;border-radius:6px;width:28px;height:28px;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all 0.2s;';
+          tb.appendChild(zi);
+          var zl=document.createElement('span');
+          zl.style.cssText='font-size:12px;font-weight:600;color:#64748B;min-width:38px;text-align:center;';
+          zl.textContent='100%';
+          tb.appendChild(zl);
+          var zo=document.createElement('button');
+          zo.innerHTML='<i class="bi bi-dash-lg"></i>'; zo.title='Perkecil';
+          zo.style.cssText='background:#1E293B;border:none;color:#fff;border-radius:6px;width:28px;height:28px;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all 0.2s;';
+          tb.appendChild(zo);
+          bd.appendChild(tb);
+          var zc=document.createElement('div');
+          zc.style.cssText='flex:1;overflow:hidden;position:relative;cursor:grab;padding:12px;';
+          var im=document.createElement('img');
+          im.src=url;
+          im.dataset.scale='1'; im.dataset.dx='0'; im.dataset.dy='0';
+          im.style.cssText='display:block;margin:0 auto;max-width:100%;max-height:100%;border-radius:8px;transform-origin:center center;';
+          im.onerror=function(){this.outerHTML='<div class="empty-state" style="padding:40px;"><i class="bi bi-exclamation-triangle"></i><p>Gagal memuat surat</p></div>';};
+          zc.appendChild(im);
+          bd.appendChild(zc);
+          zc.addEventListener('mousedown',function(ev){
+            ev.preventDefault();
+            var sx=ev.clientX,sy=ev.clientY;
+            var cx=parseFloat(im.dataset.dx)||0,cy=parseFloat(im.dataset.dy)||0;
+            zc.style.cursor='grabbing';
+            function mv(ev2){
+              ev2.preventDefault();
+              im.dataset.dx=cx+ev2.clientX-sx;
+              im.dataset.dy=cy+ev2.clientY-sy;
+              im.style.transform='translate('+im.dataset.dx+'px,'+im.dataset.dy+'px) scale('+im.dataset.scale+')';
+            }
+            function up(){
+              zc.style.cursor='grab';
+              document.removeEventListener('mousemove',mv);
+              document.removeEventListener('mouseup',up);
+            }
+            document.addEventListener('mousemove',mv);
+            document.addEventListener('mouseup',up);
+          });
+          zi.onclick=function(){
+            var s=parseFloat(im.dataset.scale||1),ns=Math.round((s+0.05)*100)/100;
+            if(ns>=0&&ns<=4){im.dataset.scale=ns;im.style.transform='translate('+im.dataset.dx+'px,'+im.dataset.dy+'px) scale('+ns+')';zl.textContent=Math.round(ns*100)+'%';}
+          };
+          zi.onmouseover=function(){this.style.background='#334155';this.style.transform='scale(1.15)';this.style.boxShadow='0 3px 10px rgba(30,41,59,0.4)';};
+          zi.onmouseout=function(){this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';};
+          zo.onclick=function(){
+            var s=parseFloat(im.dataset.scale||1),ns=Math.round((s-0.05)*100)/100;
+            if(ns>=0&&ns<=4){im.dataset.scale=ns;im.style.transform='translate('+im.dataset.dx+'px,'+im.dataset.dy+'px) scale('+ns+')';zl.textContent=Math.round(ns*100)+'%';}
+          };
+          zo.onmouseover=function(){this.style.background='#334155';this.style.transform='scale(1.15)';this.style.boxShadow='0 3px 10px rgba(30,41,59,0.4)';};
+          zo.onmouseout=function(){this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';};
+        }
+        cx.appendChild(bd);
+        var ft=document.createElement('div');
+        ft.style.cssText='display:flex;justify-content:center;gap:10px;padding:12px 20px;border-top:1px solid #E2E8F0;flex-shrink:0;';
+        var bt=document.createElement('button');
+        bt.textContent='Tutup';
+        bt.style.cssText='background:#1E293B;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;cursor:pointer;transition:all 0.2s;';
+        bt.onmouseover=function(){this.style.background='#334155';this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 12px rgba(30,41,59,0.3)';};
+        bt.onmouseout=function(){this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';};
+        bt.onclick=tutup;
+        ft.appendChild(bt);
+        var dl=document.createElement('a');
+        dl.href=url; dl.download='surat_pindah_'+_nm.replace(/\s+/g,'_');
+        dl.textContent='Download';
+        dl.style.cssText='background:#2563EB;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;text-decoration:none;display:inline-block;transition:all 0.2s;';
+        dl.onmouseover=function(){this.style.background='#1D4ED8';this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 12px rgba(37,99,235,0.35)';};
+        dl.onmouseout=function(){this.style.background='#2563EB';this.style.transform='';this.style.boxShadow='none';};
+        ft.appendChild(dl);
+        cx.appendChild(ft);
+        ov.appendChild(cx);
+        document.body.appendChild(ov);
+        ov.style.display='flex';
+        setTimeout(function(){ov.classList.add('show');},10);
+      };
+      var i=document.createElement('i');
+      i.className='bi bi-file-earmark-text-fill';
+      a.appendChild(i);
+      sc.parentNode.replaceChild(a,sc);
+    })();
+  }
+  setTimeout(function(){var e=document.getElementById('_myModalDetail');if(e)e.classList.add('show');},10);
+}
+
+function pilihTabDetail(n){
+  var t1=document.getElementById('_dt1'),t2=document.getElementById('_dt2');
+  var b1=document.getElementById('_dtBody1'),b2=document.getElementById('_dtBody2');
+  if(!t1||!t2)return;
+  if(n===1){
+    t1.style.color='#6366F1';t1.style.borderBottom='2px solid #6366F1';
+    t2.style.color='#94A3B8';t2.style.borderBottom='2px solid transparent';
+    b1.style.removeProperty('display');b2.style.display='none';
+  } else {
+    t2.style.color='#6366F1';t2.style.borderBottom='2px solid #6366F1';
+    t1.style.color='#94A3B8';t1.style.borderBottom='2px solid transparent';
+    b2.style.removeProperty('display');b1.style.display='none';
+  }
+}
+
+function tutupModalDetail(){
+  var el=document.getElementById('_myModalDetail');
+  if(!el) return;
+  el.classList.remove('show');
+  setTimeout(function(){if(el.parentNode) el.remove();}, 200);
 }
 
 function hapusPindahan(id){
@@ -514,6 +757,114 @@ function hapusMassalPindahan(){
 
 function bukaFotoPindahanById(id){var d=_pindahanData.find(function(x){return x.id==id;});if(d)bukaTabelFotoPindahan(d);}
 function bukaEditPindahanById(id){var d=_pindahanData.find(function(x){return x.id==id;});if(d)editPindahan(d);}
+function bukaDetailPindahanById(id){var d=_pindahanData.find(function(x){return x.id==id;});if(d)detailPindahan(d);}
+function lihatSuratPindahById(id){
+  var d=_pindahanData.find(function(x){return x.id==id;});
+  if(!d||!d.surat_pindah)return;
+  var old=document.getElementById('_suratPopup');
+  if(old)old.remove();
+  var ov=document.createElement('div');
+  ov.id='_suratPopup';
+  ov.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:100000;display:flex;justify-content:center;align-items:center;padding:20px;';
+  function tutupSurat(){
+    if(!ov.parentNode)return;
+    ov.classList.remove('show');
+    setTimeout(function(){if(ov.parentNode)ov.remove();},250);
+  }
+  ov.onclick=function(e){if(e.target===this)tutupSurat();};
+  var cx=document.createElement('div');
+  cx.className='_suratCard';
+  cx.style.cssText='background:#fff;border-radius:16px;max-width:700px;width:95%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 10px 40px rgba(0,0,0,0.3);';
+  var hd=document.createElement('div');
+  hd.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:linear-gradient(135deg,#7C3AED,#6D28D9);border-radius:16px 16px 0 0;';
+  hd.innerHTML='<h5 style="color:#fff;font-weight:700;margin:0;font-size:14px;">Surat Pindah - '+d.nama+'</h5><button style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;line-height:1;">&times;</button>';
+  hd.lastChild.onclick=function(){tutupSurat();};
+  cx.appendChild(hd);
+  var bd=document.createElement('div');
+  bd.style.cssText='padding:0;overflow:hidden;flex:1;display:flex;flex-direction:column;';
+  if(d.surat_pindah.match(/\.pdf$/i)){
+    var emb=document.createElement('embed');
+    emb.src=d.surat_pindah; emb.type='application/pdf';
+    emb.style.cssText='width:calc(100% - 40px);height:55vh;border-radius:8px;margin:20px auto;display:block;';
+    bd.appendChild(emb);
+  } else {
+    var tb=document.createElement('div');
+    tb.style.cssText='padding:6px 12px;display:flex;gap:6px;align-items:center;justify-content:center;flex-shrink:0;';
+    var zi=document.createElement('button');
+    zi.innerHTML='<i class="bi bi-plus-lg"></i>'; zi.title='Perbesar';
+    zi.style.cssText='background:#1E293B;border:none;color:#fff;border-radius:6px;width:28px;height:28px;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all 0.2s;';
+    tb.appendChild(zi);
+    var zl=document.createElement('span');
+    zl.style.cssText='font-size:12px;font-weight:600;color:#64748B;min-width:38px;text-align:center;';
+    zl.textContent='100%';
+    tb.appendChild(zl);
+    var zo=document.createElement('button');
+    zo.innerHTML='<i class="bi bi-dash-lg"></i>'; zo.title='Perkecil';
+    zo.style.cssText='background:#1E293B;border:none;color:#fff;border-radius:6px;width:28px;height:28px;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all 0.2s;';
+    tb.appendChild(zo);
+    bd.appendChild(tb);
+    var zc=document.createElement('div');
+    zc.style.cssText='flex:1;overflow:hidden;position:relative;cursor:grab;padding:20px;';
+    var im=document.createElement('img');
+    im.src=d.surat_pindah;
+    im.dataset.scale='1'; im.dataset.dx='0'; im.dataset.dy='0';
+    im.style.cssText='display:block;margin:0 auto;max-width:100%;max-height:100%;border-radius:8px;transform-origin:center center;';
+    zc.appendChild(im);
+    bd.appendChild(zc);
+    zc.addEventListener('mousedown',function(e){
+      e.preventDefault();
+      var sx=e.clientX,sy=e.clientY;
+      var cx=parseFloat(im.dataset.dx)||0,cy=parseFloat(im.dataset.dy)||0;
+      zc.style.cursor='grabbing';
+      function mv(ev){
+        ev.preventDefault();
+        im.dataset.dx=cx+ev.clientX-sx;
+        im.dataset.dy=cy+ev.clientY-sy;
+        im.style.transform='translate('+im.dataset.dx+'px,'+im.dataset.dy+'px) scale('+im.dataset.scale+')';
+      }
+      function up(){
+        zc.style.cursor='grab';
+        document.removeEventListener('mousemove',mv);
+        document.removeEventListener('mouseup',up);
+      }
+      document.addEventListener('mousemove',mv);
+      document.addEventListener('mouseup',up);
+    });
+    zi.onclick=function(){
+      var s=parseFloat(im.dataset.scale||1),ns=Math.round((s+0.05)*100)/100;
+      if(ns>=0&&ns<=4){im.dataset.scale=ns;im.style.transform='translate('+im.dataset.dx+'px,'+im.dataset.dy+'px) scale('+ns+')';zl.textContent=Math.round(ns*100)+'%';}
+    };
+    zi.onmouseover=function(){this.style.background='#334155';this.style.transform='scale(1.15)';this.style.boxShadow='0 3px 10px rgba(30,41,59,0.4)';};
+    zi.onmouseout=function(){this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';};
+    zo.onclick=function(){
+      var s=parseFloat(im.dataset.scale||1),ns=Math.round((s-0.05)*100)/100;
+      if(ns>=0&&ns<=4){im.dataset.scale=ns;im.style.transform='translate('+im.dataset.dx+'px,'+im.dataset.dy+'px) scale('+ns+')';zl.textContent=Math.round(ns*100)+'%';}
+    };
+    zo.onmouseover=function(){this.style.background='#334155';this.style.transform='scale(1.15)';this.style.boxShadow='0 3px 10px rgba(30,41,59,0.4)';};
+    zo.onmouseout=function(){this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';};
+  }
+  cx.appendChild(bd);
+  var ft=document.createElement('div');
+  ft.style.cssText='display:flex;justify-content:center;gap:10px;padding:12px 20px;border-top:1px solid #E2E8F0;';
+  var bt=document.createElement('button');
+  bt.textContent='Tutup';
+  bt.style.cssText='background:#1E293B;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;cursor:pointer;transition:all 0.2s;';
+  bt.onmouseover=function(){this.style.background='#334155';this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 12px rgba(30,41,59,0.3)';};
+  bt.onmouseout=function(){this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';};
+  bt.onclick=function(){tutupSurat();};
+  ft.appendChild(bt);
+  var dl=document.createElement('a');
+  dl.href=d.surat_pindah; dl.download='surat_pindah_'+d.nama.replace(/\s+/g,'_');
+  dl.textContent='Download';
+  dl.style.cssText='background:#2563EB;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;text-decoration:none;cursor:pointer;transition:all 0.2s;';
+  dl.onmouseover=function(){this.style.background='#1D4ED8';this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 12px rgba(37,99,235,0.35)';};
+  dl.onmouseout=function(){this.style.background='#2563EB';this.style.transform='';this.style.boxShadow='none';};
+  ft.appendChild(dl);
+  cx.appendChild(ft);
+  ov.appendChild(cx);
+  document.body.appendChild(ov);
+  setTimeout(function(){ov.classList.add('show');},10);
+}
 
 async function init(){
   await loadLayout('pindahan','Data Pindahan');

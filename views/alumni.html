@@ -25,6 +25,10 @@
     .btn-grad.edit:hover{box-shadow:0 4px 12px rgba(245,158,11,0.35);}
     .btn-grad.hapus{background:linear-gradient(135deg,#EF4444,#DC2626);}
     .btn-grad.hapus:hover{box-shadow:0 4px 12px rgba(239,68,68,0.35);}
+    #_ijazahPopup{opacity:0;transition:opacity .15s linear;}
+    #_ijazahPopup.show{opacity:1;}
+    #_ijazahPopup ._ijazahCard{transform:translateY(-50px);transition:transform .3s ease-out;}
+    #_ijazahPopup.show ._ijazahCard{transform:translateY(0);}
 
   </style>
 </head>
@@ -41,7 +45,10 @@
   <!-- Tombol Hapus Massal -->
   <div id="bulkActionsAlumni" style="display:none;margin-bottom:12px;padding:10px 16px;background:#FEF2F2;border:1.5px solid #FCA5A5;border-radius:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
     <span style="font-size:13px;color:#991B1B;font-weight:600;"><i class="bi bi-check2-square me-1"></i> <span id="selectedCountAlumni">0</span> alumni dipilih</span>
-    <button class="btn-danger-custom" onclick="hapusMassalAlumni()" style="padding:6px 14px;font-size:12.5px;">Hapus</button>
+    <div style="display:flex;gap:6px;">
+      <button class="btn" onclick="batalPilihAlumni()" style="background:#1E293B;border:none;color:#fff;border-radius:8px;font-size:14px;padding:6px 10px;transition:all 0.2s;line-height:1;" onmouseover="this.style.background='#334155';this.style.boxShadow='0 4px 12px rgba(30,41,59,0.3)';this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#1E293B';this.style.boxShadow='none';this.style.transform='';"><i class="bi bi-x-lg"></i></button>
+      <button class="btn-danger-custom" onclick="hapusMassalAlumni()" style="padding:6px 10px;font-size:14px;line-height:1;"><i class="bi bi-trash3"></i></button>
+    </div>
   </div>
 
   <div class="card-modern">
@@ -79,8 +86,9 @@
       </div>
       <div class="modal-body p-4">
         <div id="alertTambah"></div>
-        <div class="mb-3">
-          <input type="text" id="a_searchSiswa" class="form-control-modern" placeholder="Cari siswa..." oninput="clearTimeout(window._dA);window._dA=setTimeout(()=>loadSiswaForAlumni(),300)">
+        <div class="mb-3" style="position:relative;">
+          <input type="text" id="a_searchSiswa" class="form-control-modern" placeholder="Cari siswa..." style="padding-right:30px;" oninput="clearTimeout(window._dA);window._dA=setTimeout(()=>loadSiswaForAlumni(),300);document.getElementById('clearASiswa').style.display=this.value?'block':'none'">
+          <span id="clearASiswa" style="display:none;position:absolute;top:50%;right:8px;transform:translateY(-50%);cursor:pointer;font-size:14px;color:#94A3B8;line-height:1;z-index:2;" onclick="document.getElementById('a_searchSiswa').value='';document.getElementById('clearASiswa').style.display='none';clearTimeout(window._dA);window._dA=setTimeout(()=>loadSiswaForAlumni(),0);"><i class="bi bi-x-lg"></i></span>
         </div>
         <div id="siswaListContainer" style="max-height:245px;overflow-y:auto;border:1px solid #E2E8F0;border-radius:8px;padding:8px;">
           <div class="text-center py-4"><div class="loading-spinner"></div></div>
@@ -100,7 +108,7 @@
 
 <!-- Modal Detail Alumni -->
 <div class="modal fade" id="modalDetail" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:460px;">
     <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
       <div class="modal-header" style="background:linear-gradient(135deg,#0EA5E9,#0284C7);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
         <h5 class="modal-title text-white fw-bold">Detail Alumni</h5>
@@ -137,26 +145,6 @@
       <div class="modal-footer">
         <button class="btn-batal" data-bs-dismiss="modal" style="background:#1E293B;color:white;border:none;font-weight:600;padding:8px 18px;font-size:13px;border-radius:8px;transition:all 0.2s linear;cursor:pointer;" onmouseover="this.style.background='#334155';this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 10px rgba(30,41,59,0.3)';" onmouseout="this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';">Batal</button>
         <button class="btn-primary-custom" onclick="updateAlumni()">Simpan</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal Lihat Ijazah -->
-<div class="modal fade" id="modalIjazah" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered" style="max-width:600px;">
-    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
-      <div class="modal-header" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
-        <h5 class="modal-title text-white fw-bold">Ijazah</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body p-4">
-        <div id="ijazahPreview" class="text-center"><div class="loading-spinner"></div></div>
-        <div id="ijazahInfo"></div>
-        <div class="d-flex justify-content-center gap-2 mt-3">
-          <button type="button" data-bs-dismiss="modal" style="background:#1E293B;color:white;border:none;font-weight:600;padding:8px 18px;font-size:13px;border-radius:8px;transition:all 0.2s linear;cursor:pointer;display:inline-flex;align-items:center;gap:7px;" onmouseover="this.style.background='#334155';this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 10px rgba(30,41,59,0.3)';" onmouseout="this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';">Batal</button>
-          <a id="ijazahDownload" class="btn-primary-custom" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;" download>Download</a>
-        </div>
       </div>
     </div>
   </div>
@@ -354,49 +342,146 @@ function fmtDate(d){ if(!d) return '-'; const p=d.split('-'); return p.length===
 function bukaViewAlumni(a){
   _viewAlumniData = a;
   const fotoHtml=a.foto
-    ? `<img src="${a.foto}" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:4px solid #E2E8F0;box-shadow:0 4px 12px rgba(0,0,0,0.08);display:block;margin:0 auto;cursor:pointer;" onclick="bukaTabelFotoAlumni(_viewAlumniData)">`
-    : `<div style="width:100px;height:100px;border-radius:50%;background:#F1F5F9;display:flex;align-items:center;justify-content:center;font-size:2.2rem;font-weight:700;color:var(--primary);margin:0 auto;cursor:pointer;" onclick="bukaTabelFotoAlumni(_viewAlumniData)">${a.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()}</div>`;
+    ? `<img src="${a.foto}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;cursor:pointer;" onclick="bukaTabelFotoAlumni(_viewAlumniData)">`
+    : `<div style="width:56px;height:56px;border-radius:50%;background:${a.jenis_kelamin==='P'?'#FCE7F3':'#DBEAFE'};display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:${a.jenis_kelamin==='P'?'#BE185D':'#1E40AF'};border:2px solid #E2E8F0;cursor:pointer;" onclick="bukaTabelFotoAlumni(_viewAlumniData)">${a.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()}</div>`;
   const jk=a.jenis_kelamin||'';
-  const label=(l,v)=>`<div style="margin-bottom:10px;"><div style="font-size:10.5px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px;">${l}</div><div style="font-size:13px;font-weight:600;color:#1E293B;">${v||'-'}</div></div>`;
+  const row=(l,v)=>`<tr><td style="padding:1px 0;color:#64748B;font-size:11px;">${l}</td></tr><tr><td style="padding:0 0 3px 0;font-weight:600;font-size:12px;color:#1E293B;">${v||'-'}</td></tr>`;
   const ijazahBtn=a.ijazah
     ? `<button class="btn-grad view" title="Lihat Ijazah" onclick="lihatIjazah('${a.nama.replace(/'/g,"\\'")}','${a.ijazah}')"><i class="bi bi-file-earmark-text-fill"></i></button>`
     : '<span style="color:var(--gray);font-size:12px;">-</span>';
   document.getElementById('detailContent').innerHTML=`
-    <div class="text-center mb-3">${fotoHtml}</div>
-    <div class="row g-2">
-      <div class="col-md-6">
-        ${label('NISN',a.nisn)}
-        ${label('Nama Lengkap',a.nama)}
-        ${label('Jenis Kelamin',jk==='L'?'Laki-laki':jk==='P'?'Perempuan':jk||'-')}
-        ${label('NIK',a.nik)}
-        ${label('Tempat Lahir',a.tempat_lahir)}
-        ${label('Tanggal Lahir',fmtDate(a.tanggal_lahir))}
-      </div>
-      <div class="col-md-6">
-        ${label('Agama',a.agama)}
-        ${label('No. HP Orang Tua',a.no_hp_ortu)}
-        ${label('Alamat',`<div style="word-wrap:break-word;overflow-wrap:break-word;max-width:100%;">${a.alamat||'-'}</div>`)}
-        ${label('Kelas',`<span style="background:var(--primary-light);color:var(--primary);padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;">${a.kelas_lulus}</span>`)}
-        ${label('Tahun Lulus',`<span style="background:#EDE9FE;color:#7C3AED;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:700;">${a.tahun_lulus}</span>`)}
-        ${label('Ijazah',ijazahBtn)}
-      </div>
-    </div>`;
+    <div style="display:flex;gap:12px;margin-bottom:14px;align-items:center;">${fotoHtml}<div><div style="font-weight:700;font-size:15px;">${a.nama}</div><div style="font-size:12px;color:#64748B;">NISN: ${a.nisn} &middot; ${a.kelas_lulus}</div></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+        ${row('Nama Lengkap',a.nama)}
+        ${row('NISN',a.nisn)}
+        ${row('Kelas',`<span style="background:var(--primary-light);color:var(--primary);padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;">${a.kelas_lulus}</span>`)}
+        ${row('NIK',a.nik)}
+        ${row('Agama',a.agama)}
+        ${row('Jenis Kelamin',jk==='L'?'Laki-laki':jk==='P'?'Perempuan':jk||'-')}
+      </table>
+      <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+        ${row('Tempat Lahir',a.tempat_lahir)}
+        ${row('Tanggal Lahir',fmtDate(a.tanggal_lahir))}
+        ${row('No. HP Orang Tua',a.no_hp_ortu)}
+        ${row('Tahun Lulus',`<span style="background:#EDE9FE;color:#7C3AED;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:700;">${a.tahun_lulus}</span>`)}
+        ${row('Ijazah',ijazahBtn)}
+      </table>
+    </div>
+    <div style="margin-top:8px;"><table style="width:100%;border-collapse:collapse;font-size:12.5px;">${row('Alamat',a.alamat)}</table></div>`;
   openModal('modalDetail');
 }
 
 function lihatIjazah(nama,url){
-  const el=document.getElementById('ijazahPreview');
-  const info=document.getElementById('ijazahInfo');
-  const dl=document.getElementById('ijazahDownload');
-  dl.href=url;
-  dl.download=`ijazah_${nama.replace(/\s+/g,'_')}`;
-  info.innerHTML=`<div style="font-weight:600;color:var(--dark);margin-top:8px;">File_Ijazah_${nama}</div>`;
-  if(url.match(/\.pdf$/i)){
-    el.innerHTML=`<embed src="${url}" type="application/pdf" style="width:100%;height:55vh;border-radius:8px;">`;
-  } else {
-    el.innerHTML=`<img src="${url}" style="max-width:100%;max-height:55vh;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.1);" onerror="this.outerHTML='<div class=\\'empty-state\\'><i class=\\'bi bi-exclamation-triangle\\'></i><p>Gagal memuat ijazah</p></div>'">`;
+  if(!nama||!url){showToast('Data ijazah tidak valid','error');return;}
+  var old=document.getElementById('_ijazahPopup');
+  if(old)old.remove();
+  var ov=document.createElement('div');
+  ov.id='_ijazahPopup';
+  ov.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:100000;display:none;justify-content:center;align-items:center;padding:20px;';
+  function tutup(){
+    if(!ov.parentNode)return;
+    ov.classList.remove('show');
+    setTimeout(function(){if(ov.parentNode)ov.remove();},250);
   }
-  openModal('modalIjazah');
+  ov.onclick=function(e){if(e.target===this)tutup();};
+  var cx=document.createElement('div');
+  cx.className='_ijazahCard';
+  cx.style.cssText='background:#fff;border-radius:16px;max-width:700px;width:95%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 10px 40px rgba(0,0,0,0.3);';
+  var hd=document.createElement('div');
+  hd.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:linear-gradient(135deg,#7C3AED,#6D28D9);border-radius:16px 16px 0 0;';
+  hd.innerHTML='<h5 style="color:#fff;font-weight:700;margin:0;font-size:14px;">Ijazah - '+nama+'</h5><button style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;line-height:1;">&times;</button>';
+  hd.lastChild.onclick=function(){tutup();};
+  cx.appendChild(hd);
+  var bd=document.createElement('div');
+  bd.style.cssText='padding:20px;overflow-y:auto;flex:1;display:flex;flex-direction:column;align-items:center;';
+  var dl=document.createElement('a');
+  dl.href=url;
+  dl.download='ijazah_'+nama.replace(/\s+/g,'_');
+  dl.style.display='none';
+  cx.appendChild(dl);
+  if(url.match(/\.pdf$/i)){
+    bd.innerHTML='<embed src="'+url+'" type="application/pdf" style="width:100%;height:55vh;border-radius:8px;">';
+  } else {
+    bd.style.padding='0';
+    var tb=document.createElement('div');
+    tb.style.cssText='display:flex;gap:6px;align-items:center;justify-content:center;padding:6px 12px;flex-shrink:0;width:100%;';
+    var zi=document.createElement('button');
+    zi.innerHTML='<i class="bi bi-plus-lg"></i>'; zi.title='Perbesar';
+    zi.style.cssText='background:#1E293B;border:none;color:#fff;border-radius:6px;width:28px;height:28px;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all 0.2s;';
+    tb.appendChild(zi);
+    var zl=document.createElement('span');
+    zl.style.cssText='font-size:12px;font-weight:600;color:#64748B;min-width:38px;text-align:center;';
+    zl.textContent='100%';
+    tb.appendChild(zl);
+    var zo=document.createElement('button');
+    zo.innerHTML='<i class="bi bi-dash-lg"></i>'; zo.title='Perkecil';
+    zo.style.cssText='background:#1E293B;border:none;color:#fff;border-radius:6px;width:28px;height:28px;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all 0.2s;';
+    tb.appendChild(zo);
+    bd.appendChild(tb);
+    var zc=document.createElement('div');
+    zc.style.cssText='flex:1;width:100%;overflow:hidden;position:relative;cursor:grab;';
+    var im=document.createElement('img');
+    im.src=url;
+    im.dataset.scale='1'; im.dataset.dx='0'; im.dataset.dy='0';
+    im.style.cssText='display:block;margin:0 auto;max-width:100%;max-height:100%;border-radius:8px;transform-origin:center center;';
+    im.onerror=function(){this.outerHTML='<div class="empty-state" style="padding:40px;"><i class="bi bi-exclamation-triangle"></i><p>Gagal memuat ijazah</p></div>';};
+    zc.appendChild(im);
+    bd.appendChild(zc);
+    zc.addEventListener('mousedown',function(e){
+      e.preventDefault();
+      var sx=e.clientX,sy=e.clientY;
+      var cx=parseFloat(im.dataset.dx)||0,cy=parseFloat(im.dataset.dy)||0;
+      zc.style.cursor='grabbing';
+      function mv(ev){
+        ev.preventDefault();
+        im.dataset.dx=cx+ev.clientX-sx;
+        im.dataset.dy=cy+ev.clientY-sy;
+        im.style.transform='translate('+im.dataset.dx+'px,'+im.dataset.dy+'px) scale('+im.dataset.scale+')';
+      }
+      function up(){
+        zc.style.cursor='grab';
+        document.removeEventListener('mousemove',mv);
+        document.removeEventListener('mouseup',up);
+      }
+      document.addEventListener('mousemove',mv);
+      document.addEventListener('mouseup',up);
+    });
+    zi.onclick=function(){
+      var s=parseFloat(im.dataset.scale||1),ns=Math.round((s+0.05)*100)/100;
+      if(ns>=0&&ns<=4){im.dataset.scale=ns;im.style.transform='translate('+im.dataset.dx+'px,'+im.dataset.dy+'px) scale('+ns+')';zl.textContent=Math.round(ns*100)+'%';}
+    };
+    zi.onmouseover=function(){this.style.background='#334155';this.style.transform='scale(1.15)';this.style.boxShadow='0 3px 10px rgba(30,41,59,0.4)';};
+    zi.onmouseout=function(){this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';};
+    zo.onclick=function(){
+      var s=parseFloat(im.dataset.scale||1),ns=Math.round((s-0.05)*100)/100;
+      if(ns>=0&&ns<=4){im.dataset.scale=ns;im.style.transform='translate('+im.dataset.dx+'px,'+im.dataset.dy+'px) scale('+ns+')';zl.textContent=Math.round(ns*100)+'%';}
+    };
+    zo.onmouseover=function(){this.style.background='#334155';this.style.transform='scale(1.15)';this.style.boxShadow='0 3px 10px rgba(30,41,59,0.4)';};
+    zo.onmouseout=function(){this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';};
+  }
+  cx.appendChild(bd);
+  var ft=document.createElement('div');
+  ft.style.cssText='display:flex;justify-content:center;gap:10px;padding:12px 20px;border-top:1px solid #E2E8F0;flex-shrink:0;';
+  var bt=document.createElement('button');
+  bt.textContent='Tutup';
+  bt.style.cssText='background:#1E293B;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;cursor:pointer;transition:all 0.2s;';
+  bt.onmouseover=function(){this.style.background='#334155';this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 12px rgba(30,41,59,0.3)';};
+  bt.onmouseout=function(){this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';};
+  bt.onclick=function(){tutup();};
+  ft.appendChild(bt);
+  var dll=document.createElement('a');
+  dll.href=url; dll.target='_blank';
+  dll.textContent='Download';
+  dll.style.cssText='background:#2563EB;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;text-decoration:none;display:inline-block;transition:all 0.2s;';
+  dll.onmouseover=function(){this.style.background='#1D4ED8';this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 12px rgba(37,99,235,0.35)';};
+  dll.onmouseout=function(){this.style.background='#2563EB';this.style.transform='';this.style.boxShadow='none';};
+  ft.appendChild(dll);
+  cx.appendChild(ft);
+  ov.appendChild(cx);
+  document.body.appendChild(ov);
+  ov.style.display='flex';
+  setTimeout(function(){ov.classList.add('show');},10);
 }
 
 function hapusAlumni(id,nama){
@@ -418,6 +503,12 @@ function updateBulkAlumni(){
   const count=checked.length;
   document.getElementById('selectedCountAlumni').textContent=count;
   document.getElementById('bulkActionsAlumni').style.display=count>0?'flex':'none';
+}
+
+function batalPilihAlumni(){
+  document.querySelectorAll('.alumni-check').forEach(cb=>cb.checked=false);
+  document.getElementById('selectAllAlumni').checked=false;
+  document.getElementById('bulkActionsAlumni').style.display='none';
 }
 
 function hapusMassalAlumni(){

@@ -58,12 +58,12 @@ router.get('/', (req,res) => {
 router.get('/pengampu/:id', (req,res) => {
   const {id} = req.params;
   const s = queryOne('SELECT kelas FROM siswa WHERE id=?',[id]);
-  if(!s) return res.json({success:true, pengampu:''});
+  if(!s) return res.json({success:true, pengampu:'',pengampuList:[]});
   const list = queryAll(
     "SELECT nama FROM operators WHERE (pengampu_kelas LIKE ? OR pengampu_kelas='Semua') AND role IN ('guru','kepala_sekolah','guru_bidang') ORDER BY nama",
     [`%${s.kelas}%`]
   );
-  res.json({success:true, pengampu: list.map(r=>r.nama).join(', ')});
+  res.json({success:true, pengampu: list.map(r=>r.nama).join(', '), pengampuList: list.map(r=>r.nama)});
 });
 
 // GET single siswa by ID

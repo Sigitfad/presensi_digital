@@ -11,6 +11,12 @@
   <style>
     .foto-sm-img{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;}
     .foto-sm-ini{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#2563EB;border:2px solid #E2E8F0;flex-shrink:0;}
+    .stat-icon{width:auto;height:auto;background:none!important;border-radius:0;font-size:48px;color:rgba(0,0,0,0.7)!important;}
+    .stat-card{gap:10px;}
+    .stat-card > div:last-child{margin-left:auto;}
+    .stat-value{text-align:center;}
+    .stat-label{text-align:right;font-weight:700;}
+    .stat-label.text-center{text-align:center;}
   </style>
 </head>
 <body>
@@ -36,25 +42,25 @@
     </div>
     <div class="col-6 col-md-4 col-lg-2 fade-in-up">
       <div class="stat-card">
-        <div class="stat-icon green"><i class="bi bi-mortarboard-fill"></i></div>
-        <div><div class="stat-value" id="s-guru">-</div><div class="stat-label">Total Guru</div></div>
+        <div class="stat-icon green"><i class="bi bi-person-lines-fill"></i></div>
+        <div><div class="stat-value" id="s-guru">-</div><div class="stat-label">Guru</div></div>
       </div>
     </div>
     <div class="col-6 col-md-4 col-lg-2 fade-in-up">
       <div class="stat-card">
         <div class="stat-icon blue"><i class="bi bi-person-badge-fill"></i></div>
-        <div><div class="stat-value" id="s-operator">-</div><div class="stat-label">Total Operator</div></div>
+        <div><div class="stat-value" id="s-operator">-</div><div class="stat-label">Operator</div></div>
       </div>
     </div>
     <div class="col-6 col-md-4 col-lg-2 fade-in-up">
       <div class="stat-card">
-        <div class="stat-icon orange"><i class="bi bi-shield-fill"></i></div>
-        <div><div class="stat-value" id="s-penjaga">-</div><div class="stat-label">Total Penjaga</div></div>
+        <div class="stat-icon orange"><i class="bi bi-shield-shaded"></i></div>
+        <div><div class="stat-value" id="s-penjaga">-</div><div class="stat-label">Penjaga</div></div>
       </div>
     </div>
     <div class="col-6 col-md-4 col-lg-2 fade-in-up">
       <div class="stat-card">
-        <div class="stat-icon purple"><i class="bi bi-mortarboard"></i></div>
+        <div class="stat-icon purple"><i class="bi bi-mortarboard-fill"></i></div>
         <div><div class="stat-value" id="s-lulusan">-</div><div class="stat-label">Total Lulusan</div></div>
       </div>
     </div>
@@ -175,7 +181,7 @@ async function init(){
   const data = await fetchAPI('/api/dashboard');
   if(!data) return;
 
-  const ROLE_LABEL={ operator:'Operator', guru:'Guru', kepala_sekolah:'Kepala Sekolah', penjaga_sekolah:'Penjaga Sekolah', guru_bidang:'Guru Bidang' };
+  const ROLE_LABEL={ operator:'Operator', guru:'Guru', kepala_sekolah:'Kepala Sekolah', penjaga_sekolah:'Penjaga Sekolah', guru_bidang:data.myBidang||'Guru Bidang' };
   document.getElementById('greet').innerHTML=`Selamat datang, <strong>${data.operator}</strong> <em>${ROLE_LABEL[data.role]||data.role}</em>`;
   document.getElementById('s-siswa').textContent   = data.totalSiswa;
   document.getElementById('s-kepsek').textContent  = data.totalKepsek;
@@ -185,6 +191,20 @@ async function init(){
   document.getElementById('s-lulusan').textContent = data.totalLulusan;
   document.getElementById('s-pindahan').textContent = data.totalPindahan;
   document.getElementById('s-hadir').textContent   = data.totalHadirHariIni;
+
+  // Cards per Bidang Keahlian
+  const guruCard = document.getElementById('s-guru').closest('.col-6');
+  const iconMap={'Guru Bahasa Inggris':'bi-translate','Guru Agama':'bi-book-half','Guru Olahraga':'bi-dribbble','Guru Seni':'bi-palette-fill'};
+  const labelMap={'Guru Bahasa Inggris':'Guru Inggris'};
+  (data.bidangCounts||[]).forEach(b=>{
+    const div=document.createElement('div');
+    div.className='col-6 col-md-4 col-lg-2 fade-in-up';
+    div.innerHTML=`<div class="stat-card">
+      <div class="stat-icon blue"><i class="${iconMap[b.bidang_keahlian]||'bi-book-half'}"></i></div>
+      <div><div class="stat-value">${b.count}</div><div class="stat-label${['Guru Bahasa Inggris'].includes(b.bidang_keahlian)?' text-center':''}">${labelMap[b.bidang_keahlian]||b.bidang_keahlian}</div></div>
+    </div>`;
+    guruCard.parentNode.insertBefore(div, guruCard.nextSibling);
+  });
 
   const now=new Date();
   const tgl=`${HARI[now.getDay()]}, ${now.getDate()} ${BULAN[now.getMonth()]} ${now.getFullYear()}`;

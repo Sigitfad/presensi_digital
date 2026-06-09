@@ -11,7 +11,9 @@ router.get('/', (req,res) => {
   const today         = new Date().toLocaleDateString('sv-SE');
   const identitas     = queryOne('SELECT * FROM identitas_sekolah WHERE id=1') || {};
   const rawFilter     = req.session.pengampuKelas || 'Semua';
+  const operatorId   = req.session.operatorId;
   const role          = req.session.operatorRole;
+  const myBidang      = role==='guru_bidang' ? queryOne("SELECT bidang_keahlian FROM operators WHERE id=?",[operatorId])?.bidang_keahlian||'' : '';
   const isOperator    = role === 'operator';
 
   const totalSiswa     = queryCount('SELECT COUNT(*) as c FROM siswa');
@@ -21,6 +23,11 @@ router.get('/', (req,res) => {
   const totalPenjaga   = queryCount("SELECT COUNT(*) as c FROM operators WHERE role='penjaga_sekolah'");
   const totalLulusan   = queryCount("SELECT COUNT(*) as c FROM alumni");
   const totalPindahan  = queryCount("SELECT COUNT(*) as c FROM pindahan");
+  const allBidang      = ['Guru Bahasa Inggris','Guru Agama','Guru Olahraga','Guru Seni'];
+  const rawBidang      = queryAll("SELECT bidang_keahlian, COUNT(*) as count FROM operators WHERE role='guru_bidang' AND bidang_keahlian IS NOT NULL AND bidang_keahlian!='' GROUP BY bidang_keahlian");
+  const countMap       = {};
+  rawBidang.forEach(b=>{ countMap[b.bidang_keahlian]=b.count; });
+  const bidangCounts   = allBidang.map(bidang=>({ bidang_keahlian:bidang, count:countMap[bidang]||0 }));
 
   // Siapkan filter kelas untuk non-operator (single / multi)
   let kelasArr = [];
@@ -41,11 +48,11 @@ router.get('/', (req,res) => {
 
   res.json({
     success:true,
-    totalSiswa, totalGuru, totalOperator, totalKepsek, totalPenjaga, totalLulusan, totalPindahan, totalHadirHariIni: totalHadir,
+    totalSiswa, totalGuru, totalOperator, totalKepsek, totalPenjaga, totalLulusan, totalPindahan, totalHadirHariIni: totalHadir, bidangCounts,
     presensiHariIni: queryAll(presensiSQL, kelasArr.length ? [today, ...kelasArr] : [today]),
     tanggal        : today,
     operator       : req.session.operatorNama,
-    role,
+    role, myBidang,
     pengampuKelas  : rawFilter,
     foto           : req.session.operatorFoto || '',
     jamMasuk       : getSetting('jam_masuk','07:00'),
