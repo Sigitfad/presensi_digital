@@ -11,13 +11,19 @@ router.get('/login', (req,res) => {
 });
 
 router.post('/login', (req,res) => {
-  const { username, password } = req.body;
-  if (!username || !password)
-    return res.json({ success:false, message:'Username dan password wajib diisi!' });
-
-  const op = queryOne('SELECT * FROM operators WHERE username=?', [username]);
-  if (!op || !bcrypt.compareSync(password, op.password))
-    return res.json({ success:false, message:'Username atau password salah!' });
+  const { username, password, uid } = req.body;
+  let op;
+  if(uid){
+    if(uid.length!==10) return res.json({success:false,message:'UID harus 10 digit!'});
+    op = queryOne('SELECT * FROM operators WHERE uid=?', [uid]);
+    if(!op) return res.json({success:false,message:'UID tidak terdaftar!'});
+  } else {
+    if (!username || !password)
+      return res.json({ success:false, message:'Username dan password wajib diisi!' });
+    op = queryOne('SELECT * FROM operators WHERE username=?', [username]);
+    if (!op || !bcrypt.compareSync(password, op.password))
+      return res.json({ success:false, message:'Username atau password salah!' });
+  }
 
   req.session.operatorId        = op.id;
   req.session.operatorNama      = op.nama;

@@ -38,7 +38,14 @@
     .kelas-popup{position:fixed;background:#1E293B;color:#fff;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:600;z-index:99999;max-width:180px;width:fit-content;word-break:break-word;box-shadow:0 4px 16px rgba(0,0,0,0.25);animation:kelasFadeIn 0.15s ease;cursor:default;user-select:text;}
 .kelas-popup-close{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:#EF4444;color:#fff;border:none;font-size:10px;line-height:18px;text-align:center;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;}
 @keyframes kelasFadeIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
-.swal-kecil{font-size:12px!important;border-radius:12px!important;}.swal-title-kecil{font-size:14px!important;padding:0!important;margin:0 0 4px!important;}.swal-text-kecil{font-size:12px!important;margin:0!important;}.swal-btn-kecil{font-size:11px!important;padding:5px 14px!important;border-radius:8px!important;}
+.swal-kecil{font-size:12px!important;border-radius:12px!important;}.swal-title-kecil{font-size:14px!important;padding:0!important;margin:0 0 4px!important;}.swal-text-kecil{font-size:12px!important;margin:0!important;}.swal-btn-kecil{font-size:11px!important;padding:5px 14px!important;border-radius:8px!important;}.swal-kecil .swal2-confirm,.swal-kecil .swal2-cancel{transition:all 0.2s ease!important;}.swal-kecil .swal2-confirm:hover,.swal-kecil .swal2-cancel:hover{filter:brightness(1.2)!important;transform:translateY(-1px)!important;box-shadow:0 4px 14px rgba(0,0,0,0.25)!important;}
+.uid-hidden{display:none!important;}
+#toggleEditUidBtn:hover{background:rgba(255,255,255,0.3)!important;transform:translateY(-1px);}
+
+
+.btn-close-custom{background:#1E293B;color:white;border:none;padding:6px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all 0.25s ease;text-decoration:none;font-family:var(--font-body);}
+.btn-close-custom:hover{background:#000;transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,0.3);color:white;}
+.btn-close-custom:active{transform:translateY(0);box-shadow:none;}
 </style>
   
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
@@ -64,17 +71,20 @@
   <div class="card-modern">
     <div class="card-modern-header d-flex align-items-center justify-content-between flex-wrap gap-2">
       <div class="card-modern-title"><i class="bi bi-people-fill" style="color:var(--primary)"></i> Daftar Pengguna <span id="totalUsersBadge" style="display:inline-flex;align-items:center;justify-content:center;background:#2563EB;color:white;border-radius:50%;width:22px;height:22px;font-size:11px;font-weight:700;line-height:1;"></span></div>
-      <div style="position:relative;">
-        <input type="text" id="searchUsers" class="form-control-modern" placeholder="Cari Nama, Username, Role, Bidang..." style="width:240px;padding-right:30px;padding:5px 30px 5px 10px;font-size:12px;" oninput="clearTimeout(window._dU);window._dU=setTimeout(()=>loadUsers(),300);document.getElementById('clearSearchUsers').style.display=this.value?'block':'none'">
-        <button id="clearSearchUsers" type="button" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94A3B8;cursor:pointer;display:none;font-size:16px;padding:2px 4px;line-height:1;" onclick="document.getElementById('searchUsers').value='';loadUsers();this.style.display='none'">&times;</button>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button class="btn-primary-custom" onclick="bukaModalUidMassal()" style="padding:5px 12px;font-size:11px;white-space:nowrap;">Update UID</button>
+        <div style="position:relative;">
+          <input type="text" id="searchUsers" class="form-control-modern" placeholder="Cari Nama, Username, Role, Bidang..." style="width:240px;padding-right:30px;padding:5px 30px 5px 10px;font-size:12px;" oninput="clearTimeout(window._dU);window._dU=setTimeout(()=>loadUsers(),300);document.getElementById('clearSearchUsers').style.display=this.value?'block':'none'">
+          <button id="clearSearchUsers" type="button" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94A3B8;cursor:pointer;display:none;font-size:16px;padding:2px 4px;line-height:1;" onclick="document.getElementById('searchUsers').value='';loadUsers();this.style.display='none'">&times;</button>
+        </div>
       </div>
     </div>
     <div class="table-responsive">
       <table class="table-modern">
         <thead><tr>
           <th style="width:36px;"><input type="checkbox" id="selectAllUser" onchange="toggleSelectAllUser()" style="cursor:pointer;accent-color:var(--primary);"></th>
-          <th>#</th><th>Foto</th><th>Nama</th><th>Username</th><th>Role</th><th>Pengampu Kelas</th><th>NIP</th><th>Email</th><th>No HP</th><th>Aksi</th></tr></thead>
-        <tbody id="tblUsers"><tr><td colspan="11" class="text-center py-4"><div class="loading-spinner"></div></td></tr></tbody>
+          <th>#</th><th>Foto</th><th>Nama</th><th>Username</th><th>UID</th><th>Role</th><th>Pengampu Kelas</th><th>NIP</th><th>Email</th><th>No HP</th><th>Aksi</th></tr></thead>
+        <tbody id="tblUsers"><tr><td colspan="12" class="text-center py-4"><div class="loading-spinner"></div></td></tr></tbody>
       </table>
     </div>
   </div>
@@ -149,6 +159,7 @@
           <div class="col-md-6"><label class="form-label-modern">NIP *</label><input type="number" id="u_nip" class="form-control-modern" placeholder="Nomor Induk Pegawai" required></div>
           <div class="col-md-6"><label class="form-label-modern">Email *</label><input type="email" id="u_email" class="form-control-modern" placeholder="email@sekolah.com" required></div>
           <div class="col-md-6"><label class="form-label-modern">Alamat *</label><input type="text" id="u_alamat" class="form-control-modern" placeholder="Alamat lengkap" required></div>
+          <div class="col-md-6"><label class="form-label-modern">UID Kartu *</label><input type="text" id="u_uid" class="form-control-modern" placeholder="10 digit" maxlength="10" required oninput="this.value=this.value.replace(/\D/g,'')"></div>
         </div>
       </div>
       <div class="modal-footer">
@@ -211,11 +222,36 @@
           <div class="col-md-6"><label class="form-label-modern">NIP *</label><input type="number" id="eu_nip" class="form-control-modern" required></div>
           <div class="col-md-6"><label class="form-label-modern">Email *</label><input type="email" id="eu_email" class="form-control-modern" required></div>
           <div class="col-12"><label class="form-label-modern">Alamat *</label><input type="text" id="eu_alamat" class="form-control-modern" required></div>
+          <div class="col-md-6"><label class="form-label-modern">UID Kartu *</label><input type="text" id="eu_uid" class="form-control-modern" placeholder="10 digit" maxlength="10" required oninput="this.value=this.value.replace(/\D/g,'')"></div>
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn-batal" data-bs-dismiss="modal">Batal</button>
         <button class="btn-edit-custom" style="padding:8px 18px;font-size:13px;" onclick="updateUser()">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Update UID Massal -->
+<div class="modal fade" id="modalUidMassal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:500px;">
+    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
+      <div class="modal-header" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
+        <h5 class="modal-title text-white fw-bold">Update UID</h5>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <input type="text" id="uidSearchMassal" class="form-control-modern" placeholder="Cari nama / UID..." style="width:150px;padding:3px 8px;font-size:11px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:6px;" oninput="filterUidMassal(this.value)" onfocus="this.style.background='rgba(255,255,255,0.3)'" onblur="this.style.background='rgba(255,255,255,0.2)'">
+          <button type="button" id="toggleEditUidBtn" class="btn btn-sm text-white" style="background:rgba(255,255,255,0.15);border:none;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;" onclick="toggleEditUidMassal()">Edit</button>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+      </div>
+      <div class="modal-body p-3" style="max-height:480px;overflow-y:auto;" id="uidMassalBody"></div>
+      <div class="modal-footer d-flex justify-content-between">
+        <span id="uidMassalCount" style="font-size:11px;color:#fff;background:#2563EB;padding:3px 12px;border-radius:12px;font-weight:600;"></span>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-close-custom" onclick="closeModalUidMassal()">Tutup</button>
+          <button class="btn-primary-custom" id="simpanUidBtn" onclick="simpanUidMassal()" style="padding:6px 16px;font-size:12px;">Simpan</button>
+        </div>
       </div>
     </div>
   </div>
@@ -420,6 +456,7 @@ function renderUsersRow(d, i) {
     <td>${fotoHtml}</td>
     <td style="font-weight:700;color:var(--dark);font-size:12.5px;">${d.nama}</td>
     <td style="font-weight:600">${d.username}</td>
+    <td style="font-family:monospace;font-size:12px;color:var(--gray);">${d.uid||'-'}</td>
     <td>${roleBadge}</td>
     <td style="font-size:12px;color:var(--gray);text-align:center;">
       ${d.pengampu_kelas && d.pengampu_kelas!=='Semua'
@@ -452,14 +489,15 @@ function renderUsersPage(){
       (u.nip||'').toLowerCase().includes(search) ||
       (u.email||'').toLowerCase().includes(search) ||
       (u.no_hp||'').toLowerCase().includes(search) ||
-      (u.bidang_keahlian||'').toLowerCase().includes(search)
+      (u.bidang_keahlian||'').toLowerCase().includes(search) ||
+      (u.uid||'').toLowerCase().includes(search)
     );
   }
   const tbody=document.getElementById('tblUsers');
   if(!_usersFiltered.length){
     tbody.innerHTML=search
-      ? '<tr><td colspan="11"><div class="empty-state"><i class="bi bi-people"></i><p>Tidak ditemukan</p></div></td></tr>'
-      : '<tr><td colspan="11"><div class="empty-state"><i class="bi bi-people"></i><p>Belum ada pengguna</p></div></td></tr>';
+      ? '<tr><td colspan="12"><div class="empty-state"><i class="bi bi-people"></i><p>Tidak ditemukan</p></div></td></tr>'
+      : '<tr><td colspan="12"><div class="empty-state"><i class="bi bi-people"></i><p>Belum ada pengguna</p></div></td></tr>';
     document.getElementById('pagination').style.display='none';
     return;
   }
@@ -512,7 +550,7 @@ async function bukaTambah(){
   document.getElementById('tambah-foto-preview').innerHTML=`<div class="foto-ini-lg"><i class="bi bi-person-fill" style="font-size:32px;"></i></div>`;
   document.getElementById('tambah-foto-btn').innerHTML='<i class="bi bi-camera me-1"></i>Tambah Foto';
   ['u_nama','u_username','u_password','u_nohp','u_email'].forEach(id=>document.getElementById(id).value='');
-  ['u_nip','u_alamat'].forEach(id=>document.getElementById(id).value='');
+  ['u_nip','u_alamat','u_uid'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('u_bidang').value='';
   document.getElementById('u_role').value='operator';
   document.getElementById('alertTambah').innerHTML='';
@@ -533,6 +571,8 @@ async function simpanUser(){
     const el=document.getElementById(f.id);
     if(!el.value||!el.value.trim()){alertEl.innerHTML=`<div class="alert-msg error">${f.l} wajib diisi</div>`;el.focus();return;}
   }
+  const u_uid=document.getElementById('u_uid').value.trim();
+  if(!u_uid||u_uid.length!==10){alertEl.innerHTML='<div class="alert-msg error">UID Kartu wajib diisi 10 digit</div>';document.getElementById('u_uid').focus();return;}
   if(document.getElementById('u_role').value==='guru_bidang'){
     const b=document.getElementById('u_bidang');
     if(!b.value){alertEl.innerHTML=`<div class="alert-msg error">Bidang Keahlian wajib diisi</div>`;b.focus();return;}
@@ -560,6 +600,7 @@ async function simpanUser(){
   fd.append('nip',document.getElementById('u_nip').value.trim());
   fd.append('alamat',document.getElementById('u_alamat').value.trim());
   fd.append('bidang_keahlian',document.getElementById('u_bidang').value);
+  fd.append('uid',u_uid);
   if(tambahUserBlob) fd.append('foto',tambahUserBlob,'foto.png');
   const {isConfirmed:konfirmTambah}=await Swal.fire({title:'Konfirmasi Simpan',text:'Apakah data yang diisi sudah benar?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Simpan',cancelButtonText:'Batal',confirmButtonColor:'#2563EB',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
   if(!konfirmTambah) return;
@@ -588,6 +629,7 @@ function viewUser(d){
       <div>${r('Nama Lengkap',d.nama)}${r('Username',d.username)}${pwdHtml}${r('NIP',d.nip)}</div>
       <div>${r('No. HP',d.no_hp)}${r('Email',d.email)}${r('Role',roleLabel)}${d.role==='guru_bidang'?r('Bidang Keahlian',d.bidang_keahlian||'-'):''}</div>
     </div>
+    ${r('UID Kartu',d.uid||'-')}
     ${r('Pengampu Kelas',d.pengampu_kelas||'-')}
     ${r('Alamat',d.alamat)}`;
   openModal('modalViewUser');
@@ -616,6 +658,7 @@ async function bukaEdit(u){
   document.getElementById('eu_nip').value=u.nip||'';
   document.getElementById('eu_alamat').value=u.alamat||'';
   document.getElementById('eu_bidang').value=u.bidang_keahlian||'';
+  document.getElementById('eu_uid').value=u.uid||'';
   const pwdPlain = u.password_plain || '';
   document.getElementById('eu_password').value = pwdPlain ? '********' : '';
   document.getElementById('eu_password').dataset.plain = pwdPlain;
@@ -654,6 +697,8 @@ async function updateUser(){
     const el=document.getElementById(f.id);
     if(!el.value||!el.value.trim()){alertEl.innerHTML=`<div class="alert-msg error">${f.l} wajib diisi</div>`;el.focus();return;}
   }
+  const eu_uid=document.getElementById('eu_uid').value.trim();
+  if(!eu_uid||eu_uid.length!==10){alertEl.innerHTML='<div class="alert-msg error">UID Kartu wajib diisi 10 digit</div>';document.getElementById('eu_uid').focus();return;}
   if(document.getElementById('eu_role').value==='guru_bidang'){
     const b=document.getElementById('eu_bidang');
     if(!b.value){alertEl.innerHTML=`<div class="alert-msg error">Bidang Keahlian wajib diisi</div>`;b.focus();return;}
@@ -681,6 +726,7 @@ async function updateUser(){
   fd.append('nip',document.getElementById('eu_nip').value.trim());
   fd.append('alamat',document.getElementById('eu_alamat').value.trim());
   fd.append('bidang_keahlian',document.getElementById('eu_bidang').value);
+  fd.append('uid',eu_uid);
   fd.append('password',document.getElementById('eu_password').value);
   if(editUserBlob) fd.append('foto',editUserBlob,'foto.png');
   const {isConfirmed:konfirmEdit}=await Swal.fire({title:'Konfirmasi Update',text:'Apakah perubahan data sudah benar?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Update',cancelButtonText:'Batal',confirmButtonColor:'#F59E0B',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
@@ -774,6 +820,93 @@ function showKelasPopup(e,icon,kelas){
   const outsideClick=function(ev){if(!popup.contains(ev.target)){popup.remove();document.removeEventListener('click',outsideClick,true);}};
   document.addEventListener('click',outsideClick,true);
 }
+// Modal Update UID Massal
+let _uidEditMode=false;
+
+function toggleEditUidMassal(){
+  _uidEditMode=!_uidEditMode;
+  const btn=document.getElementById('toggleEditUidBtn');
+  const inputs=document.querySelectorAll('.uid-massal-input');
+  inputs.forEach(inp=>{
+    if(_uidEditMode){inp.removeAttribute('disabled');inp.style.background='#fff';}
+    else{inp.setAttribute('disabled','');inp.style.background='#F1F5F9';}
+  });
+  btn.innerHTML=_uidEditMode?'Lihat':'Edit';
+}
+
+function filterUidMassal(q){
+  const keyword=q.toLowerCase().trim();
+  const rows=document.querySelectorAll('#uidMassalBody > .uid-row');
+  let visible=0;
+  rows.forEach(row=>{
+    const nama=row.querySelector('.uid-row-nama')?.textContent.toLowerCase()||'';
+    const uid=row.querySelector('.uid-massal-input')?.value.toLowerCase()||'';
+    const match=!keyword||nama.includes(keyword)||uid.includes(keyword);
+    row.classList.toggle('uid-hidden',!match);
+    if(match) visible++;
+  });
+  document.getElementById('uidMassalCount').textContent=`${visible} pengguna`;
+}
+
+function bukaModalUidMassal(){
+  _uidEditMode=false;
+  document.getElementById('uidSearchMassal').value='';
+  const body=document.getElementById('uidMassalBody');
+  body.innerHTML=_usersData.map((u,i)=>`
+    <div class="uid-row" style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #F1F5F9;">
+      <div style="flex-shrink:0;width:32px;font-size:11px;color:var(--gray);font-weight:600;text-align:center;">${i+1}</div>
+      <div style="flex-shrink:0;">${
+        u.foto
+          ? `<img src="${u.foto}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:1px solid #E2E8F0;">`
+          : `<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#2563EB;border:1px solid #E2E8F0;">${u.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?'}</div>`
+      }</div>
+      <div class="uid-row-nama" style="flex:1;font-size:12px;font-weight:600;">${u.nama}</div>
+      <input type="text" class="form-control-modern uid-massal-input" data-id="${u.id}" value="${u.uid||''}" placeholder="10 digit" maxlength="10" style="width:110px;padding:3px 6px;font-size:11px;font-family:monospace;background:#F1F5F9;" disabled oninput="this.value=this.value.replace(/\D/g,'')">
+    </div>
+  `).join('');
+  document.getElementById('toggleEditUidBtn').innerHTML='Edit';
+  document.getElementById('uidMassalCount').textContent=`${_usersData.length} pengguna`;
+  openModal('modalUidMassal');
+}
+
+function closeModalUidMassal(){
+  const inputs=document.querySelectorAll('.uid-massal-input');
+  let adaPerubahan=false;
+  for(const inp of inputs){
+    const val=inp.value.trim();
+    const user=_usersData.find(u=>u.id==inp.dataset.id);
+    if(user&&(user.uid||'')!==val){adaPerubahan=true;break;}
+  }
+  if(!adaPerubahan){closeModal('modalUidMassal');return;}
+  Swal.fire({text:'Apakah anda yakin ingin membatalkan perubahan?',icon:'question',showCancelButton:true,confirmButtonText:'Discard',cancelButtonText:'Lanjut Edit',confirmButtonColor:'#EF4444',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}}).then(r=>{if(r.isConfirmed)closeModal('modalUidMassal');});
+}
+
+async function simpanUidMassal(){
+  const inputs=document.querySelectorAll('.uid-massal-input');
+  const updates=[];
+  for(const inp of inputs){
+    const uid=inp.value.trim();
+    if(uid&&uid.length!==10){showToast('UID harus 10 digit!','error');inp.focus();return;}
+    const user=_usersData.find(u=>u.id==inp.dataset.id);
+    if(!user) continue;
+    if((user.uid||'')===uid) continue;
+    updates.push({id:user.id,uid,nama:user.nama,username:user.username,role:user.role});
+  }
+  if(!updates.length){showToast('Tidak ada perubahan UID','info');closeModal('modalUidMassal');return;}
+  const {isConfirmed:konfirm}=await Swal.fire({title:'Konfirmasi Update UID',text:`${updates.length} pengguna akan diperbarui UID-nya.`,icon:'question',showCancelButton:true,confirmButtonText:'Ya, Update',cancelButtonText:'Batal',confirmButtonColor:'#7C3AED',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!konfirm) return;
+  let sukses=0;
+  for(const u of updates){
+    const fd=new FormData();fd.append('id',u.id);fd.append('uid',u.uid);
+    fd.append('nama',u.nama);fd.append('username',u.username);fd.append('role',u.role);
+    const res=await fetchAPI('/api/users/edit','POST',fd);
+    if(res?.success){sukses++;const user=_usersData.find(x=>x.id==u.id);if(user) user.uid=u.uid;}
+  }
+  showToast(`${sukses} UID diperbarui`,'success');
+  closeModal('modalUidMassal');
+  renderUsersPage();
+}
+
 async function init(){await loadLayout('users','Data Guru dan Tenaga Kependidikan (GTK)');loadUsers();}
 init();
 </script>

@@ -41,6 +41,7 @@ async function initDB() {
       nip             TEXT DEFAULT '',
       alamat          TEXT DEFAULT '',
       bidang_keahlian TEXT DEFAULT '',
+      uid             TEXT DEFAULT '',
       created_at      TEXT DEFAULT (datetime('now','localtime'))
     );
 
@@ -126,6 +127,7 @@ async function initDB() {
     "ALTER TABLE siswa ADD COLUMN agama TEXT DEFAULT ''",
     "ALTER TABLE siswa ADD COLUMN alamat TEXT DEFAULT ''",
     "ALTER TABLE siswa ADD COLUMN status TEXT DEFAULT 'Aktif'",
+    "ALTER TABLE operators ADD COLUMN uid TEXT DEFAULT ''",
     "ALTER TABLE operators ADD COLUMN password_plain TEXT DEFAULT ''",
     "ALTER TABLE alumni ADD COLUMN jenis_kelamin TEXT DEFAULT ''",
     "ALTER TABLE alumni ADD COLUMN nik TEXT DEFAULT ''",
@@ -171,10 +173,11 @@ async function initDB() {
         nip             TEXT DEFAULT '',
         alamat          TEXT DEFAULT '',
         bidang_keahlian TEXT DEFAULT '',
+        uid             TEXT DEFAULT '',
         created_at      TEXT DEFAULT (datetime('now','localtime'))
       )`);
-      db.run(`INSERT INTO operators (id,nama,username,password,role,no_hp,email,foto,pengampu_kelas,nip,alamat,bidang_keahlian,created_at)
-               SELECT id,nama,username,password,role,no_hp,email,foto,pengampu_kelas,nip,alamat,bidang_keahlian,created_at FROM operators_old`);
+      db.run(`INSERT INTO operators (id,nama,username,password,role,no_hp,email,foto,pengampu_kelas,nip,alamat,bidang_keahlian,uid,created_at)
+               SELECT id,nama,username,password,role,no_hp,email,foto,pengampu_kelas,nip,alamat,bidang_keahlian,uid,created_at FROM operators_old`);
       db.run("DROP TABLE operators_old");
       saveDB();
       console.log('[DB] Tabel operators dimigrasi (CHECK constraint guru_bidang)');
