@@ -64,6 +64,7 @@
       <input type="text" id="alasanPindah" class="form-control-modern" placeholder="Alasan pindah" style="width:140px;padding:5px 10px;font-size:12px;">
     </div>
     <div class="d-flex gap-2">
+      <button onclick="document.querySelectorAll('.siswa-check').forEach(c=>c.checked=false);document.getElementById('selectAllSiswa').checked=false;updateBulkSiswa();" style="background:#1E293B;border:none;color:#fff;border-radius:8px;font-size:14px;padding:6px 10px;cursor:pointer;transition:all 0.2s;line-height:1;" onmouseover="this.style.background='#334155';this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#1E293B';this.style.transform='';"><i class="bi bi-x-lg"></i></button>
       <button class="btn-danger-custom" onclick="hapusMassalSiswa()" style="padding:6px 14px;font-size:12.5px;">Hapus</button>
       <button class="btn-primary-custom" onclick="lulusMassalSiswa()" style="padding:6px 14px;font-size:12.5px;">Update to Lulusan</button>
       <button class="btn-primary-custom" onclick="pindahMassalSiswa()" style="padding:6px 14px;font-size:12.5px;background:linear-gradient(135deg,#7C3AED,#6D28D9);" onmouseover="this.style.boxShadow='0 4px 12px rgba(124,58,237,0.35)'" onmouseout="this.style.boxShadow='none'">Update to Pindahan</button>
@@ -97,7 +98,7 @@
 </div>
 
 <!-- Modal Tambah -->
-<div class="modal fade" id="modalTambah" tabindex="-1">
+<div class="modal fade" id="modalTambah" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-dialog-centered" style="max-width:440px;">
     <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
       <div class="modal-header" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
@@ -117,21 +118,21 @@
         </div>
         <div class="row g-3">
           <div class="col-md-6">
-            <label class="form-label-modern">Nama Lengkap *</label><input type="text" id="nama_baru" class="form-control-modern" placeholder="Nama siswa">
-            <label class="form-label-modern mt-2">NIK</label><input type="text" id="nik_baru" class="form-control-modern" placeholder="Nomor Induk Kependudukan">
-            <label class="form-label-modern mt-2">Tempat Lahir</label><input type="text" id="ttlahir_baru" class="form-control-modern" placeholder="Contoh: Garut">
-            <label class="form-label-modern mt-2">Tanggal Lahir</label><input type="date" id="tanggallahir_baru" class="form-control-modern">
-            <label class="form-label-modern mt-2">Alamat</label><textarea id="alamat_baru" class="form-control-modern" rows="2" placeholder="Alamat lengkap siswa"></textarea>
+            <label class="form-label-modern">Nama Lengkap *</label><input type="text" id="nama_baru" class="form-control-modern" placeholder="Nama siswa" required>
+            <label class="form-label-modern mt-2">NIK *</label><input type="number" id="nik_baru" class="form-control-modern" placeholder="Nomor Induk Kependudukan" required>
+            <label class="form-label-modern mt-2">Tempat Lahir *</label><input type="text" id="ttlahir_baru" class="form-control-modern" placeholder="Contoh: Garut" required>
+            <label class="form-label-modern mt-2">Tanggal Lahir *</label><input type="date" id="tanggallahir_baru" class="form-control-modern" required>
+            <label class="form-label-modern mt-2">Alamat *</label><textarea id="alamat_baru" class="form-control-modern" rows="2" placeholder="Alamat lengkap siswa" required></textarea>
           </div>
           <div class="col-md-6">
-            <label class="form-label-modern">NISN *</label><input type="text" id="nisn_baru" class="form-control-modern" placeholder="Nomor Induk Siswa">
+            <label class="form-label-modern">NISN *</label><input type="number" id="nisn_baru" class="form-control-modern" placeholder="Nomor Induk Siswa" required>
             <label class="form-label-modern mt-2">Kelas *</label>
-            <select id="kelas_baru" class="form-control-modern"><option value="">Pilih Kelas</option></select>
+            <select id="kelas_baru" class="form-control-modern" required><option value="">Pilih Kelas</option></select>
             <label class="form-label-modern mt-2">Jenis Kelamin *</label>
-            <select id="jk_baru" class="form-control-modern"><option value="">Pilih</option><option>Laki-laki</option><option>Perempuan</option></select>
-            <label class="form-label-modern mt-2">Agama</label>
-            <select id="agama_baru" class="form-control-modern"><option value="">Pilih</option><option>Islam</option><option>Kristen</option><option>Katolik</option><option>Hindu</option><option>Buddha</option><option>Konghucu</option></select>
-            <label class="form-label-modern mt-2">No. HP Orang Tua</label><input type="text" id="nohp_ortu_baru" class="form-control-modern" placeholder="08xx">
+            <select id="jk_baru" class="form-control-modern" required><option value="">Pilih</option><option>Laki-laki</option><option>Perempuan</option></select>
+            <label class="form-label-modern mt-2">Agama *</label>
+            <select id="agama_baru" class="form-control-modern" required><option value="">Pilih</option><option>Islam</option><option>Kristen</option><option>Katolik</option><option>Hindu</option><option>Buddha</option><option>Konghucu</option></select>
+            <label class="form-label-modern mt-2">No. HP Orang Tua *</label><input type="text" id="nohp_ortu_baru" class="form-control-modern" placeholder="08xx" required>
           </div>
         </div>
       </div>
@@ -144,7 +145,7 @@
 </div>
 
 <!-- Modal Edit -->
-<div class="modal fade" id="modalEdit" tabindex="-1">
+<div class="modal fade" id="modalEdit" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-dialog-centered" style="max-width:440px;">
     <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
       <div class="modal-header" style="background:linear-gradient(135deg,#F59E0B,#D97706);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
@@ -159,21 +160,21 @@
         </div>
         <div class="row g-3">
           <div class="col-md-6">
-            <label class="form-label-modern">Nama Lengkap *</label><input type="text" id="edit_nama" class="form-control-modern">
-            <label class="form-label-modern mt-2">NIK</label><input type="text" id="edit_nik" class="form-control-modern">
-            <label class="form-label-modern mt-2">Tempat Lahir</label><input type="text" id="edit_ttlahir" class="form-control-modern">
-            <label class="form-label-modern mt-2">Tanggal Lahir</label><input type="date" id="edit_tanggallahir" class="form-control-modern">
-            <label class="form-label-modern mt-2">Alamat</label><textarea id="edit_alamat" class="form-control-modern" rows="2"></textarea>
+            <label class="form-label-modern">Nama Lengkap *</label><input type="text" id="edit_nama" class="form-control-modern" required>
+            <label class="form-label-modern mt-2">NIK *</label><input type="number" id="edit_nik" class="form-control-modern" required>
+            <label class="form-label-modern mt-2">Tempat Lahir *</label><input type="text" id="edit_ttlahir" class="form-control-modern" required>
+            <label class="form-label-modern mt-2">Tanggal Lahir *</label><input type="date" id="edit_tanggallahir" class="form-control-modern" required>
+            <label class="form-label-modern mt-2">Alamat *</label><textarea id="edit_alamat" class="form-control-modern" rows="2" required></textarea>
           </div>
           <div class="col-md-6">
-            <label class="form-label-modern">NISN *</label><input type="text" id="edit_nisn" class="form-control-modern">
+            <label class="form-label-modern">NISN *</label><input type="number" id="edit_nisn" class="form-control-modern" required>
             <label class="form-label-modern mt-2">Kelas *</label>
-            <select id="edit_kelas" class="form-control-modern"></select>
+            <select id="edit_kelas" class="form-control-modern" required></select>
             <label class="form-label-modern mt-2">Jenis Kelamin *</label>
-            <select id="edit_jk" class="form-control-modern"><option>Laki-laki</option><option>Perempuan</option></select>
-            <label class="form-label-modern mt-2">Agama</label>
-            <select id="edit_agama" class="form-control-modern"><option value="">Pilih</option><option>Islam</option><option>Kristen</option><option>Katolik</option><option>Hindu</option><option>Buddha</option><option>Konghucu</option></select>
-            <label class="form-label-modern mt-2">No. HP Orang Tua</label><input type="text" id="edit_nohp_ortu" class="form-control-modern">
+            <select id="edit_jk" class="form-control-modern" required><option>Laki-laki</option><option>Perempuan</option></select>
+            <label class="form-label-modern mt-2">Agama *</label>
+            <select id="edit_agama" class="form-control-modern" required><option value="">Pilih</option><option>Islam</option><option>Kristen</option><option>Katolik</option><option>Hindu</option><option>Buddha</option><option>Konghucu</option></select>
+            <label class="form-label-modern mt-2">No. HP Orang Tua *</label><input type="text" id="edit_nohp_ortu" class="form-control-modern" required>
           </div>
         </div>
       </div>
@@ -315,8 +316,8 @@ let _siswaData=[], _siswaPage=1, _siswaPerPage=5;
 function renderSiswaRow(d, i) {
   const ini = d.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
   const fotoHtml = d.foto
-    ? `<img src="${d.foto}" class="foto-sm-img" onclick="bukaTabelFoto(_siswaData[${i}])">`
-    : `<div class="foto-sm-ini" onclick="bukaTabelFoto(_siswaData[${i}])">${ini}</div>`;
+    ? `<img src="${d.foto}" class="foto-sm-img" onclick="showFotoDialog({fotoSrc:'${(d.foto||'').replace(/'/g,"\\'")}',noButtons:true})">`
+    : `<div class="foto-sm-ini" onclick="showFotoDialog({fotoSrc:'',noButtons:true})">${ini}</div>`;
   const jkLabel = d.jenis_kelamin === 'Laki-laki' ? 'L' : 'P';
   return `<tr>
     <td><input type="checkbox" class="siswa-check" value="${d.id}" onchange="updateBulkSiswa()" style="cursor:pointer;accent-color:var(--primary);"></td>
@@ -390,13 +391,18 @@ function bukaTambah(){
 
 async function simpanSiswa(){
   const alertEl=document.getElementById('alertTambah');
-  const nisn=document.getElementById('nisn_baru').value.trim();
-  const nama=document.getElementById('nama_baru').value.trim();
-  const kelas=document.getElementById('kelas_baru').value;
-  const jk=document.getElementById('jk_baru').value;
-  if(!nisn||!nama||!kelas||!jk){alertEl.innerHTML='<div class="alert-msg error">Semua field wajib diisi!</div>';return;}
+  const required=[
+    {id:'nama_baru',l:'Nama Lengkap'},{id:'nik_baru',l:'NIK'},{id:'ttlahir_baru',l:'Tempat Lahir'},
+    {id:'tanggallahir_baru',l:'Tanggal Lahir'},{id:'alamat_baru',l:'Alamat'},
+    {id:'nisn_baru',l:'NISN'},{id:'kelas_baru',l:'Kelas'},{id:'jk_baru',l:'Jenis Kelamin'},
+    {id:'agama_baru',l:'Agama'},{id:'nohp_ortu_baru',l:'No. HP Orang Tua'}
+  ];
+  for(const f of required){
+    const el=document.getElementById(f.id);
+    if(!el.value||!el.value.trim()){alertEl.innerHTML=`<div class="alert-msg error">${f.l} wajib diisi</div>`;el.focus();return;}
+  }
   const fd=new FormData();
-  fd.append('nisn',nisn);fd.append('nama',nama);fd.append('kelas',kelas);fd.append('jenis_kelamin',jk);
+  fd.append('nisn',document.getElementById('nisn_baru').value.trim());fd.append('nama',document.getElementById('nama_baru').value.trim());fd.append('kelas',document.getElementById('kelas_baru').value);fd.append('jenis_kelamin',document.getElementById('jk_baru').value);
   fd.append('nik',document.getElementById('nik_baru').value.trim());
   fd.append('tempat_lahir',document.getElementById('ttlahir_baru').value.trim());
   fd.append('tanggal_lahir',document.getElementById('tanggallahir_baru').value);
@@ -434,6 +440,16 @@ function bukaEdit(s){
 
 async function updateSiswa(){
   const alertEl=document.getElementById('alertEdit');
+  const required=[
+    {id:'edit_nama',l:'Nama Lengkap'},{id:'edit_nik',l:'NIK'},{id:'edit_ttlahir',l:'Tempat Lahir'},
+    {id:'edit_tanggallahir',l:'Tanggal Lahir'},{id:'edit_alamat',l:'Alamat'},
+    {id:'edit_nisn',l:'NISN'},{id:'edit_kelas',l:'Kelas'},{id:'edit_jk',l:'Jenis Kelamin'},
+    {id:'edit_agama',l:'Agama'},{id:'edit_nohp_ortu',l:'No. HP Orang Tua'}
+  ];
+  for(const f of required){
+    const el=document.getElementById(f.id);
+    if(!el.value||!el.value.trim()){alertEl.innerHTML=`<div class="alert-msg error">${f.l} wajib diisi</div>`;el.focus();return;}
+  }
   const fd=new FormData();
   fd.append('id',document.getElementById('edit_id').value);
   fd.append('nisn',document.getElementById('edit_nisn').value.trim());
@@ -532,12 +548,12 @@ async function viewSiswa(d){
   } else if(!pengampuList){pengampuList=[];}
   const ini = d.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
   const fotoHtml = d.foto
-    ? `<img src="${d.foto}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;cursor:pointer;" onclick="bukaTabelFoto(_viewSiswaData)">`
-    : `<div style="width:56px;height:56px;border-radius:50%;background:${d.jenis_kelamin==='Perempuan'?'#FCE7F3':'#DBEAFE'};display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:${d.jenis_kelamin==='Perempuan'?'#BE185D':'#1E40AF'};border:2px solid #E2E8F0;cursor:pointer;" onclick="bukaTabelFoto(_viewSiswaData)">${ini}</div>`;
+    ? `<img src="${d.foto}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;cursor:pointer;" onclick="showFotoDialog({fotoSrc:'${(d.foto||'').replace(/'/g,"\\'")}',noButtons:true})">`
+    : `<div style="width:56px;height:56px;border-radius:50%;background:${d.jenis_kelamin==='Perempuan'?'#FCE7F3':'#DBEAFE'};display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:${d.jenis_kelamin==='Perempuan'?'#BE185D':'#1E40AF'};border:2px solid #E2E8F0;cursor:pointer;" onclick="showFotoDialog({fotoSrc:'',noButtons:true})">${ini}</div>`;
   document.getElementById('detailProfile').innerHTML=
     `<div style="display:flex;gap:12px;margin-bottom:14px;align-items:center;">${fotoHtml}<div><div style="font-weight:700;font-size:15px;">${d.nama}</div><div style="font-size:12px;color:#64748B;">NISN: ${d.nisn} &middot; ${d.kelas}</div></div></div>`;
   const fmt=dt=>dt?dt.split('-').reverse().join('/'):'-';
-  const t=(l,v)=>`<tr><td style="padding:2px 0;color:#64748B;font-size:11px;">${l}</td></tr><tr><td style="padding:0 0 3px 0;font-weight:600;font-size:12px;">${v||'-'}</td></tr>`;
+   const t=(l,v)=>`<tr><td style="padding:1px 0;color:#64748B;font-size:11px;">${l}</td></tr><tr><td style="padding:0 0 1px 0;font-weight:600;font-size:12px;">${v||'-'}</td></tr>`;
   document.getElementById('detailSiswaKiri').innerHTML=
     t('Nama Lengkap',d.nama)+
     t('NISN',d.nisn)+

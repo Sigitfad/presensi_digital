@@ -448,6 +448,18 @@ function showFotoDialog(opts){
   const avatarHTML = hasPhoto
     ? `<img src="${opts.fotoSrc}" style="width:190px;height:190px;border-radius:50%;object-fit:cover;border:4px solid #E2E8F0;display:block;margin:0 auto;">`
     : `<div style="width:190px;height:190px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;margin:0 auto;border:4px solid #E2E8F0;"><i class="bi bi-person-fill" style="font-size:76px;color:#2563EB;"></i></div>`;
+  const btnsHTML = opts.noButtons ? '' : `<div style="display:flex;justify-content:space-around;padding:8px 16px 24px;gap:4px;">
+    <button id="_btnGantiFoto" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:none;cursor:pointer;color:#374151;font-size:12.5px;font-weight:600;padding:12px 8px;border-radius:12px;transition:background 0.2s;" onmouseover="this.style.background='#F1F5F9'" onmouseout="this.style.background='none'">
+      <i class="bi bi-images" style="font-size:26px;color:#374151;"></i>Ganti Foto
+    </button>
+    <button id="_btnHapusFoto" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:none;cursor:pointer;color:#374151;font-size:12.5px;font-weight:600;padding:12px 8px;border-radius:12px;transition:background 0.2s;${!hasPhoto?'opacity:0.35;pointer-events:none;':''}" onmouseover="this.style.background='#F1F5F9'" onmouseout="this.style.background='none'">
+      <i class="bi bi-image" style="font-size:26px;"></i>Hapus Foto
+    </button>
+    <button id="_btnUnduhFoto" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:none;cursor:pointer;color:#374151;font-size:12.5px;font-weight:600;padding:12px 8px;border-radius:12px;transition:background 0.2s;${!hasPhoto?'opacity:0.35;pointer-events:none;':''}" onmouseover="this.style.background='#F1F5F9'" onmouseout="this.style.background='none'">
+      <i class="bi bi-download" style="font-size:26px;"></i>
+      <span style="font-size:11px;text-align:center;">Unduh Foto<br>Saat Ini</span>
+    </button>
+  </div>`;
   const d=document.createElement('div');
   d.innerHTML=`<div class="modal fade" id="_mFoto" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered" style="max-width:380px;">
@@ -458,61 +470,52 @@ function showFotoDialog(opts){
         </div>
         <hr style="margin:0 24px;opacity:0.1;">
         <div class="modal-body" style="padding:24px 24px 16px;">${avatarHTML}</div>
-        <div style="display:flex;justify-content:space-around;padding:8px 16px 24px;gap:4px;">
-          <button id="_btnGantiFoto" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:none;cursor:pointer;color:#374151;font-size:12.5px;font-weight:600;padding:12px 8px;border-radius:12px;transition:background 0.2s;" onmouseover="this.style.background='#F1F5F9'" onmouseout="this.style.background='none'">
-            <i class="bi bi-images" style="font-size:26px;color:#374151;"></i>Ganti Foto
-          </button>
-          <button id="_btnHapusFoto" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:none;cursor:pointer;color:#374151;font-size:12.5px;font-weight:600;padding:12px 8px;border-radius:12px;transition:background 0.2s;${!hasPhoto?'opacity:0.35;pointer-events:none;':''}" onmouseover="this.style.background='#F1F5F9'" onmouseout="this.style.background='none'">
-            <i class="bi bi-image" style="font-size:26px;"></i>Hapus Foto
-          </button>
-          <button id="_btnUnduhFoto" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:none;cursor:pointer;color:#374151;font-size:12.5px;font-weight:600;padding:12px 8px;border-radius:12px;transition:background 0.2s;${!hasPhoto?'opacity:0.35;pointer-events:none;':''}" onmouseover="this.style.background='#F1F5F9'" onmouseout="this.style.background='none'">
-            <i class="bi bi-download" style="font-size:26px;"></i>
-            <span style="font-size:11px;text-align:center;">Unduh Foto<br>Saat Ini</span>
-          </button>
-        </div>
+        ${btnsHTML}
         <input type="file" id="_fotoFileHidden" accept="image/*" style="display:none;">
       </div>
     </div>
   </div>`;
   document.body.appendChild(d);
   const modalEl=document.getElementById('_mFoto');
+  modalEl.style.zIndex='100000';
   const bsModal=new bootstrap.Modal(modalEl,{backdrop:true,keyboard:true});
   modalEl.addEventListener('hidden.bs.modal',()=>{ _fotoDialogOpen=false; },{once:true});
   bsModal.show();
 
-  document.getElementById('_btnGantiFoto').onclick=()=>{
-    const inp=document.getElementById('_fotoFileHidden');
-    inp.value='';
-    inp.onchange=function(){
-      const file=this.files[0]; if(!file) return;
+  if(!opts.noButtons){
+    document.getElementById('_btnGantiFoto').onclick=()=>{
+      const inp=document.getElementById('_fotoFileHidden');
+      inp.value='';
+      inp.onchange=function(){
+        const file=this.files[0]; if(!file) return;
+        bsModal.hide();
+        modalEl.addEventListener('hidden.bs.modal',()=>{
+          showCropper(file,(blob,url)=>{ if(opts.onGanti) opts.onGanti(blob,url); });
+        },{once:true});
+      };
+      inp.click();
+    };
+
+    document.getElementById('_btnHapusFoto').onclick=()=>{
       bsModal.hide();
-      modalEl.addEventListener('hidden.bs.modal',()=>{
-        showCropper(file,(blob,url)=>{ if(opts.onGanti) opts.onGanti(blob,url); });
-      },{once:true});
+      modalEl.addEventListener('hidden.bs.modal',()=>{ if(opts.onHapus) opts.onHapus(); },{once:true});
     };
-    inp.click();
-  };
 
-  document.getElementById('_btnHapusFoto').onclick=()=>{
-    bsModal.hide();
-    modalEl.addEventListener('hidden.bs.modal',()=>{ if(opts.onHapus) opts.onHapus(); },{once:true});
-  };
-
-  document.getElementById('_btnUnduhFoto').onclick=()=>{
-    if(!opts.fotoSrc) return;
-    const W=113,H=151;
-    const cvs=document.createElement('canvas'); cvs.width=W; cvs.height=H;
-    const ctx=cvs.getContext('2d');
-    const img=new Image(); img.crossOrigin='Anonymous';
-    img.onload=()=>{
-      const ir=img.width/img.height,cr=W/H;
-      let sx=0,sy=0,sw=img.width,sh=img.height;
-      if(ir>cr){sw=img.height*cr;sx=(img.width-sw)/2;}
-      else{sh=img.width/cr;sy=(img.height-sh)/2;}
-      ctx.drawImage(img,sx,sy,sw,sh,0,0,W,H);
-      const a=document.createElement('a'); a.download='foto_profil_30x40mm.png'; a.href=cvs.toDataURL('image/png',1.0); a.click();
-      showToast('Foto diunduh (30×40mm)','success');
-    };
+    document.getElementById('_btnUnduhFoto').onclick=()=>{
+      if(!opts.fotoSrc) return;
+      const W=113,H=151;
+      const cvs=document.createElement('canvas'); cvs.width=W; cvs.height=H;
+      const ctx=cvs.getContext('2d');
+      const img=new Image(); img.crossOrigin='Anonymous';
+      img.onload=()=>{
+        const ir=img.width/img.height,cr=W/H;
+        let sx=0,sy=0,sw=img.width,sh=img.height;
+        if(ir>cr){sw=img.height*cr;sx=(img.width-sw)/2;}
+        else{sh=img.width/cr;sy=(img.height-sh)/2;}
+        ctx.drawImage(img,sx,sy,sw,sh,0,0,W,H);
+        const a=document.createElement('a'); a.download='foto_profil_30x40mm.png'; a.href=cvs.toDataURL('image/png',1.0); a.click();
+        showToast('Foto diunduh (30×40mm)','success');
+      };
     img.onerror=()=>{
       fetch(opts.fotoSrc).then(r=>r.blob()).then(blob=>{
         const url=URL.createObjectURL(blob); const img2=new Image();
@@ -528,6 +531,7 @@ function showFotoDialog(opts){
     };
     img.src=opts.fotoSrc;
   };
+  }
 }
 
 function viewFotoDialog(fotoSrc){
@@ -552,6 +556,7 @@ function viewFotoDialog(fotoSrc){
   </div>`;
   document.body.appendChild(d);
   const modalEl=document.getElementById('_mFoto');
+  modalEl.style.zIndex='100000';
   const bsModal=new bootstrap.Modal(modalEl,{backdrop:true,keyboard:true});
   modalEl.addEventListener('hidden.bs.modal',()=>{ _fotoDialogOpen=false; },{once:true});
   bsModal.show();

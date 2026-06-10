@@ -409,8 +409,8 @@ let _usersData=[], _usersPage=1, _usersPerPage=5, _usersFiltered=[];
 function renderUsersRow(d, i) {
   const ini = d.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
   const fotoHtml = d.foto
-    ? `<img src="${d.foto}" class="foto-sm-img" onclick="bukaTabelFotoUser(_usersFiltered[${i}])">`
-    : `<div class="foto-sm-ini" onclick="bukaTabelFotoUser(_usersFiltered[${i}])">${ini}</div>`;
+    ? `<img src="${d.foto}" class="foto-sm-img" onclick="showFotoDialog({fotoSrc:'${d.foto.replace(/'/g,"\\'")}',noButtons:true})">`
+    : `<div class="foto-sm-ini" onclick="showFotoDialog({fotoSrc:'',noButtons:true})">${ini}</div>`;
   const roleBadge = d.role==='guru_bidang'
     ? `<span style="background:#CFFAFE;color:#0891B2;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap;">${d.bidang_keahlian||'Guru Bidang'}</span>`
     : (ROLE_BADGE[d.role] || d.role);
@@ -574,8 +574,8 @@ function viewUser(d){
   _viewUserData=d;
   const ini = d.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
   const fotoHtml = d.foto
-    ? `<img src="${d.foto}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;display:block;margin:0 auto;cursor:pointer;" onclick="bukaTabelFotoUser(_viewUserData)">`
-    : `<div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#2563EB;border:2px solid #E2E8F0;margin:0 auto;cursor:pointer;" onclick="bukaTabelFotoUser(_viewUserData)">${ini}</div>`;
+    ? `<img src="${d.foto}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;display:block;margin:0 auto;cursor:pointer;" onclick="showFotoDialog({fotoSrc:'${(d.foto||'').replace(/'/g,"\\'")}',noButtons:true})">`
+    : `<div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#2563EB;border:2px solid #E2E8F0;margin:0 auto;cursor:pointer;" onclick="showFotoDialog({fotoSrc:'',noButtons:true})">${ini}</div>`;
   const roleLabel = {kepala_sekolah:'Kepala Sekolah',guru:'Guru',operator:'Operator',penjaga_sekolah:'Penjaga Sekolah',guru_bidang:'Guru Bidang'}[d.role]||d.role;
   const r = (label, val) => `<div style="padding:4px 0;border-bottom:1px solid #F1F5F9;"><div style="color:var(--gray);font-size:10.5px;font-weight:500;">${label}</div><div style="font-weight:600;font-size:12.5px;">${val||'-'}</div></div>`;
   const sessionRole = window._session?.role || '';

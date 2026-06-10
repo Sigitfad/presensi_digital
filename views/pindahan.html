@@ -93,7 +93,7 @@
 </div>
 
 <!-- Modal Tambah (pilih dari Data Siswa dengan checkbox) -->
-<div class="modal fade" id="modalTambah" tabindex="-1">
+<div class="modal fade" id="modalTambah" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
     <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
       <div class="modal-header" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
@@ -129,8 +129,8 @@
 </div>
 
 <!-- Modal Edit Surat Pindah -->
-<div class="modal fade" id="modalEdit" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade" id="modalEdit" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
     <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
       <div class="modal-header" style="background:linear-gradient(135deg,#F59E0B,#D97706);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
         <h5 class="modal-title text-white fw-bold">Edit Surat Pindah</h5>
@@ -150,28 +150,28 @@
         <div style="display:flex;gap:16px;">
           <div style="flex:1;">
             <div class="mb-3">
-              <label class="form-label-modern">Sekolah Tujuan</label>
-              <input type="text" id="pe_sekolah_tujuan" class="form-control-modern" placeholder="Nama sekolah">
+              <label class="form-label-modern">Sekolah Tujuan *</label>
+              <input type="text" id="pe_sekolah_tujuan" class="form-control-modern" placeholder="Nama sekolah" required>
             </div>
             <div class="mb-3">
-              <label class="form-label-modern">Tanggal Surat Pindah</label>
-              <input type="date" id="pe_tanggal_surat" class="form-control-modern">
+              <label class="form-label-modern">Tanggal Surat Pindah *</label>
+              <input type="date" id="pe_tanggal_surat" class="form-control-modern" required>
             </div>
           </div>
           <div style="flex:1;">
             <div class="mb-3">
-              <label class="form-label-modern">Nomor Surat Pindah</label>
-              <input type="text" id="pe_nomor_surat" class="form-control-modern" placeholder="Contoh: 421/123/SKP/2026">
+              <label class="form-label-modern">Nomor Surat Pindah *</label>
+              <input type="text" id="pe_nomor_surat" class="form-control-modern" placeholder="Contoh: 421/123/SKP/2026" required>
             </div>
             <div class="mb-3">
-              <label class="form-label-modern" style="display:inline-flex;align-items:center;gap:6px;">Upload Surat Pindah <i class="bi bi-info-circle-fill" style="cursor:pointer;color:#1E293B;font-size:13px;" onclick="var e=document.getElementById('pe_formatMsg');e.textContent='Format: JPG, PNG, atau PDF (maks 10MB)';setTimeout(function(){e.textContent='';},3000)"></i></label>
-              <input type="file" id="pe_surat_pindah" class="form-control-modern" accept=".jpg,.jpeg,.png,.pdf">
+              <label class="form-label-modern" style="display:inline-flex;align-items:center;gap:6px;">Upload Surat Pindah * <i class="bi bi-info-circle-fill" style="cursor:pointer;color:#1E293B;font-size:13px;" onclick="var e=document.getElementById('pe_formatMsg');e.textContent='Format: JPG, PNG, atau PDF (maks 10MB)';setTimeout(function(){e.textContent='';},3000)"></i></label>
+              <input type="file" id="pe_surat_pindah" class="form-control-modern" accept=".jpg,.jpeg,.png,.pdf" required>
               <div id="pe_suratInfo" style="font-size:11px;color:var(--gray);margin-top:4px;"></div>
               <div id="pe_formatMsg" style="font-size:11px;color:var(--gray);margin-top:4px;min-height:16px;"></div>
             </div>
           <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
             <button class="btn" data-bs-dismiss="modal" style="background:#1E293B;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;transition:all 0.2s;" onmouseover="this.style.background='#334155';this.style.boxShadow='0 4px 12px rgba(30,41,59,0.3)';this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#1E293B';this.style.boxShadow='none';this.style.transform='';">Tutup</button>
-            <button class="btn-edit-custom" style="padding:8px 18px;font-size:13px;" onclick="updatePindahan()">Simpan Surat</button>
+            <button class="btn-edit-custom" style="padding:8px 18px;font-size:13px;" onclick="updatePindahan()">Simpan</button>
           </div>
         </div>
       </div>
@@ -396,13 +396,20 @@ function editPindahan(d){
 async function updatePindahan(){
   const alertEl=document.getElementById('alertEdit');
   if(!_editPindahanData){alertEl.innerHTML='<div class="alert-msg error">Data tidak valid</div>';return;}
+  const sekolahTujuan=document.getElementById('pe_sekolah_tujuan').value.trim();
+  const nomorSurat=document.getElementById('pe_nomor_surat').value.trim();
+  const tanggalSurat=document.getElementById('pe_tanggal_surat').value;
+  const fileSurat=document.getElementById('pe_surat_pindah').files[0];
+  if(!sekolahTujuan){alertEl.innerHTML='<div class="alert-msg error">Sekolah Tujuan wajib diisi</div>';document.getElementById('pe_sekolah_tujuan').focus();return;}
+  if(!nomorSurat){alertEl.innerHTML='<div class="alert-msg error">Nomor Surat Pindah wajib diisi</div>';document.getElementById('pe_nomor_surat').focus();return;}
+  if(!tanggalSurat){alertEl.innerHTML='<div class="alert-msg error">Tanggal Surat Pindah wajib diisi</div>';document.getElementById('pe_tanggal_surat').focus();return;}
+  if(!fileSurat&&!_editPindahanData.surat_pindah){alertEl.innerHTML='<div class="alert-msg error">Upload Surat Pindah wajib diisi</div>';return;}
   const fd=new FormData();
   fd.append('id',_editPindahanData.id);
-  fd.append('sekolah_tujuan',document.getElementById('pe_sekolah_tujuan').value.trim());
-  fd.append('nomor_surat',document.getElementById('pe_nomor_surat').value.trim());
-  fd.append('tanggal_surat',document.getElementById('pe_tanggal_surat').value);
-  const file=document.getElementById('pe_surat_pindah').files[0];
-  if(file) fd.append('surat_pindah',file);
+  fd.append('sekolah_tujuan',sekolahTujuan);
+  fd.append('nomor_surat',nomorSurat);
+  fd.append('tanggal_surat',tanggalSurat);
+  if(fileSurat) fd.append('surat_pindah',fileSurat);
   const {isConfirmed:konfirmEdit}=await Swal.fire({title:'Konfirmasi Update Surat',text:'Apakah data surat pindah sudah benar?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Update',cancelButtonText:'Batal',confirmButtonColor:'#F59E0B',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
   if(!konfirmEdit) return;
   const res=await fetchAPI('/api/pindahan/edit','POST',fd);
@@ -542,8 +549,8 @@ function detailPindahan(d){
     '<div style="padding:16px 20px;">'+
     '<div style="display:flex;gap:12px;margin-bottom:14px;align-items:center;">'+
     (d.foto
-      ? '<img src="'+d.foto+'" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;">'
-      : '<div style="width:56px;height:56px;border-radius:50%;background:'+(d.jenis_kelamin==='Perempuan'?'#FCE7F3':'#DBEAFE')+';display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:'+(d.jenis_kelamin==='Perempuan'?'#BE185D':'#1E40AF')+';">'+ini+'</div>')+
+      ? '<img src="'+d.foto+'" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;cursor:pointer;" onclick="showFotoDialog({fotoSrc:\''+(d.foto||'').replace(/'/g,"\\'")+'\',noButtons:true})">'
+      : '<div style="width:56px;height:56px;border-radius:50%;background:'+(d.jenis_kelamin==='Perempuan'?'#FCE7F3':'#DBEAFE')+';display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:'+(d.jenis_kelamin==='Perempuan'?'#BE185D':'#1E40AF')+';cursor:pointer;" onclick="showFotoDialog({fotoSrc:\'\',noButtons:true})">'+ini+'</div>')+
     '<div><div style="font-weight:700;font-size:15px;">'+d.nama+'</div><div style="font-size:12px;color:#64748B;">NISN: '+d.nisn+' &middot; '+d.kelas+'</div></div>'+
     '</div>'+
     '<div style="display:flex;border-bottom:2px solid #E2E8F0;margin-bottom:14px;">'+
