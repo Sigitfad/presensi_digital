@@ -50,8 +50,9 @@ router.post('/tambah', requireOperator, upload.single('foto'), (req,res) => {
   const hash = bcrypt.hashSync(password,10);
   run('INSERT INTO operators (nama,username,password,password_plain,role,no_hp,email,foto,pengampu_kelas,nip,alamat,bidang_keahlian) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
       [nama,username,hash,password,role,no_hp,email,foto,pengampu_kelas,nip,alamat,bidang_keahlian]);
+  const roleDisplay = role==='guru_bidang'&&bidang_keahlian ? bidang_keahlian : role;
   logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,
-              'Tambah User',`User baru: ${nama} (${role}) - Pengampu: ${pengampu_kelas} - NIP: ${nip}`);
+              'Tambah User',`User baru: ${nama} (${roleDisplay}) - Pengampu: ${pengampu_kelas} - NIP: ${nip}`);
   res.json({success:true,message:'Pengguna berhasil ditambahkan'});
 });
 
@@ -85,8 +86,9 @@ router.post('/edit', requireOperator, upload.single('foto'), (req,res) => {
     req.session.operatorBidang = bidang_keahlian || '';
   }
 
+  const roleDisplay2 = role==='guru_bidang'&&bidang_keahlian ? bidang_keahlian : role;
   logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,
-              'Edit User',`Edit: ${nama} (${role}) - Pengampu: ${pengampu_kelas} - NIP: ${nip}`);
+              'Edit User',`Edit: ${nama} (${roleDisplay2}) - Pengampu: ${pengampu_kelas} - NIP: ${nip}`);
   res.json({success:true,message:'Pengguna berhasil diperbarui'});
 });
 
@@ -110,8 +112,9 @@ router.post('/hapus', requireOperator, (req,res) => {
     return res.json({success:false,message:'Tidak dapat menghapus akun Operator!'});
   if(user.foto){ const p=path.join(__dirname,'../public',user.foto); if(fs.existsSync(p)) fs.unlinkSync(p); }
   run('DELETE FROM operators WHERE id=?',[id]);
+  const roleHapus = user.role==='guru_bidang'&&user.bidang_keahlian ? user.bidang_keahlian : user.role;
   logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,
-              'Hapus User',`Hapus: ${user.nama}`);
+              'Hapus User',`Hapus: ${user.nama} (${roleHapus}) - NIP: ${user.nip}`);
   res.json({success:true,message:'Pengguna berhasil dihapus'});
 });
 

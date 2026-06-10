@@ -46,8 +46,10 @@
   #_suratPindahEditPopup.show{opacity:1;}
   #_suratPindahEditPopup > div{transform:translateY(-50px);transition:transform .3s ease-out;}
   #_suratPindahEditPopup.show > div{transform:translateY(0);}
+  .swal-kecil{font-size:12px!important;border-radius:12px!important;}.swal-title-kecil{font-size:14px!important;padding:0!important;margin:0 0 4px!important;}.swal-text-kecil{font-size:12px!important;margin:0!important;}.swal-btn-kecil{font-size:11px!important;padding:5px 14px!important;border-radius:8px!important;}
   </style>
-</head>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
 <body>
 <div id="page-content" class="page-content">
   <div class="page-header d-flex align-items-center justify-content-between flex-wrap gap-2">
@@ -356,6 +358,8 @@ async function simpanPindahan(){
   if(!checked.length){alertEl.innerHTML='<div class="alert-msg error">Pilih siswa yang akan dipindahkan!</div>';return;}
   const tanggal_pindah=document.getElementById('pt_tanggal').value;
   const alasan=document.getElementById('pt_alasan').value.trim();
+  const {isConfirmed:konfirmTambah}=await Swal.fire({title:'Konfirmasi Pindahkan',text:`${checked.length} siswa akan dipindahkan. Lanjutkan?`,icon:'question',showCancelButton:true,confirmButtonText:'Ya, Pindahkan',cancelButtonText:'Batal',confirmButtonColor:'#2563EB',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!konfirmTambah) return;
   const res=await fetchAPI('/api/siswa/pindah-massal','POST',{ids:checked,tanggal_pindah,alasan});
   if(res?.success){closeModal('modalTambah');showToast(res.message,'success');loadPindahan();}
   else alertEl.innerHTML=`<div class="alert-msg error">${res?.message||'Gagal'}</div>`;
@@ -399,6 +403,8 @@ async function updatePindahan(){
   fd.append('tanggal_surat',document.getElementById('pe_tanggal_surat').value);
   const file=document.getElementById('pe_surat_pindah').files[0];
   if(file) fd.append('surat_pindah',file);
+  const {isConfirmed:konfirmEdit}=await Swal.fire({title:'Konfirmasi Update Surat',text:'Apakah data surat pindah sudah benar?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Update',cancelButtonText:'Batal',confirmButtonColor:'#F59E0B',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!konfirmEdit) return;
   const res=await fetchAPI('/api/pindahan/edit','POST',fd);
   if(res?.success){closeModal('modalEdit');showToast('Surat pindah diperbarui!','success');loadPindahan();}
   else alertEl.innerHTML=`<div class="alert-msg error">${res?.message||'Gagal'}</div>`;

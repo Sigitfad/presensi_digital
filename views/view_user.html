@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Detail Pengguna â€” Presensi SDN Karangpawitan 1</title>
+  <title>Detail Pengguna — Presensi SDN Karangpawitan 1</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="/css/style.css">
@@ -16,7 +16,8 @@
     .foto-profil{width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid #E2E8F0;}
     .foto-profil-ini{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-family:var(--font-main);font-size:42px;font-weight:800;color:#2563EB;border:4px solid #E2E8F0;}
   </style>
-</head>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
 <body>
 <div id="page-content" class="page-content">
   <div class="page-header d-flex align-items-center justify-content-between flex-wrap gap-2">
@@ -93,7 +94,7 @@ async function init(){
             <div class="info-label">Password</div>
             <div class="info-value">
               <span style="display:inline-flex;align-items:center;gap:6px;">
-                <span id="pwdDisplay" style="font-family:monospace;">${user.password_plain?'â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢':'-'}</span>
+                <span id="pwdDisplay" style="font-family:monospace;">${user.password_plain?'••••••••':'-'}</span>
                 ${user.password_plain?`<i class="bi bi-eye" id="pwdToggle" style="cursor:pointer;font-size:14px;color:var(--gray);" onclick="togglePassword()"></i>`:''}
               </span>
             </div>
@@ -144,7 +145,7 @@ async function init(){
     const icon=document.getElementById('pwdToggle');
     if(!el||!icon) return;
     if(el.dataset.visible==='true'){
-      el.textContent='â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢';
+      el.textContent='••••••••';
       icon.className='bi bi-eye';
       el.dataset.visible='false';
     } else {

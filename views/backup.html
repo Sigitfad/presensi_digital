@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -15,8 +15,10 @@
     .fmt-json{background:#D1FAE5;color:#065F46;padding:2px 9px;border-radius:8px;font-size:11.5px;font-weight:800;}
     .import-zone{border:2px dashed #CBD5E1;border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:all 0.2s;background:#FAFAFA;}
     .import-zone:hover,.import-zone.dragover{border-color:var(--primary);background:#EFF6FF;}
+    .swal-kecil{font-size:12px!important;border-radius:12px!important;}.swal-title-kecil{font-size:14px!important;padding:0!important;margin:0 0 4px!important;}.swal-text-kecil{font-size:12px!important;margin:0!important;}.swal-btn-kecil{font-size:11px!important;padding:5px 14px!important;border-radius:8px!important;}
   </style>
-</head>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
 <body>
 <div id="page-content" class="page-content">
   <div class="page-header">
@@ -242,6 +244,8 @@ function hapusMassalBackup(){
 }
 
 async function buatBackupDB(){
+  const {isConfirmed:konfirm}=await Swal.fire({title:'Konfirmasi Backup DB',text:'Buat file backup database (.db)?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Backup',cancelButtonText:'Batal',confirmButtonColor:'#2563EB',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!konfirm) return;
   const btn=document.getElementById('btnBackupDB');
   btn.disabled=true;
   btn.innerHTML='<span class="loading-spinner" style="width:14px;height:14px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span>Membuat...';
@@ -253,6 +257,8 @@ async function buatBackupDB(){
 }
 
 async function buatBackupJSON(){
+  const {isConfirmed:konfirm}=await Swal.fire({title:'Konfirmasi Backup JSON',text:'Buat file backup data (.json)?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Backup',cancelButtonText:'Batal',confirmButtonColor:'#10B981',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!konfirm) return;
   const btn=document.getElementById('btnBackupJSON');
   btn.disabled=true;
   btn.innerHTML='<span class="loading-spinner" style="width:14px;height:14px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;border-top-color:#10B981;"></span>Membuat...';
@@ -265,7 +271,7 @@ async function buatBackupJSON(){
   btn.innerHTML='<i class="bi bi-filetype-json"></i> Buat Backup .json Sekarang';
 }
 
-// â”€â”€ Import / Upload file backup â”€â”€
+// ── Import / Upload file backup ──
 function handleDrop(e){
   e.preventDefault();
   document.getElementById('importZone').classList.remove('dragover');
@@ -309,7 +315,7 @@ function restoreBackup(nama){
     'Restore Database?',
     `Restore dari: <br><code style="font-size:11px;background:#F1F5F9;padding:2px 6px;border-radius:4px;">${nama}</code><br><br>
      Semua data saat ini akan <strong>diganti</strong>.<br>
-     Server restart otomatis â€” refresh browser setelah 5 detik.`,
+     Server restart otomatis — refresh browser setelah 5 detik.`,
     async()=>{
       showToast('Sedang me-restore database...','info');
       const res=await fetchAPI('/api/backup/restore','POST',{nama});
@@ -343,7 +349,7 @@ function restoreBackupJSON(nama){
     `Restore dari: <br><code style="font-size:11px;background:#F1F5F9;padding:2px 6px;border-radius:4px;">${nama}</code><br><br>
      Data siswa, presensi, dan settings akan <strong>dipulihkan</strong>.<br>
      Akun operator yang sudah ada tidak akan terduplikasi.<br>
-     Server restart otomatis â€” refresh browser setelah 5 detik.`,
+     Server restart otomatis — refresh browser setelah 5 detik.`,
     async()=>{
       showToast('Sedang me-restore dari JSON...','info');
       const res=await fetchAPI('/api/backup/restore-json','POST',{nama});

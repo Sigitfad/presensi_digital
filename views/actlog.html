@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -10,7 +10,8 @@
   <link rel="stylesheet" href="/css/style.css">
   <style>
   </style>
-</head>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
 <body>
 <div id="page-content" class="page-content">
   <div class="page-header">
@@ -116,6 +117,7 @@ let _logData=[], _logPage=1, _logPerPage=5;
 
 function renderLogRow(d, i) {
   const cfg = AKSI_CONFIG[d.aksi] || {dot:'#2563EB',icon:'bi-activity'};
+  const detailTxt = d.role==='guru_bidang'&&d.bidang_keahlian ? (d.detail||'').replace(/guru_bidang/g, d.bidang_keahlian) : (d.detail||'');
   return `<tr>
     <td style="color:var(--gray)">${i+1}</td>
     <td style="font-size:12px;white-space:nowrap;">${d.created_at}</td>
@@ -128,8 +130,8 @@ function renderLogRow(d, i) {
       </div>
     </td>
     <td>
-      <i class="bi bi-person-fill-exclamation" title="Lihat Detail" onclick="showDetailLog(_logData[${i}].user_nama,_logData[${i}].aksi,_logData[${i}].detail,_logData[${i}].created_at,_logData[${i}].ip||'')" style="color:#2563EB;cursor:pointer;font-size:16px;"></i>
-      <span style="font-size:11.5px;color:var(--gray)">${(d.detail||'').length>50?d.detail.substring(0,50)+'...':d.detail||'-'}</span>
+      <i class="bi bi-person-fill-exclamation" title="Lihat Detail" onclick="showDetailLog(_logData[${i}].user_nama,_logData[${i}].aksi,_logData[${i}].detail,_logData[${i}].created_at,_logData[${i}].ip||'',_logData[${i}].role,_logData[${i}].bidang_keahlian||'')" style="color:#2563EB;cursor:pointer;font-size:16px;"></i>
+      <span style="font-size:11.5px;color:var(--gray)">${detailTxt.length>50?detailTxt.substring(0,50)+'...':detailTxt||'-'}</span>
     </td>
     <td style="font-size:11.5px;color:var(--gray);font-family:monospace;">${d.ip||'-'}</td>
   </tr>`;
@@ -178,9 +180,11 @@ async function init(){
   loadLog();
 }
 
-function showDetailLog(user, aksi, detail, waktu, ip){
+function showDetailLog(user, aksi, detail, waktu, ip, role, bidang){
   const old=document.getElementById('_mDetailLog'); if(old) old.remove();
   const cfg=AKSI_CONFIG[aksi]||{dot:'#2563EB',icon:'bi-activity'};
+  const roleLabel = role==='guru_bidang'&&bidang ? bidang : ({kepala_sekolah:'Kepala Sekolah',guru:'Guru',operator:'Operator',penjaga_sekolah:'Penjaga Sekolah',guru_bidang:'Guru Bidang'}[role]||role||'-');
+  const detailFixed = role==='guru_bidang'&&bidang ? (detail||'').replace(/guru_bidang/g, bidang) : detail;
   const d=document.createElement('div');
   d.innerHTML=`<div class="modal fade" id="_mDetailLog" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -204,12 +208,16 @@ function showDetailLog(user, aksi, detail, waktu, ip){
               <div><div style="font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Pengguna</div><div style="font-weight:600;color:#1E293B;margin-top:2px;">${user}</div></div>
             </div>
             <div style="display:flex;align-items:flex-start;gap:12px;">
+              <i class="bi bi-person-badge" style="color:#64748B;font-size:16px;margin-top:2px;flex-shrink:0;"></i>
+              <div><div style="font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Role</div><div style="font-weight:600;color:#1E293B;margin-top:2px;">${roleLabel}</div></div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;">
               <i class="bi ${cfg.icon}" style="color:${cfg.dot};font-size:16px;margin-top:2px;flex-shrink:0;"></i>
               <div><div style="font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Aktivitas</div><div style="font-weight:600;color:#1E293B;margin-top:2px;">${aksi}</div></div>
             </div>
             <div style="display:flex;align-items:flex-start;gap:12px;">
               <i class="bi bi-text-left" style="color:#64748B;font-size:16px;margin-top:2px;flex-shrink:0;"></i>
-              <div><div style="font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Detail</div><div style="font-weight:500;color:#1E293B;margin-top:2px;line-height:1.6;word-break:break-word;">${detail||'-'}</div></div>
+              <div><div style="font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Detail</div><div style="font-weight:500;color:#1E293B;margin-top:2px;line-height:1.6;word-break:break-word;">${detailFixed||'-'}</div></div>
             </div>
             ${ip ? `<div style="display:flex;align-items:flex-start;gap:12px;">
               <i class="bi bi-globe" style="color:#64748B;font-size:16px;margin-top:2px;flex-shrink:0;"></i>

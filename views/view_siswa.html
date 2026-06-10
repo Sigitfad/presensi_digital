@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Detail Siswa â€” Presensi SDN Karangpawitan 1</title>
+  <title>Detail Siswa — Presensi SDN Karangpawitan 1</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="/css/style.css">
@@ -19,7 +19,8 @@
     .stat-mini-val{font-family:var(--font-main);font-size:22px;font-weight:800;line-height:1;margin-bottom:4px;}
     .stat-mini-lbl{font-size:11.5px;font-weight:600;}
   </style>
-</head>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
 <body>
 <div id="page-content" class="page-content">
   <div class="page-header d-flex align-items-center justify-content-between flex-wrap gap-2">
@@ -60,7 +61,7 @@ async function init(){
   }
   const siswa = res.data;
   document.getElementById('page-nama').textContent = siswa.nama;
-  document.title = `${siswa.nama} â€” Presensi SDN Karangpawitan 1`;
+  document.title = `${siswa.nama} — Presensi SDN Karangpawitan 1`;
 
   const ini = siswa.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
   const pengampuHTML = siswa.pengampu_kelas_list?.length
@@ -211,7 +212,7 @@ async function init(){
           <div class="card-modern-header">
             <div class="card-modern-title">
               <i class="bi bi-calendar-check" style="color:var(--primary)"></i>
-              Rekap Presensi â€” ${BULAN_NAMA[parseInt(bulan)]} ${tahun}
+              Rekap Presensi — ${BULAN_NAMA[parseInt(bulan)]} ${tahun}
             </div>
           </div>
           <div class="card-modern-body">

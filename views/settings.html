@@ -1,14 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Pengaturan â€” SDN Karangpawitan 1</title>
+  <title>Pengaturan — SDN Karangpawitan 1</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="/css/style.css">
-</head>
+  <style>.swal-kecil{font-size:12px!important;border-radius:12px!important;}.swal-title-kecil{font-size:14px!important;padding:0!important;margin:0 0 4px!important;}.swal-text-kecil{font-size:12px!important;margin:0!important;}.swal-btn-kecil{font-size:11px!important;padding:5px 14px!important;border-radius:8px!important;}</style>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
 <body>
 <div id="page-content" class="page-content">
   <div class="page-header"><div class="page-title">Pengaturan</div><div class="page-subtitle">Konfigurasi jam masuk, identitas sekolah, dan sistem</div></div>
@@ -110,6 +111,8 @@ function previewLogo(input) {
 
 async function simpanJam() {
   const body={jam_masuk:document.getElementById('jam_masuk').value, batas_terlambat:document.getElementById('batas_terlambat').value};
+  const {isConfirmed:konfirm}=await Swal.fire({title:'Konfirmasi Simpan',text:'Apakah pengaturan jam sudah benar?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Simpan',cancelButtonText:'Batal',confirmButtonColor:'#2563EB',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!konfirm) return;
   const res=await fetchAPI('/api/settings/simpan','POST',body);
   if(res?.success) showToast('Pengaturan jam berhasil disimpan!','success');
   else showToast(res?.message||'Gagal','error');
@@ -126,6 +129,8 @@ async function simpanIdentitas() {
   const logoFile = document.getElementById('logoInput').files[0];
   if (logoFile) fd.append('logo', logoFile);
 
+  const {isConfirmed:konfirm}=await Swal.fire({title:'Konfirmasi Simpan',text:'Apakah data identitas sekolah sudah benar?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Simpan',cancelButtonText:'Batal',confirmButtonColor:'#2563EB',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!konfirm) return;
   const res=await fetchAPI('/api/identitas/simpan','POST',fd);
   if(res?.success){showToast('Identitas sekolah disimpan!','success'); setTimeout(()=>location.reload(),1500);}
   else showToast(res?.message||'Gagal','error');

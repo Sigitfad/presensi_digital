@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -15,7 +15,7 @@
     .foto-sm-ini{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#2563EB;border:2px solid #E2E8F0;cursor:pointer;flex-shrink:0;}
     .btn-foto-edit{display:block;margin:8px auto 0;background:var(--primary-light);color:var(--primary);border:none;border-radius:8px;padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;}
     .btn-foto-edit:hover{background:var(--primary);color:white;}
-    .btn-grad{width:32px;height:32px;border:none;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;font-size:14px;color:white;}
+    .btn-grad{width:26px;height:26px;border:none;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;font-size:10px;color:white;}
     .btn-grad:hover{transform:translateY(-1px);}
     .btn-grad.view{background:linear-gradient(135deg,#0EA5E9,#0284C7);}
     .btn-grad.view:hover{box-shadow:0 4px 12px rgba(14,165,233,0.35);}
@@ -23,15 +23,25 @@
     .btn-grad.edit:hover{box-shadow:0 4px 12px rgba(245,158,11,0.35);}
     .btn-grad.hapus{background:linear-gradient(135deg,#EF4444,#DC2626);}
     .btn-grad.hapus:hover{box-shadow:0 4px 12px rgba(239,68,68,0.35);}
-    .btn-batal{background:#1E293B;color:white;border:none;font-weight:600;padding:8px 18px;font-size:13px;border-radius:8px;transition:all 0.2s linear;cursor:pointer;display:inline-flex;align-items:center;gap:7px;}
+    .btn-batal{background:#1E293B;color:white;border:none;font-weight:600;padding:6px 14px;font-size:12px;border-radius:8px;transition:all 0.2s linear;cursor:pointer;display:inline-flex;align-items:center;gap:7px;}
     .btn-batal:hover{background:#334155;transform:translateY(-1px);box-shadow:0 4px 10px rgba(30,41,59,0.3);}
     #modalTambah .form-control-modern,
     #modalEdit .form-control-modern{padding:4px 8px;font-size:11px;}
     #modalTambah .form-label-modern,
     #modalEdit .form-label-modern{font-size:11px;margin-bottom:2px;}
 
-  </style>
-</head>
+    .card-modern-header{padding:12px 16px;}
+    .card-modern-title{font-size:13px;}
+    .card-modern .table-modern{font-size:11.5px;}
+    .card-modern .btn-primary-custom,
+    .card-modern .btn-danger-custom{padding:4px 10px;font-size:11px;}
+    .kelas-popup{position:fixed;background:#1E293B;color:#fff;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:600;z-index:99999;max-width:180px;width:fit-content;word-break:break-word;box-shadow:0 4px 16px rgba(0,0,0,0.25);animation:kelasFadeIn 0.15s ease;cursor:default;user-select:text;}
+.kelas-popup-close{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:#EF4444;color:#fff;border:none;font-size:10px;line-height:18px;text-align:center;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;}
+@keyframes kelasFadeIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+.swal-kecil{font-size:12px!important;border-radius:12px!important;}.swal-title-kecil{font-size:14px!important;padding:0!important;margin:0 0 4px!important;}.swal-text-kecil{font-size:12px!important;margin:0!important;}.swal-btn-kecil{font-size:11px!important;padding:5px 14px!important;border-radius:8px!important;}
+</style>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
 <body>
 <div id="page-content" class="page-content">
   <div class="page-header d-flex align-items-center justify-content-between flex-wrap gap-2">
@@ -55,7 +65,7 @@
     <div class="card-modern-header d-flex align-items-center justify-content-between flex-wrap gap-2">
       <div class="card-modern-title"><i class="bi bi-people-fill" style="color:var(--primary)"></i> Daftar Pengguna <span id="totalUsersBadge" style="display:inline-flex;align-items:center;justify-content:center;background:#2563EB;color:white;border-radius:50%;width:22px;height:22px;font-size:11px;font-weight:700;line-height:1;"></span></div>
       <div style="position:relative;">
-        <input type="text" id="searchUsers" class="form-control-modern" placeholder="Cari Nama, Username, Role..." style="width:240px;padding-right:30px;padding:5px 30px 5px 10px;font-size:12px;" oninput="clearTimeout(window._dU);window._dU=setTimeout(()=>loadUsers(),300);document.getElementById('clearSearchUsers').style.display=this.value?'block':'none'">
+        <input type="text" id="searchUsers" class="form-control-modern" placeholder="Cari Nama, Username, Role, Bidang..." style="width:240px;padding-right:30px;padding:5px 30px 5px 10px;font-size:12px;" oninput="clearTimeout(window._dU);window._dU=setTimeout(()=>loadUsers(),300);document.getElementById('clearSearchUsers').style.display=this.value?'block':'none'">
         <button id="clearSearchUsers" type="button" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94A3B8;cursor:pointer;display:none;font-size:16px;padding:2px 4px;line-height:1;" onclick="document.getElementById('searchUsers').value='';loadUsers();this.style.display='none'">&times;</button>
       </div>
     </div>
@@ -87,7 +97,7 @@
 <!-- OPTIONS: Daftar kelas (loaded dynamically from database) -->
 
 <!-- Modal Tambah -->
-<div class="modal fade" id="modalTambah" tabindex="-1">
+<div class="modal fade" id="modalTambah" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-dialog-centered" style="max-width:500px;">
     <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
       <div class="modal-header" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
@@ -103,11 +113,12 @@
           </button>
         </div>
         <div class="row g-2">
-          <div class="col-md-6"><label class="form-label-modern">Nama Lengkap *</label><input type="text" id="u_nama" class="form-control-modern" placeholder="Nama pengguna"></div>
-          <div class="col-md-6"><label class="form-label-modern">Username *</label><input type="text" id="u_username" class="form-control-modern" placeholder="Username login"></div>
+          <div class="col-md-6"><label class="form-label-modern">Nama Lengkap *</label><input type="text" id="u_nama" class="form-control-modern" placeholder="Nama pengguna" required></div>
+          <div class="col-md-6"><label class="form-label-modern">Username *</label><input type="text" id="u_username" class="form-control-modern" placeholder="Username login" required></div>
           <div class="col-md-6">
             <label class="form-label-modern">Role *</label>
-            <select id="u_role" class="form-control-modern" onchange="toggleKelasSelect('u_pengampu','u_role')">
+            <select id="u_role" class="form-control-modern" onchange="toggleKelasSelect('u_pengampu','u_role')" required>
+              <option value="">Pilih Role</option>
               <option value="operator">Operator</option>
               <option value="guru">Guru</option>
               <option value="guru_bidang">Guru Bidang</option>
@@ -115,24 +126,29 @@
               <option value="penjaga_sekolah">Penjaga Sekolah</option>
             </select>
           </div>
-          <div class="col-md-6">
-            <label class="form-label-modern">Pengampu Kelas</label>
-            <select id="u_pengampu" class="form-control-modern" disabled style="opacity:0.5;">
-              <!-- diisi dari template -->
-            </select>
-            <div id="u_pengampu_checkboxes" style="display:none;max-height:150px;overflow-y:auto;border:1px solid #E2E8F0;border-radius:8px;padding:8px 10px;"></div>
-          </div>
-          <div class="col-md-6"><label class="form-label-modern">Password *</label><input type="password" id="u_password" class="form-control-modern" placeholder="Min. 6 karakter"></div>
-          <div class="col-md-6"><label class="form-label-modern">No HP</label><input type="text" id="u_nohp" class="form-control-modern" placeholder="08xx"></div>
-          <div class="col-md-6"><label class="form-label-modern">NIP</label><input type="text" id="u_nip" class="form-control-modern" placeholder="Nomor Induk Pegawai"></div>
-          <div class="col-md-6"><label class="form-label-modern">Email</label><input type="email" id="u_email" class="form-control-modern" placeholder="email@sekolah.com"></div>
-          <div class="col-md-6"><label class="form-label-modern">Bidang Keahlian</label>
+          <div class="col-md-6"><label class="form-label-modern">Bidang Keahlian *</label>
             <select id="u_bidang" class="form-control-modern" style="display:none;">
               <option value="">Pilih Bidang</option>
               <option>Guru Bahasa Inggris</option><option>Guru Agama</option><option>Guru Olahraga</option><option>Guru Seni</option>
             </select>
           </div>
-          <div class="col-md-6"><label class="form-label-modern">Alamat</label><input type="text" id="u_alamat" class="form-control-modern" placeholder="Alamat lengkap"></div>
+          <div class="col-12">
+            <label class="form-label-modern">Pengampu Kelas *</label>
+            <select id="u_pengampu" class="form-control-modern" disabled style="opacity:0.5;">
+              <!-- diisi dari template -->
+            </select>
+            <div id="u_pengampu_checkboxes" style="display:none;max-height:150px;overflow-y:auto;border:1px solid #E2E8F0;border-radius:8px;padding:6px 8px;grid-template-columns:repeat(4,1fr);gap:4px;"></div>
+          </div>
+          <div class="col-md-6"><label class="form-label-modern">Password *</label>
+            <div style="position:relative;">
+              <input type="password" id="u_password" class="form-control-modern" placeholder="Min. 6 karakter" style="padding-right:36px;" required>
+              <i class="bi bi-eye" id="u_pwdToggle" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;color:#64748B;" onclick="togglePassword()"></i>
+            </div>
+          </div>
+          <div class="col-md-6"><label class="form-label-modern">No HP *</label><input type="number" id="u_nohp" class="form-control-modern" placeholder="08xx" required></div>
+          <div class="col-md-6"><label class="form-label-modern">NIP *</label><input type="number" id="u_nip" class="form-control-modern" placeholder="Nomor Induk Pegawai" required></div>
+          <div class="col-md-6"><label class="form-label-modern">Email *</label><input type="email" id="u_email" class="form-control-modern" placeholder="email@sekolah.com" required></div>
+          <div class="col-md-6"><label class="form-label-modern">Alamat *</label><input type="text" id="u_alamat" class="form-control-modern" placeholder="Alamat lengkap" required></div>
         </div>
       </div>
       <div class="modal-footer">
@@ -144,7 +160,7 @@
 </div>
 
 <!-- Modal Edit -->
-<div class="modal fade" id="modalEdit" tabindex="-1">
+<div class="modal fade" id="modalEdit" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-dialog-centered" style="max-width:500px;">
     <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
       <div class="modal-header" style="background:linear-gradient(135deg,#F59E0B,#D97706);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
@@ -158,11 +174,12 @@
           <div id="edit-foto-preview" onclick="bukaFotoEditUser()" style="cursor:pointer;"></div>
         </div>
         <div class="row g-2">
-          <div class="col-md-6"><label class="form-label-modern">Nama Lengkap *</label><input type="text" id="eu_nama" class="form-control-modern"></div>
-          <div class="col-md-6"><label class="form-label-modern">Username *</label><input type="text" id="eu_username" class="form-control-modern"></div>
+          <div class="col-md-6"><label class="form-label-modern">Nama Lengkap *</label><input type="text" id="eu_nama" class="form-control-modern" required></div>
+          <div class="col-md-6"><label class="form-label-modern">Username *</label><input type="text" id="eu_username" class="form-control-modern" required></div>
           <div class="col-md-6">
             <label class="form-label-modern">Role *</label>
-            <select id="eu_role" class="form-control-modern" onchange="toggleKelasSelect('eu_pengampu','eu_role')">
+            <select id="eu_role" class="form-control-modern" onchange="toggleKelasSelect('eu_pengampu','eu_role')" required>
+              <option value="">Pilih Role</option>
               <option value="operator">Operator</option>
               <option value="guru">Guru</option>
               <option value="guru_bidang">Guru Bidang</option>
@@ -170,30 +187,30 @@
               <option value="penjaga_sekolah">Penjaga Sekolah</option>
             </select>
           </div>
-          <div class="col-md-6">
-            <label class="form-label-modern">Pengampu Kelas</label>
-            <select id="eu_pengampu" class="form-control-modern" disabled style="opacity:0.5;">
-              <!-- diisi dari template -->
-            </select>
-            <div id="eu_pengampu_checkboxes" style="display:none;max-height:150px;overflow-y:auto;border:1px solid #E2E8F0;border-radius:8px;padding:8px 10px;"></div>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label-modern">Password Baru</label>
-            <div style="position:relative;">
-              <input type="password" id="eu_password" class="form-control-modern" placeholder="Kosongkan jika tidak diubah" style="padding-right:36px;">
-              <i class="bi bi-eye" id="eu_pwdToggle" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;color:#64748B;" onclick="toggleEuPassword()"></i>
-            </div>
-          </div>
-          <div class="col-md-6"><label class="form-label-modern">Bidang Keahlian</label>
+          <div class="col-md-6"><label class="form-label-modern">Bidang Keahlian *</label>
             <select id="eu_bidang" class="form-control-modern" style="display:none;">
               <option value="">Pilih Bidang</option>
               <option>Guru Bahasa Inggris</option><option>Guru Agama</option><option>Guru Olahraga</option><option>Guru Seni</option>
             </select>
           </div>
-          <div class="col-md-6"><label class="form-label-modern">No HP</label><input type="text" id="eu_nohp" class="form-control-modern"></div>
-          <div class="col-md-6"><label class="form-label-modern">NIP</label><input type="text" id="eu_nip" class="form-control-modern"></div>
-          <div class="col-md-6"><label class="form-label-modern">Email</label><input type="email" id="eu_email" class="form-control-modern"></div>
-          <div class="col-12"><label class="form-label-modern">Alamat</label><input type="text" id="eu_alamat" class="form-control-modern"></div>
+          <div class="col-12">
+            <label class="form-label-modern">Pengampu Kelas *</label>
+            <select id="eu_pengampu" class="form-control-modern" disabled style="opacity:0.5;">
+              <!-- diisi dari template -->
+            </select>
+            <div id="eu_pengampu_checkboxes" style="display:none;max-height:150px;overflow-y:auto;border:1px solid #E2E8F0;border-radius:8px;padding:6px 8px;grid-template-columns:repeat(4,1fr);gap:4px;"></div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-modern">Password Baru *</label>
+            <div style="position:relative;">
+              <input type="password" id="eu_password" class="form-control-modern" placeholder="Kosongkan jika tidak diubah" style="padding-right:36px;">
+              <i class="bi bi-eye" id="eu_pwdToggle" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;color:#64748B;" onclick="toggleEuPassword()"></i>
+            </div>
+          </div>
+          <div class="col-md-6"><label class="form-label-modern">No HP *</label><input type="number" id="eu_nohp" class="form-control-modern" required></div>
+          <div class="col-md-6"><label class="form-label-modern">NIP *</label><input type="number" id="eu_nip" class="form-control-modern" required></div>
+          <div class="col-md-6"><label class="form-label-modern">Email *</label><input type="email" id="eu_email" class="form-control-modern" required></div>
+          <div class="col-12"><label class="form-label-modern">Alamat *</label><input type="text" id="eu_alamat" class="form-control-modern" required></div>
         </div>
       </div>
       <div class="modal-footer">
@@ -235,7 +252,7 @@ async function isiKelasOptions(selectId){
 function toggleKelasSelect(kelasId, roleId){
   const role=document.getElementById(roleId).value;
   const sel =document.getElementById(kelasId);
-  const wrap=sel.closest('.col-md-6');
+  const wrap=sel.closest('.col-md-6, .col-12');
   const checkboxId = kelasId === 'u_pengampu' ? 'u_pengampu_checkboxes' : 'eu_pengampu_checkboxes';
   const cbContainer = document.getElementById(checkboxId);
   const bidangId = kelasId === 'u_pengampu' ? 'u_bidang' : 'eu_bidang';
@@ -244,17 +261,20 @@ function toggleKelasSelect(kelasId, roleId){
 
   // Sembunyikan checkboxes dulu
   if(cbContainer) cbContainer.style.display='none';
-  
+  sel.style.display='';
+
   const isTambah = kelasId === 'u_pengampu';
   const usernameId = isTambah ? 'u_username' : 'eu_username';
   const passwordId = isTambah ? 'u_password' : 'eu_password';
   const usernameWrap = document.getElementById(usernameId)?.closest('.col-md-6');
   const passwordWrap = document.getElementById(passwordId)?.closest('.col-md-6');
+  const roleWrap = document.getElementById(roleId)?.closest('.col-md-6');
+  const alamatId = isTambah ? 'u_alamat' : 'eu_alamat';
+  const alamatWrap = document.getElementById(alamatId)?.closest('.col-md-6, .col-12');
 
   // Remove toggle button if exists (when switching away from guru_bidang)
   const existingToggle = document.getElementById(kelasId+'_toggle');
   if(existingToggle) existingToggle.remove();
-  sel.style.display='';
 
   if(role==='operator' || role==='penjaga_sekolah'){
     sel.disabled=true; sel.style.opacity='0.5'; sel.value='Semua';
@@ -268,6 +288,9 @@ function toggleKelasSelect(kelasId, roleId){
       if(usernameWrap) usernameWrap.style.display='';
       if(passwordWrap) passwordWrap.style.display='';
     }
+    // Reset pengampu layout
+    if(wrap && wrap.classList.contains('col-md-6')) wrap.classList.replace('col-md-6','col-12');
+    if(wrap && alamatWrap && alamatWrap.classList.contains('col-12') && isTambah) alamatWrap.classList.replace('col-12','col-md-6');
   } else if(role==='guru_bidang'){
     if(wrap) wrap.style.display='';
     sel.style.display='none'; // hide the select entirely
@@ -277,8 +300,8 @@ function toggleKelasSelect(kelasId, roleId){
       [...sel.options].forEach(opt=>{
         if(opt.value==='Semua') return;
         const cbId=checkboxId+'_'+opt.value.replace(/\s+/g,'_');
-        cbContainer.innerHTML+=`<label style="display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:6px;cursor:pointer;font-size:13px;user-select:none;">
-          <input type="checkbox" value="${opt.value}" id="${cbId}" style="accent-color:var(--primary);width:16px;height:16px;cursor:pointer;">
+        cbContainer.innerHTML+=`<label style="display:inline-flex;align-items:center;gap:4px;padding:3px 4px;border-radius:6px;cursor:pointer;font-size:12px;user-select:none;white-space:nowrap;">
+          <input type="checkbox" value="${opt.value}" id="${cbId}" style="accent-color:var(--primary);width:14px;height:14px;cursor:pointer;">
           ${opt.value}
         </label>`;
       });
@@ -291,12 +314,12 @@ function toggleKelasSelect(kelasId, roleId){
       toggleBtn = document.createElement('button');
       toggleBtn.id = toggleId;
       toggleBtn.type='button';
-      toggleBtn.style.cssText = 'display:block;background:white;border:1.5px solid #E2E8F0;border-radius:8px;padding:6px 10px;font-size:12px;color:#475569;cursor:pointer;width:100%;text-align:left;';
+      toggleBtn.style.cssText = 'display:block;background:white;border:1.5px solid #E2E8F0;border-radius:8px;padding:4px 8px;font-size:11px;color:#475569;cursor:pointer;width:100%;text-align:left;';
       toggleBtn.innerHTML = '<i class="bi bi-plus-circle me-1"></i> Pilih Kelas';
       toggleBtn.onclick = function(){
         const cb = document.getElementById(checkboxId);
-        if(cb.style.display==='none'){
-          cb.style.display='';
+        if(cb.style.display==='none'||cb.style.display===''){
+          cb.style.display='grid';
           toggleBtn.innerHTML = '<i class="bi bi-dash-circle me-1"></i> Tutup Kelas';
         } else {
           cb.style.display='none';
@@ -310,6 +333,12 @@ function toggleKelasSelect(kelasId, roleId){
     }
     if(bidangSel){ bidangSel.style.display=''; bidangSel.disabled=false; }
     if(bidangWrap) bidangWrap.style.display='';
+    // Guru Bidang: Bidang di sebelah Role, Pengampu col-12 di bawah
+    if(wrap && wrap.classList.contains('col-md-6')) wrap.classList.replace('col-md-6','col-12');
+    if(wrap && bidangWrap && roleWrap && bidangWrap.parentNode===roleWrap.parentNode){
+      if(bidangWrap.nextElementSibling!==wrap) bidangWrap.after(wrap);
+    }
+    if(alamatWrap && alamatWrap.classList.contains('col-12') && isTambah) alamatWrap.classList.replace('col-12','col-md-6');
     if(usernameWrap) usernameWrap.style.display='';
     if(passwordWrap) passwordWrap.style.display='';
   } else {
@@ -319,6 +348,12 @@ function toggleKelasSelect(kelasId, roleId){
     if(wrap) wrap.style.display='';
     if(bidangSel){ bidangSel.style.display='none'; bidangSel.value=''; }
     if(bidangWrap) bidangWrap.style.display='none';
+    // Guru/Kepsek: Pengampu di sebelah Role (col-md-6), Alamat full width
+    if(wrap && wrap.classList.contains('col-12')) wrap.classList.replace('col-12','col-md-6');
+    if(wrap && roleWrap && roleWrap.parentNode===wrap.parentNode){
+      if(roleWrap.nextElementSibling!==wrap) roleWrap.after(wrap);
+    }
+    if(alamatWrap && !alamatWrap.classList.contains('col-12')) alamatWrap.classList.replace('col-md-6','col-12');
     if(usernameWrap) usernameWrap.style.display='';
     if(passwordWrap) passwordWrap.style.display='';
   }
@@ -383,10 +418,14 @@ function renderUsersRow(d, i) {
     <td>${d.role!=='operator'?`<input type="checkbox" class="user-check" value="${d.id}" onchange="updateBulkUser()" style="cursor:pointer;accent-color:var(--primary);">`:''}</td>
     <td style="color:var(--gray)">${i+1}</td>
     <td>${fotoHtml}</td>
-    <td style="font-weight:700;color:var(--dark)">${d.nama}</td>
+    <td style="font-weight:700;color:var(--dark);font-size:12.5px;">${d.nama}</td>
     <td style="font-weight:600">${d.username}</td>
     <td>${roleBadge}</td>
-    <td style="font-size:12px;color:var(--gray)">${d.pengampu_kelas||'-'}</td>
+    <td style="font-size:12px;color:var(--gray);text-align:center;">
+      ${d.pengampu_kelas && d.pengampu_kelas!=='Semua'
+        ? `<i class="bi bi-info-circle-fill" style="cursor:pointer;font-size:15px;color:#0EA5E9;transition:all 0.15s;" onmouseover="this.style.color='#0369A1';this.style.transform='scale(1.2)';" onmouseout="this.style.color='#0EA5E9';this.style.transform='scale(1)';" onclick="showKelasPopup(event,this,'${d.pengampu_kelas.replace(/'/g,"\\'")}')"></i>`
+        : '<span style="color:#94A3B8;">-</span>'}
+    </td>
     <td style="font-size:12px;color:var(--gray)">${d.nip||'-'}</td>
     <td style="font-size:12px;color:var(--gray)">${d.email||'-'}</td>
     <td style="font-size:12px;color:var(--gray)">${d.no_hp||'-'}</td>
@@ -412,7 +451,8 @@ function renderUsersPage(){
       (u.pengampu_kelas||'').toLowerCase().includes(search) ||
       (u.nip||'').toLowerCase().includes(search) ||
       (u.email||'').toLowerCase().includes(search) ||
-      (u.no_hp||'').toLowerCase().includes(search)
+      (u.no_hp||'').toLowerCase().includes(search) ||
+      (u.bidang_keahlian||'').toLowerCase().includes(search)
     );
   }
   const tbody=document.getElementById('tblUsers');
@@ -483,6 +523,20 @@ async function bukaTambah(){
 
 async function simpanUser(){
   const alertEl=document.getElementById('alertTambah');
+  const required = [
+    {id:'u_nama', l:'Nama Lengkap'}, {id:'u_username', l:'Username'},
+    {id:'u_role', l:'Role'}, {id:'u_password', l:'Password'},
+    {id:'u_nohp', l:'No HP'}, {id:'u_nip', l:'NIP'},
+    {id:'u_email', l:'Email'}, {id:'u_alamat', l:'Alamat'}
+  ];
+  for(const f of required){
+    const el=document.getElementById(f.id);
+    if(!el.value||!el.value.trim()){alertEl.innerHTML=`<div class="alert-msg error">${f.l} wajib diisi</div>`;el.focus();return;}
+  }
+  if(document.getElementById('u_role').value==='guru_bidang'){
+    const b=document.getElementById('u_bidang');
+    if(!b.value){alertEl.innerHTML=`<div class="alert-msg error">Bidang Keahlian wajib diisi</div>`;b.focus();return;}
+  }
   const fd=new FormData();
   fd.append('nama',document.getElementById('u_nama').value.trim());
   fd.append('username',document.getElementById('u_username').value.trim());
@@ -507,6 +561,8 @@ async function simpanUser(){
   fd.append('alamat',document.getElementById('u_alamat').value.trim());
   fd.append('bidang_keahlian',document.getElementById('u_bidang').value);
   if(tambahUserBlob) fd.append('foto',tambahUserBlob,'foto.png');
+  const {isConfirmed:konfirmTambah}=await Swal.fire({title:'Konfirmasi Simpan',text:'Apakah data yang diisi sudah benar?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Simpan',cancelButtonText:'Batal',confirmButtonColor:'#2563EB',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!konfirmTambah) return;
   const res=await fetchAPI('/api/users/tambah','POST',fd);
   if(res?.success){closeModal('modalTambah');showToast('Pengguna ditambahkan!','success');tambahUserBlob=null;loadUsers();alertEl.innerHTML='';}
   else alertEl.innerHTML=`<div class="alert-msg error">${res?.message||'Gagal'}</div>`;
@@ -530,8 +586,9 @@ function viewUser(d){
     <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:12px;">${fotoHtml}</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
       <div>${r('Nama Lengkap',d.nama)}${r('Username',d.username)}${pwdHtml}${r('NIP',d.nip)}</div>
-      <div>${r('No. HP',d.no_hp)}${r('Email',d.email)}${r('Pengampu Kelas',d.pengampu_kelas||'-')}${r('Role',roleLabel)}${d.role==='guru_bidang'?r('Bidang Keahlian',d.bidang_keahlian||'-'):''}</div>
+      <div>${r('No. HP',d.no_hp)}${r('Email',d.email)}${r('Role',roleLabel)}${d.role==='guru_bidang'?r('Bidang Keahlian',d.bidang_keahlian||'-'):''}</div>
     </div>
+    ${r('Pengampu Kelas',d.pengampu_kelas||'-')}
     ${r('Alamat',d.alamat)}`;
   openModal('modalViewUser');
 }
@@ -587,6 +644,20 @@ async function bukaEdit(u){
 
 async function updateUser(){
   const alertEl=document.getElementById('alertEdit');
+  const required = [
+    {id:'eu_nama', l:'Nama Lengkap'}, {id:'eu_username', l:'Username'},
+    {id:'eu_role', l:'Role'}, {id:'eu_nohp', l:'No HP'},
+    {id:'eu_nip', l:'NIP'}, {id:'eu_email', l:'Email'},
+    {id:'eu_alamat', l:'Alamat'}
+  ];
+  for(const f of required){
+    const el=document.getElementById(f.id);
+    if(!el.value||!el.value.trim()){alertEl.innerHTML=`<div class="alert-msg error">${f.l} wajib diisi</div>`;el.focus();return;}
+  }
+  if(document.getElementById('eu_role').value==='guru_bidang'){
+    const b=document.getElementById('eu_bidang');
+    if(!b.value){alertEl.innerHTML=`<div class="alert-msg error">Bidang Keahlian wajib diisi</div>`;b.focus();return;}
+  }
   const fd=new FormData();
   fd.append('id',document.getElementById('eu_id').value);
   fd.append('nama',document.getElementById('eu_nama').value.trim());
@@ -612,11 +683,19 @@ async function updateUser(){
   fd.append('bidang_keahlian',document.getElementById('eu_bidang').value);
   fd.append('password',document.getElementById('eu_password').value);
   if(editUserBlob) fd.append('foto',editUserBlob,'foto.png');
+  const {isConfirmed:konfirmEdit}=await Swal.fire({title:'Konfirmasi Update',text:'Apakah perubahan data sudah benar?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Update',cancelButtonText:'Batal',confirmButtonColor:'#F59E0B',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!konfirmEdit) return;
   const res=await fetchAPI('/api/users/edit','POST',fd);
   if(res?.success){closeModal('modalEdit');showToast('Pengguna diperbarui!','success');editUserBlob=null;loadUsers();}
   else alertEl.innerHTML=`<div class="alert-msg error">${res?.message||'Gagal'}</div>`;
 }
 
+function togglePassword(){
+  const el=document.getElementById('u_password');
+  const icon=document.getElementById('u_pwdToggle');
+  if(el.type==='password'){el.type='text';icon.className='bi bi-eye-slash';}
+  else{el.type='password';icon.className='bi bi-eye';}
+}
 function toggleEuPassword(){
   const el=document.getElementById('eu_password');
   const icon=document.getElementById('eu_pwdToggle');
@@ -671,6 +750,30 @@ function hapusMassalUser(){
   });
 }
 
+function showKelasPopup(e,icon,kelas){
+  const existing=document.querySelector('.kelas-popup');
+  if(existing){
+    if(existing._icon===icon){existing.remove();return;}
+    existing.remove();
+  }
+  const popup=document.createElement('div');
+  popup.className='kelas-popup';
+  popup._icon=icon;
+  popup.textContent=kelas;
+  const close=document.createElement('button');
+  close.className='kelas-popup-close';
+  close.innerHTML='<i class="bi bi-x" style="font-size:10px;line-height:1;"></i>';
+  close.onclick=function(ev){ev.stopPropagation();popup.remove();};
+  popup.appendChild(close);
+  document.body.appendChild(popup);
+  const r=popup.getBoundingClientRect();
+  let x=e.clientX, y=e.clientY-36;
+  if(x+r.width>document.documentElement.clientWidth-5) x=document.documentElement.clientWidth-r.width-5;
+  if(y<5) y=e.clientY+10;
+  popup.style.left=x+'px'; popup.style.top=y+'px';
+  const outsideClick=function(ev){if(!popup.contains(ev.target)){popup.remove();document.removeEventListener('click',outsideClick,true);}};
+  document.addEventListener('click',outsideClick,true);
+}
 async function init(){await loadLayout('users','Data Guru dan Tenaga Kependidikan (GTK)');loadUsers();}
 init();
 </script>

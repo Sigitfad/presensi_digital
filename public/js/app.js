@@ -206,16 +206,16 @@ async function fetchAPI(url, method='GET', data=null){
 
 // ── TOAST ──
 function showToast(msg, type='success'){
-  let c=document.getElementById('_tc');
-  if(!c){ c=document.createElement('div'); c.id='_tc'; c.style.cssText='position:fixed;top:20px;right:20px;z-index:99999;display:flex;flex-direction:column;gap:10px;max-width:320px;'; document.body.appendChild(c); }
-  const cl={success:{bg:'#D1FAE5',br:'#34D399',col:'#065F46',ic:'bi-check-circle-fill'},error:{bg:'#FEE2E2',br:'#F87171',col:'#7F1D1D',ic:'bi-x-circle-fill'},warning:{bg:'#FEF3C7',br:'#FCD34D',col:'#92400E',ic:'bi-exclamation-circle-fill'},info:{bg:'#DBEAFE',br:'#93C5FD',col:'#1E40AF',ic:'bi-info-circle-fill'}}[type]||{bg:'#DBEAFE',br:'#93C5FD',col:'#1E40AF',ic:'bi-info-circle-fill'};
-  const t=document.createElement('div');
-  t.style.cssText=`background:${cl.bg};border:1.5px solid ${cl.br};color:${cl.col};padding:12px 16px;border-radius:10px;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:10px;box-shadow:0 4px 15px rgba(0,0,0,0.1);font-family:'Nunito',sans-serif;`;
-  t.innerHTML=`<i class="bi ${cl.ic}" style="font-size:16px;flex-shrink:0"></i><span>${msg}</span>`;
-  t.style.animation='_ti 0.3s ease';
-  if(!document.getElementById('_ts')){ const s=document.createElement('style'); s.id='_ts'; s.textContent='@keyframes _ti{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}'; document.head.appendChild(s); }
-  c.appendChild(t);
-  setTimeout(()=>{ t.style.transition='opacity 0.3s'; t.style.opacity='0'; setTimeout(()=>t.remove(),300); }, 3500);
+  if(!document.getElementById('_swalAnim')){
+    const s=document.createElement('style'); s.id='_swalAnim';
+    s.textContent='.sa-in{animation:_saIn .25s ease forwards}.sa-out{animation:_saOut .25s ease forwards}@keyframes _saIn{from{opacity:0;transform:translateY(-16px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}@keyframes _saOut{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(-16px) scale(.95)}}';
+    document.head.appendChild(s);
+  }
+  Swal.fire({
+    toast:true, position:'center', showConfirmButton:false, timer:3500, timerProgressBar:false,
+    icon:type, title:msg, padding:'12px 16px',
+    hideClass:{popup:'sa-out'}
+  });
 }
 
 // ── MODAL ──

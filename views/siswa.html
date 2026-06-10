@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -41,8 +41,10 @@
     #modalEdit .form-label-modern{font-size:10px;margin-bottom:2px;}
     #modalTambah .form-control-modern,
     #modalEdit .form-control-modern{padding:5px 8px;font-size:11px;}
+    .swal-kecil{font-size:12px!important;border-radius:12px!important;}.swal-title-kecil{font-size:14px!important;padding:0!important;margin:0 0 4px!important;}.swal-text-kecil{font-size:12px!important;margin:0!important;}.swal-btn-kecil{font-size:11px!important;padding:5px 14px!important;border-radius:8px!important;}
   </style>
-</head>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
 <body>
 <div id="page-content" class="page-content">
   <div class="page-header d-flex align-items-center justify-content-between flex-wrap gap-2">
@@ -243,7 +245,7 @@ let currentQRNISN='', currentQRNama='';
 let tambahFotoBlob=null, tambahFotoUrl='';
 let editFotoBlob=null,   editFotoUrl='',  editFotoSrcLama='', editSiswaId=null;
 
-// â”€â”€ Buka foto di tabel (klik foto kecil) â”€â”€
+// ── Buka foto di tabel (klik foto kecil) ──
 function bukaTabelFoto(s){
   showFotoDialog({
     fotoSrc: s.foto||'',
@@ -267,9 +269,9 @@ function bukaTabelFoto(s){
   });
 }
 
-// â”€â”€ Tambah foto di modal Tambah Siswa â”€â”€
+// ── Tambah foto di modal Tambah Siswa ──
 function bukaFotoTambah(){
-  // Buka file picker langsung â†’ cropper (tanpa dialog foto profil)
+  // Buka file picker langsung → cropper (tanpa dialog foto profil)
   const inp=document.createElement('input');
   inp.type='file'; inp.accept='image/*';
   inp.onchange=function(){
@@ -284,7 +286,7 @@ function bukaFotoTambah(){
   inp.click();
 }
 
-// â”€â”€ Edit foto di modal Edit Siswa â”€â”€
+// ── Edit foto di modal Edit Siswa ──
 function bukaFotoEdit(){
   showFotoDialog({
     fotoSrc: editFotoSrcLama,
@@ -402,6 +404,8 @@ async function simpanSiswa(){
   fd.append('alamat',document.getElementById('alamat_baru').value.trim());
   fd.append('no_hp_ortu',document.getElementById('nohp_ortu_baru').value.trim());
   if(tambahFotoBlob) fd.append('foto',tambahFotoBlob,'foto.png');
+  const {isConfirmed:konfirmTambah}=await Swal.fire({title:'Konfirmasi Simpan',text:'Apakah data yang diisi sudah benar?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Simpan',cancelButtonText:'Batal',confirmButtonColor:'#2563EB',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!konfirmTambah) return;
   const res=await fetchAPI('/api/siswa/tambah','POST',fd);
   if(res?.success){closeModal('modalTambah');showToast('Siswa ditambahkan!','success');tambahFotoBlob=null;loadSiswa();alertEl.innerHTML='';}
   else alertEl.innerHTML=`<div class="alert-msg error">${res?.message||'Gagal'}</div>`;
@@ -444,6 +448,8 @@ async function updateSiswa(){
   fd.append('no_hp_ortu',document.getElementById('edit_nohp_ortu').value.trim());
 
   if(editFotoBlob) fd.append('foto',editFotoBlob,'foto.png');
+  const {isConfirmed:konfirmEdit}=await Swal.fire({title:'Konfirmasi Update',text:'Apakah perubahan data sudah benar?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Update',cancelButtonText:'Batal',confirmButtonColor:'#F59E0B',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!konfirmEdit) return;
   const res=await fetchAPI('/api/siswa/edit','POST',fd);
   if(res?.success){closeModal('modalEdit');showToast('Data diperbarui!','success');editFotoBlob=null;loadSiswa();}
   else alertEl.innerHTML=`<div class="alert-msg error">${res?.message||'Gagal'}</div>`;

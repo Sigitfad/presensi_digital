@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -31,7 +31,8 @@
       .qr-actions{display:none!important;}
     }
   </style>
-</head>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
 <body>
 <canvas id="dl-canvas"></canvas>
 <div id="page-content" class="page-content">
@@ -125,7 +126,7 @@ async function downloadQRCard(id,nisn,nama,kelas,jk){
   await new Promise(r=>setTimeout(r,200));
   const qrCanvas=document.querySelector(`#qr-${id} canvas`);
   if(!qrCanvas){showToast('QR belum siap','error');return;}
-  // 85.6mm x 54mm = ukuran kartu standar (CR80) â€” skala 10x untuk kualitas cetak
+  // 85.6mm x 54mm = ukuran kartu standar (CR80) — skala 10x untuk kualitas cetak
   const W=856,H=540,PAD=42;
   const canvas=document.getElementById('dl-canvas');
   canvas.width=W; canvas.height=H;
@@ -192,7 +193,8 @@ function cetakSatu(id,nisn,nama,kelas,jk){
     .name{font-size:14px;font-weight:bold;margin-top:6px;}
     .info{font-size:10px;color:#666;margin-top:2px;}
     .nisn{font-size:10px;font-weight:bold;color:#2563EB;margin-top:2px;}
-  </style></head>
+  </style>  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
   <body><div class="school">${SCHOOL_NAME}</div>
   <img src="${canvas.toDataURL()}">
   <div class="name">${nama}</div>

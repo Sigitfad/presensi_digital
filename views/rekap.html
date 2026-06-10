@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -31,7 +31,8 @@
     .btn-action-xs{padding:4px 10px;border:none;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:all 0.15s;}
     .btn-action-xs:hover{transform:translateY(-1px);}
   </style>
-</head>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
 <body>
 <div id="page-content" class="page-content">
   <div class="page-header">
@@ -199,7 +200,7 @@ function loadAktif(){
   loadRekapKelas();
 }
 
-// Filter kelas â€” langsung panggil loadAktif() via onchange di select
+// Filter kelas — langsung panggil loadAktif() via onchange di select
 
 let _rekapData=[], _rekapPage=1, _rekapPerPage=5;
 
@@ -321,7 +322,7 @@ async function loadRekapKelas(){
   }).join('');
 }
 
-// â”€â”€ Detail kalender per siswa â”€â”€
+// ── Detail kalender per siswa ──
 async function lihatDetailSiswa(siswaId,nama){
   const bulan=document.getElementById('filterBulan').value;
   const tahun=document.getElementById('filterTahun').value;
@@ -369,7 +370,7 @@ async function lihatDetailSiswa(siswaId,nama){
   document.getElementById('detailBody').innerHTML=html;
 }
 
-// â”€â”€ View detail siswa per kelas â”€â”€
+// ── View detail siswa per kelas ──
 async function viewKelas(kelas){
   const bulan=document.getElementById('filterBulan').value;
   const tahun=document.getElementById('filterTahun').value;
@@ -423,7 +424,7 @@ async function viewKelas(kelas){
   document.getElementById('viewKelasBody').innerHTML=html;
 }
 
-// â”€â”€ Export Excel Per Siswa â”€â”€
+// ── Export Excel Per Siswa ──
 function exportExcelSiswa(){
   const bulan=document.getElementById('filterBulan').value;
   const tahun=document.getElementById('filterTahun').value;
@@ -432,7 +433,7 @@ function exportExcelSiswa(){
   showToast('Mengunduh file Excel...','info');
 }
 
-// â”€â”€ Export Excel Per Kelas spesifik â”€â”€
+// ── Export Excel Per Kelas spesifik ──
 function exportExcelKelas(kelas){
   const bulan=document.getElementById('filterBulan').value;
   const tahun=document.getElementById('filterTahun').value;
@@ -440,7 +441,7 @@ function exportExcelKelas(kelas){
   showToast(`Mengunduh Excel ${kelas}...`,'info');
 }
 
-// â”€â”€ Export xlsx satu siswa â”€â”€
+// ── Export xlsx satu siswa ──
 function exportSiswaExcel(siswaId, nama){
   const bulan=document.getElementById('filterBulan').value;
   const tahun=document.getElementById('filterTahun').value;
@@ -448,7 +449,7 @@ function exportSiswaExcel(siswaId, nama){
   showToast(`Mengunduh rekap ${nama}...`,'info');
 }
 
-// â”€â”€ Juga hapus setTab update export-siswa-btn karena sudah tidak ada â”€â”€
+// ── Juga hapus setTab update export-siswa-btn karena sudah tidak ada ──
 async function init(){
   await loadLayout('rekap','Rekap Presensi');
   await loadKelasOptions('filterKelas', true);

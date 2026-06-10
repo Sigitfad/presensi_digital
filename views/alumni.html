@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -30,8 +30,10 @@
     #_ijazahPopup ._ijazahCard{transform:translateY(-50px);transition:transform .3s ease-out;}
     #_ijazahPopup.show ._ijazahCard{transform:translateY(0);}
 
+.swal-kecil{font-size:12px!important;border-radius:12px!important;}.swal-title-kecil{font-size:14px!important;padding:0!important;margin:0 0 4px!important;}.swal-text-kecil{font-size:12px!important;margin:0!important;}.swal-btn-kecil{font-size:11px!important;padding:5px 14px!important;border-radius:8px!important;}
   </style>
-</head>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
 <body>
 <div id="page-content" class="page-content">
   <div class="page-header d-flex align-items-center justify-content-between flex-wrap gap-2">
@@ -292,6 +294,8 @@ async function simpanAlumni(){
   if(!checked.length){alertEl.innerHTML='<div class="alert-msg error">Pilih siswa yang akan diluluskan!</div>';return;}
   const tahun=document.getElementById('a_tahunLulus').value.trim();
   if(!tahun){alertEl.innerHTML='<div class="alert-msg error">Masukkan tahun lulus!</div>';return;}
+  const {isConfirmed:konfirmTambah}=await Swal.fire({title:'Konfirmasi Luluskan',text:`${checked.length} siswa akan diluluskan. Lanjutkan?`,icon:'question',showCancelButton:true,confirmButtonText:'Ya, Luluskan',cancelButtonText:'Batal',confirmButtonColor:'#2563EB',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!konfirmTambah) return;
   const res=await fetchAPI('/api/siswa/lulus-massal','POST',{ids:checked,tahun_lulus:tahun});
   if(res?.success){closeModal('modalTambah');showToast(res.message,'success');loadAlumni();loadTahunFilter();alertEl.innerHTML='';}
   else alertEl.innerHTML=`<div class="alert-msg error">${res?.message||'Gagal'}</div>`;
@@ -332,6 +336,8 @@ async function updateAlumni(){
   fd.append('kelas_lulus',_editAlumniData.kelas_lulus);
   fd.append('tahun_lulus',_editAlumniData.tahun_lulus);
   if(ijazahFile) fd.append('ijazah',ijazahFile);
+  const {isConfirmed:konfirmEdit}=await Swal.fire({title:'Konfirmasi Update Ijazah',text:'Apakah data ijazah sudah benar?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Update',cancelButtonText:'Batal',confirmButtonColor:'#F59E0B',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!konfirmEdit) return;
   const res=await fetchAPI('/api/alumni/edit','POST',fd);
   if(res?.success){closeModal('modalEdit');showToast('Ijazah diperbarui!','success');loadAlumni();}
   else alertEl.innerHTML=`<div class="alert-msg error">${res?.message||'Gagal'}</div>`;
