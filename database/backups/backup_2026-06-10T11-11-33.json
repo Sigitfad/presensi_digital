@@ -1,0 +1,5354 @@
+{
+  "metadata": {
+    "dibuat": "2026-06-10T11:11:33.183Z",
+    "versi": "2.2",
+    "aplikasi": "Presensi SDN Karangpawitan 1"
+  },
+  "operators": [
+    {
+      "id": 1,
+      "nama": "Sigit Fadilla, S.Kom.",
+      "username": "admin",
+      "password": "$2a$10$qqiFI0ffvYc.b1BcCc8HXeL2v83Wwva4IoFbzJh4scfyE.oUiCssu",
+      "role": "operator",
+      "no_hp": "0812376734737",
+      "email": "sigitfadilla.id@gmail.com",
+      "foto": "/uploads/foto-user/user_1780751470228.png",
+      "pengampu_kelas": "Semua",
+      "nip": "32100000123",
+      "alamat": "asdadasd",
+      "bidang_keahlian": "",
+      "created_at": "2026-06-03 20:15:10",
+      "password_plain": "111111"
+    },
+    {
+      "id": 316,
+      "nama": "M. Bagus Faturochman, S.Pd",
+      "username": "bagus",
+      "password": "$2a$10$8MeaPfPWC6G/DTn0WSRuGeAj04EDnbypshwDPsspw9U/GIWlpV0xS",
+      "role": "guru_bidang",
+      "no_hp": "081667788990",
+      "email": "m.bagus.faturochman@gmail.com",
+      "foto": "/uploads/foto-user/user_1781055341846.png",
+      "pengampu_kelas": "Kelas 2A,Kelas 2C,Kelas 3A,Kelas 3C",
+      "nip": "198912052011012023",
+      "alamat": "Jl. Kertabumi No. 15, Karawang",
+      "bidang_keahlian": "Guru Bahasa Inggris",
+      "created_at": "2026-06-10 08:35:41",
+      "password_plain": "111111"
+    },
+    {
+      "id": 329,
+      "nama": "Sunardi, S.Pd",
+      "username": "sunardi",
+      "password": "$2a$10$4xI8vkUm3AizO3z2oP9VU.IYPSNsfkq6r6MQkbnIUavFo7h/v1JnG",
+      "role": "guru_bidang",
+      "no_hp": "087745612389",
+      "email": "sunardi@gmail.com",
+      "foto": "/uploads/foto-user/user_1781074299297.png",
+      "pengampu_kelas": "Kelas 5A,Kelas 5B,Kelas 5C,Kelas 5D,Kelas 6A,Kelas 6B,Kelas 6C,Kelas 6D",
+      "nip": "197711292004012022",
+      "alamat": "Jl. Surotokunto No. 8, Karawang",
+      "bidang_keahlian": "Guru Olahraga",
+      "created_at": "2026-06-10 13:51:39",
+      "password_plain": "111111"
+    },
+    {
+      "id": 330,
+      "nama": "Yayah Sopiah, S.Pd",
+      "username": "yayah",
+      "password": "$2a$10$BUL8yPhUGDfjB7BNoRaKFepFBpUxdRAGi8NoPt.DYt5XcyvOKb8DK",
+      "role": "guru_bidang",
+      "no_hp": "082334455667",
+      "email": "yayah.sopiah@gmail.com",
+      "foto": "/uploads/foto-user/user_1781074499022.png",
+      "pengampu_kelas": "Kelas 1A,Kelas 1B,Kelas 1C,Kelas 1D,Kelas 2A,Kelas 2B,Kelas 2C,Kelas 2D",
+      "nip": "198209172007012021",
+      "alamat": "Jl. Ahmad Yani No. 25, Karawang",
+      "bidang_keahlian": "Guru Olahraga",
+      "created_at": "2026-06-10 13:53:15",
+      "password_plain": "111111"
+    },
+    {
+      "id": 331,
+      "nama": "H. Umah, S.Pd",
+      "username": "umah",
+      "password": "$2a$10$/aqYC2fmCAb7D5rdNtfBhODuie24uzPed343P2seGl8hqTedUs.fS",
+      "role": "guru_bidang",
+      "no_hp": "081445566778",
+      "email": "umah@gmail.com",
+      "foto": "/uploads/foto-user/user_1781074483533.png",
+      "pengampu_kelas": "Kelas 3A,Kelas 3B,Kelas 3C,Kelas 3D,Kelas 4A,Kelas 4B,Kelas 4C,Kelas 4D",
+      "nip": "197403102002012020",
+      "alamat": "Jl. Tuparev No. 12, Karawang",
+      "bidang_keahlian": "Guru Olahraga",
+      "created_at": "2026-06-10 13:54:43",
+      "password_plain": "111111"
+    },
+    {
+      "id": 332,
+      "nama": "Endang S. Hasan, S.Pd.I",
+      "username": "hasan",
+      "password": "$2a$10$GzVsJ4tTX2BJBnACbhQVeujT/.bigWkxeOnrhllsdixAvMM8n8h82",
+      "role": "guru_bidang",
+      "no_hp": "081237237272",
+      "email": "endang.s.hasan@gmail.com",
+      "foto": "/uploads/foto-user/user_1781074793742.png",
+      "pengampu_kelas": "Kelas 1A,Kelas 1B,Kelas 1C,Kelas 1D,Kelas 2A,Kelas 2B,Kelas 2C,Kelas 2D,Kelas 3A,Kelas 3B,Kelas 3C,Kelas 3D",
+      "nip": "197605052003012019",
+      "alamat": "Jl. Ronggowaluyo No. 10, Karawang",
+      "bidang_keahlian": "Guru Agama",
+      "created_at": "2026-06-10 13:58:10",
+      "password_plain": "111111"
+    },
+    {
+      "id": 333,
+      "nama": "Rina Fadzillah, S.Pd.I",
+      "username": "rina",
+      "password": "$2a$10$AdxsHUuvYJrklsB5VFLzlOo1EH.3dlKvomaFEF5api2yULs8WWoYW",
+      "role": "guru_bidang",
+      "no_hp": "085734567891",
+      "email": "rina.fadzillah@gmail.com",
+      "foto": "/uploads/foto-user/user_1781074875714.png",
+      "pengampu_kelas": "Kelas 4A,Kelas 4B,Kelas 4C,Kelas 4D,Kelas 5A,Kelas 5B,Kelas 5C,Kelas 5D,Kelas 6A,Kelas 6B,Kelas 6C,Kelas 6D",
+      "nip": "198706242009012016",
+      "alamat": "Jl. Pangkal Perjuangan No. 28, Karawang",
+      "bidang_keahlian": "Guru Agama",
+      "created_at": "2026-06-10 14:01:15",
+      "password_plain": "111111"
+    },
+    {
+      "id": 341,
+      "nama": "Euis Usnia, S.Pd",
+      "username": "usnia",
+      "password": "$2a$10$91rLYP8cJsvwLO0AvXCXTe0GF6oFk3MNYMOT73ZHuJFLhtbpv71u6",
+      "role": "guru_bidang",
+      "no_hp": "081789012345",
+      "email": "euis.usnia@gmail.com",
+      "foto": "/uploads/foto-user/user_1781080286765.png",
+      "pengampu_kelas": "Kelas 4A,Kelas 4B,Kelas 4C,Kelas 4D,Kelas 5A,Kelas 5B,Kelas 5C,Kelas 5D,Kelas 6A,Kelas 6B,Kelas 6C,Kelas 6D",
+      "nip": "197812282005012018",
+      "alamat": "Jl. Raya Klari No. 33, Karawang",
+      "bidang_keahlian": "Guru Seni",
+      "created_at": "2026-06-10 15:31:26",
+      "password_plain": "111111"
+    },
+    {
+      "id": 342,
+      "nama": "Rika Robiah. A, S.Pd",
+      "username": "rika",
+      "password": "$2a$10$QUpudD.lR44gSbLsgm1PB.PZqfM20QYxSsuRKdfLROSndz72UrqRW",
+      "role": "guru",
+      "no_hp": "081356789012",
+      "email": "rika.robiah.a@gmail.com",
+      "foto": "/uploads/foto-user/user_1781080481116.png",
+      "pengampu_kelas": "Kelas 6A",
+      "nip": "198401192008012015",
+      "alamat": "Jl. Galuh Mas No. 21, Karawang",
+      "bidang_keahlian": "",
+      "created_at": "2026-06-10 15:34:41",
+      "password_plain": "111111"
+    },
+    {
+      "id": 343,
+      "nama": "Ajeng Mardalena, S.Pd",
+      "username": "ajeng",
+      "password": "$2a$10$eHkS/mBVhu3AuvM67EjvpO.IH78y6TYwtfFwO6f/c5v8WcBut821m",
+      "role": "guru",
+      "no_hp": "082267890123",
+      "email": "ajengmardalena@gmail.com",
+      "foto": "/uploads/foto-user/user_1781080602879.png",
+      "pengampu_kelas": "Kelas 6C",
+      "nip": "199103152012012017",
+      "alamat": "Jl. Interchange Karawang Barat No. 5, Karawang Barat",
+      "bidang_keahlian": "",
+      "created_at": "2026-06-10 15:36:42",
+      "password_plain": "111111"
+    },
+    {
+      "id": 344,
+      "nama": "Yuyu Wahyuni, S.Pd",
+      "username": "yuyu",
+      "password": "$2a$10$4A7DU1.e9roubch40Wfxae4d2HCPO6uW6EwFdIHXPktef9z1ZtPBO",
+      "role": "guru",
+      "no_hp": "082198765432",
+      "email": "yuyu.wahyuni@gmail.com",
+      "foto": "/uploads/foto-user/user_1781080785891.png",
+      "pengampu_kelas": "Kelas 5A",
+      "nip": "198810302010012014",
+      "alamat": "Jl. Kertabumi No. 15, Karawang",
+      "bidang_keahlian": "",
+      "created_at": "2026-06-10 15:39:46",
+      "password_plain": "111111"
+    },
+    {
+      "id": 345,
+      "nama": "Neli Sri Lestari, S.Pd",
+      "username": "neli",
+      "password": "$2a$10$uVZ11PqnxruBsGZdD.HvneqgSeRbIYebzNLZAwT8waztcS6kOmU3.",
+      "role": "guru",
+      "no_hp": "085223344556",
+      "email": "neli.sri.lestari@gmail.com",
+      "foto": "/uploads/foto-user/user_1781080889596.png",
+      "pengampu_kelas": "Kelas 5B",
+      "nip": "198502062007012013",
+      "alamat": "Jl. Surotokunto No. 8, Karawang",
+      "bidang_keahlian": "",
+      "created_at": "2026-06-10 15:41:29",
+      "password_plain": "111111"
+    },
+    {
+      "id": 346,
+      "nama": "Kartini, S.Pd",
+      "username": "kartini",
+      "password": "$2a$10$d7Llez5rLfpVNk3d8xTicuUS4QdWf3SBWF0BD.v6F/siN3ldFmCp6",
+      "role": "guru",
+      "no_hp": "081234567891",
+      "email": "kartini@gmail.com",
+      "foto": "/uploads/foto-user/user_1781080961676.png",
+      "pengampu_kelas": "Kelas 5C",
+      "nip": "197909142006012012",
+      "alamat": "Ahmad Yani No. 25, Karawang",
+      "bidang_keahlian": "",
+      "created_at": "2026-06-10 15:42:41",
+      "password_plain": "111111"
+    },
+    {
+      "id": 347,
+      "nama": "Mulyanah, S.Pd",
+      "username": "mulyanah",
+      "password": "$2a$10$uw1WSheWEsLQibW9eHi4AeXSJv57Oz4zaRhyPeCC8AXN51X.J83Gi",
+      "role": "guru",
+      "no_hp": "087812345670",
+      "email": "mulyanah@gmail.com",
+      "foto": "/uploads/foto-user/user_1781081020858.png",
+      "pengampu_kelas": "Kelas 4A",
+      "nip": "197704222004012011",
+      "alamat": "Jl. Tuparev No. 12, Karawang",
+      "bidang_keahlian": "",
+      "created_at": "2026-06-10 15:43:40",
+      "password_plain": "111111"
+    },
+    {
+      "id": 349,
+      "nama": "Ima Arina. D, S.Pd",
+      "username": "arina",
+      "password": "$2a$10$5OqO1We.7IDypbSzdKxf/O7vX7FvZlAeq9yoxjFBGY9ZbBSuElI5K",
+      "role": "guru",
+      "no_hp": "082345678912",
+      "email": "ima.arina.d@gmail.com",
+      "foto": "/uploads/foto-user/user_1781082176513.png",
+      "pengampu_kelas": "Kelas 4B",
+      "nip": "198611132009012010",
+      "alamat": "Jl. Pangkal Perjuangan No. 28, Karawang",
+      "bidang_keahlian": "",
+      "created_at": "2026-06-10 16:02:56",
+      "password_plain": "111111"
+    },
+    {
+      "id": 350,
+      "nama": "Sriastutik Andoyani, S.Pd",
+      "username": "astutik",
+      "password": "$2a$10$58WuiCNWXQc4OnFRQEpd2umeqlNu8ALbfrzW.kzGSalGMgZS5dPjW",
+      "role": "guru",
+      "no_hp": "081998877665",
+      "email": "sriastutik.andoyani@gmail.com",
+      "foto": "/uploads/foto-user/user_1781082277126.png",
+      "pengampu_kelas": "Kelas 4C",
+      "nip": "198309252008012009",
+      "alamat": "Jl. Ronggowaluyo No. 10, Karawang",
+      "bidang_keahlian": "",
+      "created_at": "2026-06-10 16:04:37",
+      "password_plain": "111111"
+    },
+    {
+      "id": 351,
+      "nama": "Tati Rusmiati, S.Pd",
+      "username": "tati",
+      "password": "$2a$10$5ZmGWib6euNfUpLoW78bYOOyNodWHbo0jT7lPVCuOkEIKyVIi8hSW",
+      "role": "guru",
+      "no_hp": "085612348901",
+      "email": "tati.rusmiati@gmail.com",
+      "foto": "/uploads/foto-user/user_1781082346733.png",
+      "pengampu_kelas": "Kelas 3A",
+      "nip": "197508082003012008",
+      "alamat": "Jl. Raya Klari No. 33, Karawang",
+      "bidang_keahlian": "",
+      "created_at": "2026-06-10 16:05:46",
+      "password_plain": "111111"
+    },
+    {
+      "id": 352,
+      "nama": "Eli Komalasari, S.Pd",
+      "username": "eli",
+      "password": "$2a$10$GQrlL/Z/YlCLuTxeEjCfeuYydExcgPqSy1djo/cfXeBOjOVb6NWCi",
+      "role": "guru",
+      "no_hp": "083812345679",
+      "email": "eli.komalasari@gmail.com",
+      "foto": "/uploads/foto-user/user_1781082416930.png",
+      "pengampu_kelas": "Kelas 3B",
+      "nip": "197706112004012007",
+      "alamat": "Jl. Interchange Karawang Barat No. 5, Karawang",
+      "bidang_keahlian": "",
+      "created_at": "2026-06-10 16:06:57",
+      "password_plain": "111111"
+    },
+    {
+      "id": 353,
+      "nama": "Auliya Rizki. J, S.Pd",
+      "username": "auliya",
+      "password": "$2a$10$GAChKhOoUHNd.q1Y1adqKO0IU0XT1iuuvqsdxE1CI9WkdkRR/jasm",
+      "role": "guru",
+      "no_hp": "081278945612",
+      "email": "auliya.rizki.j@gmail.com",
+      "foto": "/uploads/foto-user/user_1781082470337.png",
+      "pengampu_kelas": "Kelas 3C",
+      "nip": "198805172010012006",
+      "alamat": "Jl. Tarumanagara No. 17, Karawang",
+      "bidang_keahlian": "",
+      "created_at": "2026-06-10 16:07:50",
+      "password_plain": "111111"
+    },
+    {
+      "id": 354,
+      "nama": "Saskia Choirunnisa. K, S.Pd",
+      "username": "saskia",
+      "password": "$2a$10$M0.TDzg0Ie/WmUrYuyoYl.QudrXvHimkJLpjsY9vMh9WaFnYNMsHy",
+      "role": "guru",
+      "no_hp": "085723451289",
+      "email": "saskia.choirunnisa.k@gmail.com",
+      "foto": "/uploads/foto-user/user_1781082561258.png",
+      "pengampu_kelas": "Kelas 2C",
+      "nip": "199001202011012005",
+      "alamat": "Jl. Galuh Mas No. 21, Karawang",
+      "bidang_keahlian": "",
+      "created_at": "2026-06-10 16:09:21",
+      "password_plain": "111111"
+    },
+    {
+      "id": 355,
+      "nama": "Hj. Enung Nurhasanah, S.Pd",
+      "username": "enung",
+      "password": "$2a$10$5RFPS4oZz0Oo6djLoqR/I.PI4yT4lCI8PxV8YYUigrvWSs03ArqgK",
+      "role": "guru",
+      "no_hp": "082112345678",
+      "email": "hj.enung.nurhasanah@gmail.com",
+      "foto": "/uploads/foto-user/user_1781082670670.png",
+      "pengampu_kelas": "Kelas 2A",
+      "nip": "197912102005012004",
+      "alamat": "Jl. Kertabumi No. 15, Karawang",
+      "bidang_keahlian": "",
+      "created_at": "2026-06-10 16:11:10",
+      "password_plain": "111111"
+    },
+    {
+      "id": 356,
+      "nama": "Siti Fatimah, S.Pd",
+      "username": "sitifat",
+      "password": "$2a$10$MWJGFaZZ.wcvikATMT0DWO1FnzroiJgcZ1rK1J3AiUQohflnuOz4u",
+      "role": "guru",
+      "no_hp": "0877236265",
+      "email": "siti.fatimah@gmail.com",
+      "foto": "/uploads/foto-user/user_1781082828286.png",
+      "pengampu_kelas": "Kelas 1A",
+      "nip": "198104152006042002",
+      "alamat": "Jl. Ahmad Yani No. 25, Karawang",
+      "bidang_keahlian": "",
+      "created_at": "2026-06-10 16:13:48",
+      "password_plain": "111111"
+    },
+    {
+      "id": 357,
+      "nama": "Ii Rosmiati, S.Pd",
+      "username": "iirosmiati",
+      "password": "$2a$10$eWkQWDYLk0h0Ej3GXfKHVecf77.b6f09EXVxxbn6MI6pXDG1aitYO",
+      "role": "guru",
+      "no_hp": "0812473272",
+      "email": "ii.rosmiati@gmail.com",
+      "foto": "/uploads/foto-user/user_1781082901523.png",
+      "pengampu_kelas": "Kelas 1C",
+      "nip": "197803122005012001",
+      "alamat": "Jl. Tuparev No. 12, Karawang",
+      "bidang_keahlian": "",
+      "created_at": "2026-06-10 16:15:01",
+      "password_plain": "111111"
+    },
+    {
+      "id": 358,
+      "nama": "Elsi Dwi Tiani, S.Pd., Gr.",
+      "username": "tiani",
+      "password": "$2a$10$s9MJM.kwju6zKuLV0bEeMOM63mcm6hHln7TMvn9u1FV11fk8r4fcC",
+      "role": "guru",
+      "no_hp": "081315674821",
+      "email": "elsitiani@gmail.com",
+      "foto": "/uploads/foto-user/user_1781083527217.png",
+      "pengampu_kelas": "Kelas 2B",
+      "nip": "198207182007012003",
+      "alamat": "Jl. Kepuh Ibnusina No. 18, Karawang",
+      "bidang_keahlian": "",
+      "created_at": "2026-06-10 16:25:27",
+      "password_plain": "111111"
+    }
+  ],
+  "siswa": [
+    {
+      "id": 140,
+      "nisn": "2024004",
+      "nama": "Dewi Rahayu",
+      "kelas": "Kelas 2A",
+      "jenis_kelamin": "Perempuan",
+      "foto": "",
+      "created_at": "2026-06-04 00:54:31",
+      "updated_at": "2026-06-10 16:59:42",
+      "no_hp_ortu": "",
+      "nik": "2312312",
+      "tempat_lahir": "karawang",
+      "tanggal_lahir": "",
+      "agama": "",
+      "alamat": ""
+    },
+    {
+      "id": 155,
+      "nisn": "8231231",
+      "nama": "Jaizan",
+      "kelas": "Kelas 6B",
+      "jenis_kelamin": "Laki-laki",
+      "foto": "/uploads/foto-siswa/siswa_1780912333637.png",
+      "created_at": "2026-06-08 16:52:13",
+      "updated_at": "2026-06-08 16:52:13",
+      "no_hp_ortu": "008123717",
+      "nik": "23123123",
+      "tempat_lahir": "karawang",
+      "tanggal_lahir": "2002-02-16",
+      "agama": "Katolik",
+      "alamat": "Karawang"
+    },
+    {
+      "id": 156,
+      "nisn": "sadads",
+      "nama": "asdasda",
+      "kelas": "Kelas 3D",
+      "jenis_kelamin": "Laki-laki",
+      "foto": "",
+      "created_at": "2026-06-10 16:28:53",
+      "updated_at": "2026-06-10 16:28:53",
+      "no_hp_ortu": "adadasdada",
+      "nik": "1231231231",
+      "tempat_lahir": "asdasda",
+      "tanggal_lahir": "2222-02-12",
+      "agama": "Islam",
+      "alamat": "asdasac"
+    }
+  ],
+  "presensi": [
+    {
+      "id": 17,
+      "siswa_id": 143,
+      "tanggal": "2026-06-08",
+      "jam_masuk": "13:38:27",
+      "status": "Terlambat",
+      "keterangan": "",
+      "created_at": "2026-06-08 13:38:27"
+    },
+    {
+      "id": 18,
+      "siswa_id": 140,
+      "tanggal": "2026-06-08",
+      "jam_masuk": "13:38:32",
+      "status": "Terlambat",
+      "keterangan": "",
+      "created_at": "2026-06-08 13:38:32"
+    },
+    {
+      "id": 19,
+      "siswa_id": 154,
+      "tanggal": "2026-06-08",
+      "jam_masuk": "13:38:37",
+      "status": "Terlambat",
+      "keterangan": "",
+      "created_at": "2026-06-08 13:38:37"
+    },
+    {
+      "id": 20,
+      "siswa_id": 143,
+      "tanggal": "2026-06-09",
+      "jam_masuk": "07:17:39",
+      "status": "Terlambat",
+      "keterangan": "",
+      "created_at": "2026-06-09 07:17:39"
+    },
+    {
+      "id": 21,
+      "siswa_id": 140,
+      "tanggal": "2026-06-09",
+      "jam_masuk": "23:29:04",
+      "status": "Terlambat",
+      "keterangan": "",
+      "created_at": "2026-06-09 23:29:04"
+    },
+    {
+      "id": 22,
+      "siswa_id": 155,
+      "tanggal": "2026-06-10",
+      "jam_masuk": "16:40:45",
+      "status": "Terlambat",
+      "keterangan": "",
+      "created_at": "2026-06-10 16:40:45"
+    }
+  ],
+  "settings": [
+    {
+      "key": "jam_masuk",
+      "value": "06:45"
+    },
+    {
+      "key": "batas_terlambat",
+      "value": "07:00"
+    },
+    {
+      "key": "backup_otomatis",
+      "value": "false"
+    }
+  ],
+  "identitas_sekolah": [
+    {
+      "id": 1,
+      "nama_sekolah": "SDN Karangpawitan 1",
+      "alamat": "Jl. Karangpawitan No.1",
+      "logo": "/uploads/logo/logo_1780767391893.png",
+      "tahun_ajaran": "2024/2025",
+      "telp": "",
+      "email": "",
+      "website": "",
+      "updated_at": "2026-06-07 17:44:37"
+    }
+  ],
+  "activity_log": [
+    {
+      "id": 1052,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Restore Database",
+      "detail": "Dari JSON: imported_2026-06-06T16-32-47.json",
+      "ip_address": "",
+      "created_at": "2026-06-06 23:32:50"
+    },
+    {
+      "id": 1053,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Deden (guru_bidang) - Pengampu: Kelas 1A,Kelas 2A - NIP: 231412",
+      "ip_address": "",
+      "created_at": "2026-06-06 23:34:01"
+    },
+    {
+      "id": 1054,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Lulus Massal",
+      "detail": "1 siswa dipindahkan ke Data Lulusan tahun 2026",
+      "ip_address": "",
+      "created_at": "2026-06-06 23:34:40"
+    },
+    {
+      "id": 1055,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: sebelum_restore_2026-06-06T16-32-49.db",
+      "ip_address": "",
+      "created_at": "2026-06-06 23:35:03"
+    },
+    {
+      "id": 1056,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-06T16-32-47.json",
+      "ip_address": "",
+      "created_at": "2026-06-06 23:35:05"
+    },
+    {
+      "id": 1057,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Restore Database",
+      "detail": "Dari JSON: backup_2026-06-06T16-35-13.json",
+      "ip_address": "",
+      "created_at": "2026-06-06 23:36:58"
+    },
+    {
+      "id": 1058,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::1",
+      "ip_address": "::1",
+      "created_at": "2026-06-06 23:46:51"
+    },
+    {
+      "id": 1059,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::1",
+      "ip_address": "::1",
+      "created_at": "2026-06-06 23:47:12"
+    },
+    {
+      "id": 1060,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Lulus Massal",
+      "detail": "1 siswa dipindahkan ke Data Lulusan tahun 2027",
+      "ip_address": "",
+      "created_at": "2026-06-06 23:53:43"
+    },
+    {
+      "id": 1061,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Elsi Dwi (guru_bidang) - Pengampu: Kelas 1A,Kelas 2A - NIP: 32131",
+      "ip_address": "",
+      "created_at": "2026-06-06 23:57:28"
+    },
+    {
+      "id": 1062,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-06 23:57:46"
+    },
+    {
+      "id": 1063,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-06 23:57:50"
+    },
+    {
+      "id": 1064,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-06 23:57:59"
+    },
+    {
+      "id": 1065,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-06 23:58:00"
+    },
+    {
+      "id": 1066,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-06 23:58:04"
+    },
+    {
+      "id": 1067,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-06 23:58:09"
+    },
+    {
+      "id": 1068,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:02:29"
+    },
+    {
+      "id": 1069,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 00:02:30"
+    },
+    {
+      "id": 1070,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:03:12"
+    },
+    {
+      "id": 1071,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 00:03:26"
+    },
+    {
+      "id": 1072,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:04:05"
+    },
+    {
+      "id": 1073,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 00:04:08"
+    },
+    {
+      "id": 1074,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:04:15"
+    },
+    {
+      "id": 1075,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 00:04:21"
+    },
+    {
+      "id": 1076,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah Siswa",
+      "detail": "Kakanda (321412)",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:08:48"
+    },
+    {
+      "id": 1077,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Siswa",
+      "detail": "Kakanda (321412)",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:09:17"
+    },
+    {
+      "id": 1078,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Lulus Massal",
+      "detail": "1 siswa dipindahkan ke Data Lulusan tahun 2026",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:09:28"
+    },
+    {
+      "id": 1079,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Identitas Sekolah",
+      "detail": "Memperbarui identitas sekolah",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:11:14"
+    },
+    {
+      "id": 1080,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Lulus Massal",
+      "detail": "1 siswa dipindahkan ke Data Lulusan tahun 2026",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:16:15"
+    },
+    {
+      "id": 1081,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:23:00"
+    },
+    {
+      "id": 1082,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 00:23:05"
+    },
+    {
+      "id": 1083,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:28:35"
+    },
+    {
+      "id": 1084,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 00:28:36"
+    },
+    {
+      "id": 1085,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah Siswa",
+      "detail": "Citra (211222111)",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:30:10"
+    },
+    {
+      "id": 1086,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Lulus Massal",
+      "detail": "1 siswa dipindahkan ke Data Lulusan tahun 2026",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:30:23"
+    },
+    {
+      "id": 1087,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Alumni",
+      "detail": "Edit: Citra (211222111)",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:30:49"
+    },
+    {
+      "id": 1088,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Identitas Sekolah",
+      "detail": "Memperbarui identitas sekolah",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:36:31"
+    },
+    {
+      "id": 1089,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:43:05"
+    },
+    {
+      "id": 1090,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 00:43:10"
+    },
+    {
+      "id": 1091,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Scan Presensi",
+      "detail": "Ahmad Fauzi - Hadir pukul 00:43",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:43:35"
+    },
+    {
+      "id": 1092,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:44:12"
+    },
+    {
+      "id": 1093,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 00:44:13"
+    },
+    {
+      "id": 1094,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Didik (guru) - Pengampu: Kelas 3C - NIP: 231231",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:44:48"
+    },
+    {
+      "id": 1095,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:45:45"
+    },
+    {
+      "id": 1096,
+      "user_id": 40,
+      "user_nama": "Didik",
+      "role": "guru",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 00:45:49"
+    },
+    {
+      "id": 1097,
+      "user_id": 40,
+      "user_nama": "Didik",
+      "role": "guru",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:46:03"
+    },
+    {
+      "id": 1098,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 00:46:05"
+    },
+    {
+      "id": 1099,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:46:09"
+    },
+    {
+      "id": 1100,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 00:46:15"
+    },
+    {
+      "id": 1101,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:49:28"
+    },
+    {
+      "id": 1102,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 00:49:29"
+    },
+    {
+      "id": 1103,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:51:42"
+    },
+    {
+      "id": 1104,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 00:51:47"
+    },
+    {
+      "id": 1105,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:51:50"
+    },
+    {
+      "id": 1106,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 00:57:18"
+    },
+    {
+      "id": 1107,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Elsi Dwi (guru_bidang) - Pengampu: Kelas 1A,Kelas 2A - NIP: 32131",
+      "ip_address": "",
+      "created_at": "2026-06-07 00:59:32"
+    },
+    {
+      "id": 1108,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:00:16"
+    },
+    {
+      "id": 1109,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:00:23"
+    },
+    {
+      "id": 1110,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Scan Presensi",
+      "detail": "Dewi Rahayu - Hadir pukul 01:01",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:01:57"
+    },
+    {
+      "id": 1111,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:03:17"
+    },
+    {
+      "id": 1112,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:03:18"
+    },
+    {
+      "id": 1113,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:04:08"
+    },
+    {
+      "id": 1114,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:04:12"
+    },
+    {
+      "id": 1115,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:04:19"
+    },
+    {
+      "id": 1116,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:04:25"
+    },
+    {
+      "id": 1117,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Siswa",
+      "detail": "Ahmad Fauzi (2024001)",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:17:30"
+    },
+    {
+      "id": 1118,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:19:36"
+    },
+    {
+      "id": 1119,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:19:41"
+    },
+    {
+      "id": 1120,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:29:29"
+    },
+    {
+      "id": 1121,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:29:32"
+    },
+    {
+      "id": 1122,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:29:37"
+    },
+    {
+      "id": 1123,
+      "user_id": 40,
+      "user_nama": "Didik",
+      "role": "guru",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:29:42"
+    },
+    {
+      "id": 1124,
+      "user_id": 40,
+      "user_nama": "Didik",
+      "role": "guru",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:29:55"
+    },
+    {
+      "id": 1125,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:30:33"
+    },
+    {
+      "id": 1126,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:31:56"
+    },
+    {
+      "id": 1127,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:31:58"
+    },
+    {
+      "id": 1128,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Didik (guru) - Pengampu: Kelas 4A - NIP: 231231",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:32:09"
+    },
+    {
+      "id": 1129,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:32:14"
+    },
+    {
+      "id": 1130,
+      "user_id": 40,
+      "user_nama": "Didik",
+      "role": "guru",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:32:18"
+    },
+    {
+      "id": 1131,
+      "user_id": 40,
+      "user_nama": "Didik",
+      "role": "guru",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:32:48"
+    },
+    {
+      "id": 1132,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:34:05"
+    },
+    {
+      "id": 1133,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:35:08"
+    },
+    {
+      "id": 1134,
+      "user_id": 40,
+      "user_nama": "Didik",
+      "role": "guru",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:35:13"
+    },
+    {
+      "id": 1135,
+      "user_id": 40,
+      "user_nama": "Didik",
+      "role": "guru",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:35:18"
+    },
+    {
+      "id": 1136,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:35:26"
+    },
+    {
+      "id": 1137,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:42:35"
+    },
+    {
+      "id": 1138,
+      "user_id": 40,
+      "user_nama": "Didik",
+      "role": "guru",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:42:41"
+    },
+    {
+      "id": 1139,
+      "user_id": 40,
+      "user_nama": "Didik",
+      "role": "guru",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:42:53"
+    },
+    {
+      "id": 1140,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:42:58"
+    },
+    {
+      "id": 1141,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:43:38"
+    },
+    {
+      "id": 1142,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:43:40"
+    },
+    {
+      "id": 1143,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Indir (kepala_sekolah) - Pengampu: Kelas 3A - NIP: 123213",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:44:37"
+    },
+    {
+      "id": 1144,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:44:43"
+    },
+    {
+      "id": 1145,
+      "user_id": 73,
+      "user_nama": "Indir",
+      "role": "kepala_sekolah",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:44:48"
+    },
+    {
+      "id": 1146,
+      "user_id": 73,
+      "user_nama": "Indir",
+      "role": "kepala_sekolah",
+      "aksi": "Tambah Siswa",
+      "detail": "Didik (213123)",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:47:40"
+    },
+    {
+      "id": 1147,
+      "user_id": 73,
+      "user_nama": "Indir",
+      "role": "kepala_sekolah",
+      "aksi": "Tambah Siswa",
+      "detail": "Sumanto (231231212)",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:48:22"
+    },
+    {
+      "id": 1148,
+      "user_id": 73,
+      "user_nama": "Indir",
+      "role": "kepala_sekolah",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:48:50"
+    },
+    {
+      "id": 1149,
+      "user_id": 40,
+      "user_nama": "Didik",
+      "role": "guru",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:48:57"
+    },
+    {
+      "id": 1150,
+      "user_id": 40,
+      "user_nama": "Didik",
+      "role": "guru",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:49:11"
+    },
+    {
+      "id": 1151,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:49:16"
+    },
+    {
+      "id": 1152,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:49:22"
+    },
+    {
+      "id": 1153,
+      "user_id": 40,
+      "user_nama": "Didik",
+      "role": "guru",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:51:15"
+    },
+    {
+      "id": 1154,
+      "user_id": 40,
+      "user_nama": "Didik",
+      "role": "guru",
+      "aksi": "Tambah Siswa",
+      "detail": "Sumanto (312727427)",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:51:55"
+    },
+    {
+      "id": 1155,
+      "user_id": 40,
+      "user_nama": "Didik",
+      "role": "guru",
+      "aksi": "Tambah Siswa",
+      "detail": "Sigitfad (2321381283)",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:59:03"
+    },
+    {
+      "id": 1156,
+      "user_id": 40,
+      "user_nama": "Didik",
+      "role": "guru",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 01:59:16"
+    },
+    {
+      "id": 1157,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 01:59:18"
+    },
+    {
+      "id": 1158,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 02:03:14"
+    },
+    {
+      "id": 1159,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 02:03:19"
+    },
+    {
+      "id": 1160,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 02:03:24"
+    },
+    {
+      "id": 1161,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 02:03:26"
+    },
+    {
+      "id": 1162,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 11:27:35"
+    },
+    {
+      "id": 1163,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Scan Presensi",
+      "detail": "Sigitfad - Hadir pukul 11:37",
+      "ip_address": "",
+      "created_at": "2026-06-07 11:37:13"
+    },
+    {
+      "id": 1164,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Auliya (guru_bidang) - Pengampu: Kelas 1A,Kelas 2A,Kelas 3A,Kelas 4A,Kelas 5A,Kelas 6A - NIP: 32131212312",
+      "ip_address": "",
+      "created_at": "2026-06-07 11:45:44"
+    },
+    {
+      "id": 1165,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 11:49:26"
+    },
+    {
+      "id": 1166,
+      "user_id": 100,
+      "user_nama": "Auliya",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 11:49:31"
+    },
+    {
+      "id": 1167,
+      "user_id": 100,
+      "user_nama": "Auliya",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 11:50:19"
+    },
+    {
+      "id": 1168,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 11:50:21"
+    },
+    {
+      "id": 1169,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah Siswa",
+      "detail": "Malika (23123131)",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:33:26"
+    },
+    {
+      "id": 1170,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Scan Presensi",
+      "detail": "Malika - Hadir pukul 12:33",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:33:33"
+    },
+    {
+      "id": 1171,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:42:12"
+    },
+    {
+      "id": 1172,
+      "user_id": 100,
+      "user_nama": "Auliya",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 12:42:16"
+    },
+    {
+      "id": 1173,
+      "user_id": 100,
+      "user_nama": "Auliya",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:42:26"
+    },
+    {
+      "id": 1174,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 12:42:36"
+    },
+    {
+      "id": 1175,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:42:40"
+    },
+    {
+      "id": 1176,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 12:42:49"
+    },
+    {
+      "id": 1177,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:43:07"
+    },
+    {
+      "id": 1178,
+      "user_id": 73,
+      "user_nama": "Indir",
+      "role": "kepala_sekolah",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 12:43:11"
+    },
+    {
+      "id": 1179,
+      "user_id": 73,
+      "user_nama": "Indir",
+      "role": "kepala_sekolah",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:43:16"
+    },
+    {
+      "id": 1180,
+      "user_id": 100,
+      "user_nama": "Auliya",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 12:43:28"
+    },
+    {
+      "id": 1181,
+      "user_id": 100,
+      "user_nama": "Auliya",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:47:04"
+    },
+    {
+      "id": 1182,
+      "user_id": 100,
+      "user_nama": "Auliya",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 12:47:58"
+    },
+    {
+      "id": 1183,
+      "user_id": 100,
+      "user_nama": "Auliya",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:48:36"
+    },
+    {
+      "id": 1184,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 12:48:38"
+    },
+    {
+      "id": 1185,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:50:37"
+    },
+    {
+      "id": 1186,
+      "user_id": 100,
+      "user_nama": "Auliya",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 12:50:42"
+    },
+    {
+      "id": 1187,
+      "user_id": 100,
+      "user_nama": "Auliya",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:50:59"
+    },
+    {
+      "id": 1188,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 12:51:01"
+    },
+    {
+      "id": 1189,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Auliya Kusumawati Dewi Ratna Sri, S.Pd. (guru_bidang) - Pengampu: Kelas 1A,Kelas 2A,Kelas 3A,Kelas 4A,Kelas 5A,Kelas 6A - NIP: 32131212312",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:51:32"
+    },
+    {
+      "id": 1190,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:51:35"
+    },
+    {
+      "id": 1191,
+      "user_id": 100,
+      "user_nama": "Auliya Kusumawati Dewi Ratna Sri, S.Pd.",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 12:51:40"
+    },
+    {
+      "id": 1192,
+      "user_id": 100,
+      "user_nama": "Auliya Kusumawati Dewi Ratna Sri, S.Pd.",
+      "role": "guru_bidang",
+      "aksi": "Scan Presensi",
+      "detail": "Rizki Pratama - Hadir pukul 12:55",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:55:21"
+    },
+    {
+      "id": 1193,
+      "user_id": 100,
+      "user_nama": "Auliya Kusumawati Dewi Ratna Sri, S.Pd.",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:55:37"
+    },
+    {
+      "id": 1194,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 12:55:39"
+    },
+    {
+      "id": 1195,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Settings",
+      "detail": "Mengubah pengaturan jam masuk",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:55:58"
+    },
+    {
+      "id": 1196,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Scan Presensi",
+      "detail": "Siti Nurhaliza - Terlambat pukul 12:56",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:56:10"
+    },
+    {
+      "id": 1197,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:56:59"
+    },
+    {
+      "id": 1198,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 12:57:00"
+    },
+    {
+      "id": 1199,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:57:07"
+    },
+    {
+      "id": 1200,
+      "user_id": 100,
+      "user_nama": "Auliya Kusumawati Dewi Ratna Sri, S.Pd.",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 12:57:12"
+    },
+    {
+      "id": 1201,
+      "user_id": 100,
+      "user_nama": "Auliya Kusumawati Dewi Ratna Sri, S.Pd.",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:57:30"
+    },
+    {
+      "id": 1202,
+      "user_id": 40,
+      "user_nama": "Didik",
+      "role": "guru",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 12:57:35"
+    },
+    {
+      "id": 1203,
+      "user_id": 40,
+      "user_nama": "Didik",
+      "role": "guru",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 12:57:48"
+    },
+    {
+      "id": 1204,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 12:57:50"
+    },
+    {
+      "id": 1205,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 13:34:33"
+    },
+    {
+      "id": 1206,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 13:34:34"
+    },
+    {
+      "id": 1207,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Elsi Dwi (guru_bidang) - Pengampu: Kelas 1B,Kelas 2A - NIP: 32131",
+      "ip_address": "",
+      "created_at": "2026-06-07 13:34:55"
+    },
+    {
+      "id": 1208,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Indir (kepala_sekolah) - Pengampu: Kelas 1A - NIP: 123213",
+      "ip_address": "",
+      "created_at": "2026-06-07 13:40:14"
+    },
+    {
+      "id": 1209,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::1",
+      "ip_address": "::1",
+      "created_at": "2026-06-07 14:03:41"
+    },
+    {
+      "id": 1210,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 14:09:06"
+    },
+    {
+      "id": 1211,
+      "user_id": 100,
+      "user_nama": "Auliya Kusumawati Dewi Ratna Sri, S.Pd.",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 14:09:12"
+    },
+    {
+      "id": 1212,
+      "user_id": 100,
+      "user_nama": "Auliya Kusumawati Dewi Ratna Sri, S.Pd.",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 14:09:28"
+    },
+    {
+      "id": 1213,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 14:09:30"
+    },
+    {
+      "id": 1214,
+      "user_id": 10,
+      "user_nama": "Elsi Dwi",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 14:16:25"
+    },
+    {
+      "id": 1215,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Sigit Fadilla, S.Kom. (operator) - Pengampu: Semua - NIP: 232131231",
+      "ip_address": "",
+      "created_at": "2026-06-07 14:16:50"
+    },
+    {
+      "id": 1216,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::1",
+      "ip_address": "::1",
+      "created_at": "2026-06-07 14:17:04"
+    },
+    {
+      "id": 1217,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: sebelum_restore_2026-06-06T16-36-58.db",
+      "ip_address": "",
+      "created_at": "2026-06-07 17:11:31"
+    },
+    {
+      "id": 1218,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: backup_2026-06-06T16-35-13.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 17:11:33"
+    },
+    {
+      "id": 1219,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Restore Database",
+      "detail": "Dari JSON: imported_2026-06-07T10-31-27.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 17:31:30"
+    },
+    {
+      "id": 1220,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: sadasds (guru) - Pengampu: Kelas 4B - NIP: asdas",
+      "ip_address": "",
+      "created_at": "2026-06-07 17:33:27"
+    },
+    {
+      "id": 1221,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: sebelum_restore_2026-06-07T10-31-29.db",
+      "ip_address": "",
+      "created_at": "2026-06-07 17:43:39"
+    },
+    {
+      "id": 1222,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T10-31-27.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 17:43:40"
+    },
+    {
+      "id": 1223,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Backup Database (JSON)",
+      "detail": "File: backup_2026-06-07T10-43-41.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 17:43:41"
+    },
+    {
+      "id": 1224,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: backup_2026-06-07T10-43-41.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 17:43:45"
+    },
+    {
+      "id": 1225,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Backup Database (JSON)",
+      "detail": "File: backup_2026-06-07T10-43-56.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 17:43:56"
+    },
+    {
+      "id": 1226,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: backup_2026-06-07T10-43-56.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 17:44:04"
+    },
+    {
+      "id": 1227,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Restore Database",
+      "detail": "Dari JSON: imported_2026-06-07T10-44-34.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 17:44:37"
+    },
+    {
+      "id": 1228,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T10-56-53.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 17:56:53"
+    },
+    {
+      "id": 1229,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T10-58-34.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 17:58:34"
+    },
+    {
+      "id": 1230,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T10-59-32.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 17:59:32"
+    },
+    {
+      "id": 1231,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T11-01-44.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:01:44"
+    },
+    {
+      "id": 1232,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T11-01-44.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:11:26"
+    },
+    {
+      "id": 1233,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T10-59-32.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:11:31"
+    },
+    {
+      "id": 1234,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: sebelum_restore_2026-06-07T10-44-37.db",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:11:48"
+    },
+    {
+      "id": 1235,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T10-58-34.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:11:48"
+    },
+    {
+      "id": 1236,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T10-56-53.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:11:48"
+    },
+    {
+      "id": 1237,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T10-44-34.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:11:48"
+    },
+    {
+      "id": 1238,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T11-15-00.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:15:00"
+    },
+    {
+      "id": 1239,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T11-15-04.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:15:04"
+    },
+    {
+      "id": 1240,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T11-15-06.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:15:06"
+    },
+    {
+      "id": 1241,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T11-15-13.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:15:13"
+    },
+    {
+      "id": 1242,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T11-15-20.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:15:20"
+    },
+    {
+      "id": 1243,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T11-15-13.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:16:07"
+    },
+    {
+      "id": 1244,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T11-15-20.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:16:18"
+    },
+    {
+      "id": 1245,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T11-15-04.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:18:40"
+    },
+    {
+      "id": 1246,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T11-15-00.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:18:59"
+    },
+    {
+      "id": 1247,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T11-19-06.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:19:06"
+    },
+    {
+      "id": 1248,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T11-19-09.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:19:09"
+    },
+    {
+      "id": 1249,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T11-19-12.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:19:12"
+    },
+    {
+      "id": 1250,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T11-19-16.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:19:16"
+    },
+    {
+      "id": 1251,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T11-19-19.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:19:19"
+    },
+    {
+      "id": 1252,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T11-22-37.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:22:37"
+    },
+    {
+      "id": 1253,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T11-23-32.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:23:32"
+    },
+    {
+      "id": 1254,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T11-23-32.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:23:38"
+    },
+    {
+      "id": 1255,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T11-22-37.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:23:38"
+    },
+    {
+      "id": 1256,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T11-19-19.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:23:38"
+    },
+    {
+      "id": 1257,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T11-19-16.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:23:38"
+    },
+    {
+      "id": 1258,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T11-19-12.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:23:38"
+    },
+    {
+      "id": 1259,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T11-19-09.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:23:38"
+    },
+    {
+      "id": 1260,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T11-19-06.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:23:38"
+    },
+    {
+      "id": 1261,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T11-15-06.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:23:38"
+    },
+    {
+      "id": 1262,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T11-23-56.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:23:56"
+    },
+    {
+      "id": 1263,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T11-24-48.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:24:48"
+    },
+    {
+      "id": 1264,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T11-24-51.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:24:51"
+    },
+    {
+      "id": 1265,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-07T11-24-53.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:24:53"
+    },
+    {
+      "id": 1266,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T11-24-53.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:24:58"
+    },
+    {
+      "id": 1267,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T11-24-51.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:25:02"
+    },
+    {
+      "id": 1268,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T11-24-48.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:25:02"
+    },
+    {
+      "id": 1269,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-07T11-23-56.json",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:25:02"
+    },
+    {
+      "id": 1270,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Alumni",
+      "detail": "Edit: Citra (211222111)",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:31:08"
+    },
+    {
+      "id": 1271,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Lulus Massal",
+      "detail": "1 siswa dipindahkan ke Data Lulusan tahun 2026",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:34:49"
+    },
+    {
+      "id": 1272,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Alumni",
+      "detail": "Edit: Sumanto (231231212)",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:34:59"
+    },
+    {
+      "id": 1273,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Lulus Massal",
+      "detail": "1 siswa dipindahkan ke Data Lulusan tahun 2027",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:36:49"
+    },
+    {
+      "id": 1274,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Alumni",
+      "detail": "Edit: Sumanto (312727427)",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:37:04"
+    },
+    {
+      "id": 1275,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah Siswa",
+      "detail": "asdasd (asdasda)",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:40:08"
+    },
+    {
+      "id": 1276,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah Siswa",
+      "detail": "asdasd (adasd)",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:40:24"
+    },
+    {
+      "id": 1277,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah Siswa",
+      "detail": "asdasdasd (123g331)",
+      "ip_address": "",
+      "created_at": "2026-06-07 18:40:49"
+    },
+    {
+      "id": 1278,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Pindah Massal",
+      "detail": "1 siswa dipindahkan ke Data Pindahan",
+      "ip_address": "",
+      "created_at": "2026-06-07 19:12:32"
+    },
+    {
+      "id": 1279,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Pindahan",
+      "detail": "Edit surat: Sigitfad (2321381283)",
+      "ip_address": "",
+      "created_at": "2026-06-07 19:23:44"
+    },
+    {
+      "id": 1280,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 22:10:15"
+    },
+    {
+      "id": 1281,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Pindahan",
+      "detail": "Hapus massal: 1 data",
+      "ip_address": "",
+      "created_at": "2026-06-07 22:37:12"
+    },
+    {
+      "id": 1282,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Pindah Massal",
+      "detail": "1 siswa dipindahkan ke Data Pindahan",
+      "ip_address": "",
+      "created_at": "2026-06-07 22:37:41"
+    },
+    {
+      "id": 1283,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Pindahan",
+      "detail": "Edit surat: asdasd (asdasda)",
+      "ip_address": "",
+      "created_at": "2026-06-07 22:38:47"
+    },
+    {
+      "id": 1284,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Pindahan",
+      "detail": "Edit surat: asdasd (asdasda)",
+      "ip_address": "",
+      "created_at": "2026-06-07 22:48:17"
+    },
+    {
+      "id": 1285,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Nining (guru_bidang) - Pengampu: Kelas 1A,Kelas 1B,Kelas 1C - NIP: 321381283",
+      "ip_address": "",
+      "created_at": "2026-06-07 23:00:49"
+    },
+    {
+      "id": 1286,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Nining (guru_bidang) - Pengampu: Kelas 1A,Kelas 1B,Kelas 1C - NIP: 321381283",
+      "ip_address": "",
+      "created_at": "2026-06-07 23:01:23"
+    },
+    {
+      "id": 1287,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Siswa",
+      "detail": "Ahmad Fauzi (2024001)",
+      "ip_address": "",
+      "created_at": "2026-06-07 23:01:58"
+    },
+    {
+      "id": 1288,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Siswa",
+      "detail": "Ahmad Fauzi (2024001)",
+      "ip_address": "",
+      "created_at": "2026-06-07 23:02:26"
+    },
+    {
+      "id": 1289,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 23:02:34"
+    },
+    {
+      "id": 1290,
+      "user_id": 239,
+      "user_nama": "Nining",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 23:02:42"
+    },
+    {
+      "id": 1291,
+      "user_id": 239,
+      "user_nama": "Nining",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 23:03:26"
+    },
+    {
+      "id": 1292,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 23:03:28"
+    },
+    {
+      "id": 1293,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Pindah Massal",
+      "detail": "1 siswa dipindahkan ke Data Pindahan",
+      "ip_address": "",
+      "created_at": "2026-06-07 23:03:54"
+    },
+    {
+      "id": 1294,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Pindahan",
+      "detail": "Edit surat: Ahmad Fauzi (2024001)",
+      "ip_address": "",
+      "created_at": "2026-06-07 23:04:32"
+    },
+    {
+      "id": 1295,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Pindahan",
+      "detail": "Edit surat: Ahmad Fauzi (2024001)",
+      "ip_address": "",
+      "created_at": "2026-06-07 23:04:49"
+    },
+    {
+      "id": 1296,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 23:05:23"
+    },
+    {
+      "id": 1297,
+      "user_id": 239,
+      "user_nama": "Nining",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 23:05:27"
+    },
+    {
+      "id": 1298,
+      "user_id": 239,
+      "user_nama": "Nining",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 23:05:34"
+    },
+    {
+      "id": 1299,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 23:05:35"
+    },
+    {
+      "id": 1300,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 23:59:16"
+    },
+    {
+      "id": 1301,
+      "user_id": 239,
+      "user_nama": "Nining",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 23:59:21"
+    },
+    {
+      "id": 1302,
+      "user_id": 239,
+      "user_nama": "Nining",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-07 23:59:53"
+    },
+    {
+      "id": 1303,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-07 23:59:54"
+    },
+    {
+      "id": 1304,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah Siswa",
+      "detail": "asdada (213213)",
+      "ip_address": "",
+      "created_at": "2026-06-08 00:25:25"
+    },
+    {
+      "id": 1305,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah Siswa",
+      "detail": "hjhgjhgj (321123123)",
+      "ip_address": "",
+      "created_at": "2026-06-08 00:25:50"
+    },
+    {
+      "id": 1306,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Alumni",
+      "detail": "Edit: Sumanto (312727427)",
+      "ip_address": "",
+      "created_at": "2026-06-08 00:36:41"
+    },
+    {
+      "id": 1307,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Alumni",
+      "detail": "Hapus massal: 1 alumni",
+      "ip_address": "",
+      "created_at": "2026-06-08 00:42:56"
+    },
+    {
+      "id": 1308,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Siswa",
+      "detail": "Anisa Putri (2024006)",
+      "ip_address": "",
+      "created_at": "2026-06-08 01:16:04"
+    },
+    {
+      "id": 1309,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Pindah Massal",
+      "detail": "1 siswa dipindahkan ke Data Pindahan",
+      "ip_address": "",
+      "created_at": "2026-06-08 01:16:20"
+    },
+    {
+      "id": 1310,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Pindahan",
+      "detail": "Edit surat: Anisa Putri (2024006)",
+      "ip_address": "",
+      "created_at": "2026-06-08 01:48:42"
+    },
+    {
+      "id": 1311,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Siswa",
+      "detail": "Dani Kurniawan (2024007)",
+      "ip_address": "",
+      "created_at": "2026-06-08 01:55:14"
+    },
+    {
+      "id": 1312,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Pindah Massal",
+      "detail": "1 siswa dipindahkan ke Data Pindahan",
+      "ip_address": "",
+      "created_at": "2026-06-08 01:58:57"
+    },
+    {
+      "id": 1313,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Pindah Massal",
+      "detail": "1 siswa dipindahkan ke Data Pindahan",
+      "ip_address": "",
+      "created_at": "2026-06-08 01:59:16"
+    },
+    {
+      "id": 1314,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Pindah Massal",
+      "detail": "1 siswa dipindahkan ke Data Pindahan",
+      "ip_address": "",
+      "created_at": "2026-06-08 01:59:41"
+    },
+    {
+      "id": 1315,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Pindahan",
+      "detail": "Hapus massal: 1 data",
+      "ip_address": "",
+      "created_at": "2026-06-08 02:19:36"
+    },
+    {
+      "id": 1316,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Pindah Massal",
+      "detail": "5 siswa dipindahkan ke Data Pindahan",
+      "ip_address": "",
+      "created_at": "2026-06-08 02:22:11"
+    },
+    {
+      "id": 1317,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-08 03:21:41"
+    },
+    {
+      "id": 1318,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-08 03:44:14"
+    },
+    {
+      "id": 1319,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-08 13:34:26"
+    },
+    {
+      "id": 1320,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Pindahan",
+      "detail": "Edit surat: Ahmad Fauzi (2024001)",
+      "ip_address": "",
+      "created_at": "2026-06-08 13:36:58"
+    },
+    {
+      "id": 1321,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Scan Presensi",
+      "detail": "Dani Kurniawan - Terlambat pukul 13:38",
+      "ip_address": "",
+      "created_at": "2026-06-08 13:38:27"
+    },
+    {
+      "id": 1322,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Scan Presensi",
+      "detail": "Dewi Rahayu - Terlambat pukul 13:38",
+      "ip_address": "",
+      "created_at": "2026-06-08 13:38:32"
+    },
+    {
+      "id": 1323,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Scan Presensi",
+      "detail": "hjhgjhgj - Terlambat pukul 13:38",
+      "ip_address": "",
+      "created_at": "2026-06-08 13:38:37"
+    },
+    {
+      "id": 1324,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Siswa",
+      "detail": "Dani Kurniawan (2024007)",
+      "ip_address": "",
+      "created_at": "2026-06-08 14:01:49"
+    },
+    {
+      "id": 1325,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Siswa",
+      "detail": "Dani Kurniawan (2024007)",
+      "ip_address": "",
+      "created_at": "2026-06-08 14:15:38"
+    },
+    {
+      "id": 1326,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-08 14:29:26"
+    },
+    {
+      "id": 1327,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-08 14:32:06"
+    },
+    {
+      "id": 1328,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: sadasds (guru) - Pengampu: Kelas 4A - NIP: asdas",
+      "ip_address": "",
+      "created_at": "2026-06-08 15:19:11"
+    },
+    {
+      "id": 1329,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Sigitfad (guru) - Pengampu: Kelas 4A - NIP: asdas",
+      "ip_address": "",
+      "created_at": "2026-06-08 15:19:28"
+    },
+    {
+      "id": 1330,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Sigitfad, S.Kom. (guru) - Pengampu: Kelas 4A - NIP: asdas",
+      "ip_address": "",
+      "created_at": "2026-06-08 15:19:38"
+    },
+    {
+      "id": 1331,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Nining (guru_bidang) - Pengampu: Kelas 1A,Kelas 1B,Kelas 1C,Kelas 2A - NIP: 321381283",
+      "ip_address": "",
+      "created_at": "2026-06-08 15:20:07"
+    },
+    {
+      "id": 1332,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-08 16:30:18"
+    },
+    {
+      "id": 1333,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-08 16:30:30"
+    },
+    {
+      "id": 1334,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Zahra Listi, S.Pd. (guru_bidang) - Pengampu: Kelas 6A,Kelas 6B,Kelas 6C,Kelas 6D - NIP: 434321",
+      "ip_address": "",
+      "created_at": "2026-06-08 16:32:36"
+    },
+    {
+      "id": 1335,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Zahra Listi, S.Pd. (guru_bidang) - Pengampu: Kelas 6A,Kelas 6B,Kelas 6C,Kelas 6D - NIP: 434321",
+      "ip_address": "",
+      "created_at": "2026-06-08 16:33:00"
+    },
+    {
+      "id": 1336,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah Siswa",
+      "detail": "Jaizan (8231231)",
+      "ip_address": "",
+      "created_at": "2026-06-08 16:52:13"
+    },
+    {
+      "id": 1337,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Zahra Listi, S.Pd. (guru_bidang) - Pengampu: Kelas 3A,Kelas 6D - NIP: 434321",
+      "ip_address": "",
+      "created_at": "2026-06-08 17:05:26"
+    },
+    {
+      "id": 1338,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Zahra Listi, S.Pd. (guru_bidang) - Pengampu: Kelas 3D,Kelas 6A,Kelas 6D - NIP: 434321",
+      "ip_address": "",
+      "created_at": "2026-06-08 17:08:03"
+    },
+    {
+      "id": 1339,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Zahra Listi, S.Pd. (guru_bidang) - Pengampu: Kelas 1A,Kelas 1D,Kelas 5D - NIP: 434321",
+      "ip_address": "",
+      "created_at": "2026-06-08 17:08:14"
+    },
+    {
+      "id": 1340,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Zahra Listi, S.Pd. (guru_bidang) - Pengampu: Kelas 1A,Kelas 1D - NIP: 434321",
+      "ip_address": "",
+      "created_at": "2026-06-08 17:14:42"
+    },
+    {
+      "id": 1341,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Nining (guru_bidang) - Pengampu: Kelas 1A,Kelas 1B - NIP: 321381283",
+      "ip_address": "",
+      "created_at": "2026-06-08 17:16:37"
+    },
+    {
+      "id": 1342,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Iis Dahlia, S.Pd (guru_bidang) - Pengampu: Kelas 3D,Kelas 4D,Kelas 5D - NIP: 290129",
+      "ip_address": "",
+      "created_at": "2026-06-08 18:24:16"
+    },
+    {
+      "id": 1343,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Iis Dahlia, S.Pd (guru_bidang) - Pengampu: Kelas 3D,Kelas 4D,Kelas 5D - NIP: 290129",
+      "ip_address": "",
+      "created_at": "2026-06-08 18:24:38"
+    },
+    {
+      "id": 1344,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus User",
+      "detail": "Hapus: Sigitfad, S.Kom.",
+      "ip_address": "",
+      "created_at": "2026-06-08 18:24:54"
+    },
+    {
+      "id": 1345,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Iis Dahlia, S.Pd (guru_bidang) - Pengampu: Kelas 2A,Kelas 2B - NIP: 290129",
+      "ip_address": "",
+      "created_at": "2026-06-08 18:32:32"
+    },
+    {
+      "id": 1346,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Lulus Massal",
+      "detail": "1 siswa dipindahkan ke Data Lulusan tahun 2025",
+      "ip_address": "",
+      "created_at": "2026-06-08 18:59:50"
+    },
+    {
+      "id": 1347,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Alumni",
+      "detail": "Hapus massal: 1 alumni",
+      "ip_address": "",
+      "created_at": "2026-06-08 19:54:56"
+    },
+    {
+      "id": 1348,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Elsi Dwi Tiani, S.Pd. (guru_bidang) - Pengampu: Kelas 1A,Kelas 1D - NIP: 434321",
+      "ip_address": "",
+      "created_at": "2026-06-08 20:01:51"
+    },
+    {
+      "id": 1349,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Nining (guru) - Pengampu: Semua - NIP: 321381283",
+      "ip_address": "",
+      "created_at": "2026-06-08 20:15:49"
+    },
+    {
+      "id": 1350,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Ismail Tan. S.Pd. (guru) - Pengampu: Kelas 4B - NIP: 313233",
+      "ip_address": "",
+      "created_at": "2026-06-08 20:21:35"
+    },
+    {
+      "id": 1351,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Nining (guru_bidang) - Pengampu: Kelas 1A,Kelas 1D - NIP: 321381283",
+      "ip_address": "",
+      "created_at": "2026-06-08 20:22:04"
+    },
+    {
+      "id": 1352,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Ismail Tan. S.Pd. (guru) - Pengampu: Kelas 4A - NIP: 313233",
+      "ip_address": "",
+      "created_at": "2026-06-08 20:22:28"
+    },
+    {
+      "id": 1353,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Nining (guru_bidang) - Pengampu: Kelas 1A,Kelas 1D,Kelas 4A - NIP: 321381283",
+      "ip_address": "",
+      "created_at": "2026-06-08 20:22:37"
+    },
+    {
+      "id": 1354,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Sudirman Albaik. M.Pd (kepala_sekolah) - Pengampu: Kelas 6C - NIP: 310003",
+      "ip_address": "",
+      "created_at": "2026-06-08 20:23:59"
+    },
+    {
+      "id": 1355,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Sudirman Albaik. M.Pd (kepala_sekolah) - Pengampu: Kelas 4A - NIP: 310003",
+      "ip_address": "",
+      "created_at": "2026-06-08 20:24:25"
+    },
+    {
+      "id": 1356,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Nining (guru_bidang) - Pengampu: Kelas 1A,Kelas 1D,Kelas 4A - NIP: 321381283",
+      "ip_address": "",
+      "created_at": "2026-06-08 20:33:36"
+    },
+    {
+      "id": 1357,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-08 20:33:42"
+    },
+    {
+      "id": 1358,
+      "user_id": 239,
+      "user_nama": "Nining",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-08 20:33:47"
+    },
+    {
+      "id": 1359,
+      "user_id": 239,
+      "user_nama": "Nining",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-08 20:38:46"
+    },
+    {
+      "id": 1360,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-08 20:38:48"
+    },
+    {
+      "id": 1361,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-08 20:39:36"
+    },
+    {
+      "id": 1362,
+      "user_id": 239,
+      "user_nama": "Nining",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-08 20:39:42"
+    },
+    {
+      "id": 1363,
+      "user_id": 239,
+      "user_nama": "Nining",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-08 20:39:47"
+    },
+    {
+      "id": 1364,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-08 20:39:49"
+    },
+    {
+      "id": 1365,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-08 20:40:02"
+    },
+    {
+      "id": 1366,
+      "user_id": 269,
+      "user_nama": "Iis Dahlia, S.Pd",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-08 20:40:08"
+    },
+    {
+      "id": 1367,
+      "user_id": 269,
+      "user_nama": "Iis Dahlia, S.Pd",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-08 20:40:14"
+    },
+    {
+      "id": 1368,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-08 20:40:16"
+    },
+    {
+      "id": 1369,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Pindahan",
+      "detail": "Hapus: asdasdasd (123g331)",
+      "ip_address": "",
+      "created_at": "2026-06-08 22:23:26"
+    },
+    {
+      "id": 1370,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Pindahan",
+      "detail": "Edit surat: Ahmad Fauzi (2024001)",
+      "ip_address": "",
+      "created_at": "2026-06-08 22:29:02"
+    },
+    {
+      "id": 1371,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-08 23:40:24"
+    },
+    {
+      "id": 1372,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-09 00:23:58"
+    },
+    {
+      "id": 1373,
+      "user_id": 239,
+      "user_nama": "Nining",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-09 00:24:05"
+    },
+    {
+      "id": 1374,
+      "user_id": 239,
+      "user_nama": "Nining",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-09 00:24:11"
+    },
+    {
+      "id": 1375,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-09 00:25:09"
+    },
+    {
+      "id": 1376,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-09 00:27:08"
+    },
+    {
+      "id": 1377,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-09 00:27:15"
+    },
+    {
+      "id": 1378,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-09 00:27:41"
+    },
+    {
+      "id": 1379,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-09 00:33:17"
+    },
+    {
+      "id": 1380,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-09 00:33:20"
+    },
+    {
+      "id": 1381,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-09 00:33:25"
+    },
+    {
+      "id": 1382,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-09 00:33:28"
+    },
+    {
+      "id": 1383,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-09 00:34:18"
+    },
+    {
+      "id": 1384,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Pindahan",
+      "detail": "Edit surat: Didik (213123)",
+      "ip_address": "",
+      "created_at": "2026-06-09 07:14:51"
+    },
+    {
+      "id": 1385,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Nining (guru_bidang) - Pengampu: Kelas 2A,Kelas 2B,Kelas 4A - NIP: 321381283",
+      "ip_address": "",
+      "created_at": "2026-06-09 07:16:20"
+    },
+    {
+      "id": 1386,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Iis Dahlia (guru_bidang) - Pengampu: Kelas 2A,Kelas 2B - NIP: 290129",
+      "ip_address": "",
+      "created_at": "2026-06-09 07:16:43"
+    },
+    {
+      "id": 1387,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Iis Dahlia. S.Pd. (guru_bidang) - Pengampu: Kelas 2A,Kelas 2B - NIP: 290129",
+      "ip_address": "",
+      "created_at": "2026-06-09 07:17:05"
+    },
+    {
+      "id": 1388,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Scan Presensi",
+      "detail": "Dani Kurniawan - Terlambat pukul 07:17",
+      "ip_address": "",
+      "created_at": "2026-06-09 07:17:39"
+    },
+    {
+      "id": 1389,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-09 07:22:48"
+    },
+    {
+      "id": 1390,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-09 07:22:57"
+    },
+    {
+      "id": 1391,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Pindahan",
+      "detail": "Edit surat: Rizki Pratama (2024005)",
+      "ip_address": "",
+      "created_at": "2026-06-09 10:05:31"
+    },
+    {
+      "id": 1392,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Pindahan",
+      "detail": "Edit surat: Fitri Handayani (2024008)",
+      "ip_address": "",
+      "created_at": "2026-06-09 10:46:14"
+    },
+    {
+      "id": 1393,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Alumni",
+      "detail": "Edit: Budi Santoso (2024003)",
+      "ip_address": "",
+      "created_at": "2026-06-09 14:16:01"
+    },
+    {
+      "id": 1394,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Pindahan",
+      "detail": "Edit surat: Ahmad Fauzi (2024001)",
+      "ip_address": "",
+      "created_at": "2026-06-09 14:16:37"
+    },
+    {
+      "id": 1395,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-09 16:00:24"
+    },
+    {
+      "id": 1396,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Nining, S.Pd. (guru_bidang) - Pengampu: Kelas 2A,Kelas 2B,Kelas 4A - NIP: 321381283",
+      "ip_address": "",
+      "created_at": "2026-06-09 16:05:48"
+    },
+    {
+      "id": 1397,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Iis Dahlia, S.Ag. (guru_bidang) - Pengampu: Kelas 2A,Kelas 2B - NIP: 290129",
+      "ip_address": "",
+      "created_at": "2026-06-09 16:05:59"
+    },
+    {
+      "id": 1398,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Elsi Dwi Tiani, S.Pd. (guru_bidang) - Pengampu: Kelas 1A,Kelas 1D,Kelas 4B - NIP: 434321",
+      "ip_address": "",
+      "created_at": "2026-06-09 16:48:15"
+    },
+    {
+      "id": 1399,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Elsi Dwi Tiani, S.Pd. (guru_bidang) - Pengampu: Kelas 1A,Kelas 1D,Kelas 4B,Kelas 6B - NIP: 434321",
+      "ip_address": "",
+      "created_at": "2026-06-09 16:48:31"
+    },
+    {
+      "id": 1400,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Elsi Dwi Tiani, S.Pd. (guru_bidang) - Pengampu: Kelas 1A,Kelas 1D,Kelas 4A,Kelas 6B - NIP: 434321",
+      "ip_address": "",
+      "created_at": "2026-06-09 17:05:29"
+    },
+    {
+      "id": 1401,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Siswa",
+      "detail": "Dani Kurniawan (2024007)",
+      "ip_address": "",
+      "created_at": "2026-06-09 17:10:46"
+    },
+    {
+      "id": 1402,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Lulus Massal",
+      "detail": "1 siswa dipindahkan ke Data Lulusan tahun 2027",
+      "ip_address": "",
+      "created_at": "2026-06-09 17:17:48"
+    },
+    {
+      "id": 1403,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Alumni",
+      "detail": "Edit: Eko Prasetyo (2024009)",
+      "ip_address": "",
+      "created_at": "2026-06-09 20:21:07"
+    },
+    {
+      "id": 1404,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Elsi Dwi Tiani, S.Pd. (guru_bidang) - Pengampu: Kelas 1A,Kelas 1D,Kelas 4A,Kelas 6B - NIP: 434321",
+      "ip_address": "",
+      "created_at": "2026-06-09 21:33:50"
+    },
+    {
+      "id": 1405,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-09 21:33:57"
+    },
+    {
+      "id": 1406,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-09 21:34:12"
+    },
+    {
+      "id": 1407,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-09 21:34:22"
+    },
+    {
+      "id": 1408,
+      "user_id": 268,
+      "user_nama": "Elsi Dwi Tiani, S.Pd.",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-09 21:34:25"
+    },
+    {
+      "id": 1409,
+      "user_id": 268,
+      "user_nama": "Elsi Dwi Tiani, S.Pd.",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-09 21:34:44"
+    },
+    {
+      "id": 1410,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-09 21:34:46"
+    },
+    {
+      "id": 1411,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-09 21:54:26"
+    },
+    {
+      "id": 1412,
+      "user_id": 268,
+      "user_nama": "Elsi Dwi Tiani, S.Pd.",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-09 21:54:31"
+    },
+    {
+      "id": 1413,
+      "user_id": 268,
+      "user_nama": "Elsi Dwi Tiani, S.Pd.",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-09 21:54:35"
+    },
+    {
+      "id": 1414,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-09 21:54:38"
+    },
+    {
+      "id": 1415,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Ismail Tan. S.Pd. (guru_bidang) - Pengampu: Kelas 1A,Kelas 1B - NIP: 313233",
+      "ip_address": "",
+      "created_at": "2026-06-09 21:58:53"
+    },
+    {
+      "id": 1416,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Elsi Dwi Tiani, S.Pd. (guru) - Pengampu: Semua - NIP: 434321",
+      "ip_address": "",
+      "created_at": "2026-06-09 22:01:42"
+    },
+    {
+      "id": 1417,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Ismail Tan. S.Pd. (guru) - Pengampu: Semua - NIP: 313233",
+      "ip_address": "",
+      "created_at": "2026-06-09 22:01:51"
+    },
+    {
+      "id": 1418,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-09 23:09:31"
+    },
+    {
+      "id": 1419,
+      "user_id": 239,
+      "user_nama": "Nining, S.Pd.",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-09 23:09:38"
+    },
+    {
+      "id": 1420,
+      "user_id": 239,
+      "user_nama": "Nining, S.Pd.",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-09 23:13:14"
+    },
+    {
+      "id": 1421,
+      "user_id": 269,
+      "user_nama": "Iis Dahlia, S.Ag.",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-09 23:13:21"
+    },
+    {
+      "id": 1422,
+      "user_id": 269,
+      "user_nama": "Iis Dahlia, S.Ag.",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-09 23:13:49"
+    },
+    {
+      "id": 1423,
+      "user_id": 268,
+      "user_nama": "Elsi Dwi Tiani, S.Pd.",
+      "role": "guru",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-09 23:13:54"
+    },
+    {
+      "id": 1424,
+      "user_id": 268,
+      "user_nama": "Elsi Dwi Tiani, S.Pd.",
+      "role": "guru",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-09 23:13:59"
+    },
+    {
+      "id": 1425,
+      "user_id": 239,
+      "user_nama": "Nining, S.Pd.",
+      "role": "guru_bidang",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-09 23:14:16"
+    },
+    {
+      "id": 1426,
+      "user_id": 239,
+      "user_nama": "Nining, S.Pd.",
+      "role": "guru_bidang",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-09 23:27:15"
+    },
+    {
+      "id": 1427,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-09 23:27:16"
+    },
+    {
+      "id": 1428,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Elsi Dwi Tiani, S.Pd. (guru_bidang) - Pengampu: Kelas 2A,Kelas 2B,Kelas 2C,Kelas 2D - NIP: 434321",
+      "ip_address": "",
+      "created_at": "2026-06-09 23:27:37"
+    },
+    {
+      "id": 1429,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Scan Presensi",
+      "detail": "Dewi Rahayu - Terlambat pukul 23:29",
+      "ip_address": "",
+      "created_at": "2026-06-09 23:29:04"
+    },
+    {
+      "id": 1430,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus User",
+      "detail": "Hapus massal: 5 pengguna",
+      "ip_address": "",
+      "created_at": "2026-06-09 23:38:45"
+    },
+    {
+      "id": 1431,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-10 07:36:34"
+    },
+    {
+      "id": 1432,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-10 07:36:42"
+    },
+    {
+      "id": 1433,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-10 07:37:06"
+    },
+    {
+      "id": 1434,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: M. Bagus Faturochman, S.Pd (guru_bidang) - Pengampu: Kelas 2A,Kelas 2B,Kelas 2C,Kelas 2D - NIP: 198912052011012023",
+      "ip_address": "",
+      "created_at": "2026-06-10 08:01:20"
+    },
+    {
+      "id": 1435,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Sunardi, S.Pd (Guru Agama) - Pengampu: Kelas 1A,Kelas 1B,Kelas 1C,Kelas 1D - NIP: 197711292004012022",
+      "ip_address": "",
+      "created_at": "2026-06-10 08:17:31"
+    },
+    {
+      "id": 1436,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Sunardi, S.Pd (guru_bidang) - Pengampu: Semua - NIP: ",
+      "ip_address": "",
+      "created_at": "2026-06-10 08:17:46"
+    },
+    {
+      "id": 1437,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus User",
+      "detail": "Hapus: Sunardi, S.Pd",
+      "ip_address": "",
+      "created_at": "2026-06-10 08:19:24"
+    },
+    {
+      "id": 1438,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: M. Bagus Faturochman, S.Pd (Guru Bahasa Inggris) - Pengampu: Kelas 2A,Kelas 2B,Kelas 2C,Kelas 2D - NIP: 198912052011012023",
+      "ip_address": "",
+      "created_at": "2026-06-10 08:22:18"
+    },
+    {
+      "id": 1439,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus User",
+      "detail": "Hapus: M. Bagus Faturochman, S.Pd (Guru Bahasa Inggris)",
+      "ip_address": "",
+      "created_at": "2026-06-10 08:22:38"
+    },
+    {
+      "id": 1440,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: H. Umah, S.Pd (Guru Olahraga) - Pengampu: Kelas 3B,Kelas 3D - NIP: 197403102002012020",
+      "ip_address": "",
+      "created_at": "2026-06-10 08:27:13"
+    },
+    {
+      "id": 1441,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus User",
+      "detail": "Hapus: H. Umah, S.Pd (Guru Olahraga) - NIP: 197403102002012020",
+      "ip_address": "",
+      "created_at": "2026-06-10 08:27:31"
+    },
+    {
+      "id": 1442,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: M. Bagus Faturochman, S.Pd (Guru Bahasa Inggris) - Pengampu: Kelas 2A,Kelas 2C,Kelas 3A,Kelas 3C - NIP: 198912052011012023",
+      "ip_address": "",
+      "created_at": "2026-06-10 08:35:41"
+    },
+    {
+      "id": 1443,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-10 08:40:14"
+    },
+    {
+      "id": 1444,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Logout",
+      "detail": "Keluar dari sistem",
+      "ip_address": "",
+      "created_at": "2026-06-10 08:43:20"
+    },
+    {
+      "id": 1445,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-10 08:43:22"
+    },
+    {
+      "id": 1446,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-10 08:51:21"
+    },
+    {
+      "id": 1447,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Sunardi, S.Pd (guru_bidang) - Pengampu: Kelas 5A,Kelas 5B,Kelas 5C,Kelas 5D,Kelas 6A,Kelas 6B,Kelas 6C,Kelas 6D - NIP: 197711292004012022",
+      "ip_address": "",
+      "created_at": "2026-06-10 13:51:39"
+    },
+    {
+      "id": 1448,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Yayah Sopiah, S.Pd (Guru Olahraga) - Pengampu: Kelas 1A,Kelas 1B,Kelas 1C,Kelas 1D,Kelas 2A,Kelas 2B,Kelas 2C,Kelas 2D - NIP: 198209172007012021",
+      "ip_address": "",
+      "created_at": "2026-06-10 13:53:15"
+    },
+    {
+      "id": 1449,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: H. Umah, S.Pd (Guru Olahraga) - Pengampu: Kelas 3A,Kelas 3B,Kelas 3C,Kelas 3D,Kelas 4A,Kelas 4B,Kelas 4C,Kelas 4D - NIP: 197403102002012020",
+      "ip_address": "",
+      "created_at": "2026-06-10 13:54:43"
+    },
+    {
+      "id": 1450,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Yayah Sopiah, S.Pd (guru_bidang) - Pengampu: Semua - NIP: ",
+      "ip_address": "",
+      "created_at": "2026-06-10 13:54:59"
+    },
+    {
+      "id": 1451,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Sunardi, S.Pd (Guru Olahraga) - Pengampu: Kelas 5A,Kelas 5B,Kelas 5C,Kelas 5D,Kelas 6A,Kelas 6B,Kelas 6C,Kelas 6D - NIP: 197711292004012022",
+      "ip_address": "",
+      "created_at": "2026-06-10 13:56:24"
+    },
+    {
+      "id": 1452,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Yayah Sopiah, S.Pd (Guru Olahraga) - Pengampu: Semua - NIP: 198209172007012021",
+      "ip_address": "",
+      "created_at": "2026-06-10 13:57:12"
+    },
+    {
+      "id": 1453,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Yayah Sopiah, S.Pd (Guru Olahraga) - Pengampu: Kelas 1A,Kelas 1B,Kelas 1C,Kelas 1D,Kelas 2A,Kelas 2B,Kelas 2C,Kelas 2D - NIP: 198209172007012021",
+      "ip_address": "",
+      "created_at": "2026-06-10 13:57:33"
+    },
+    {
+      "id": 1454,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Endang S. Hasan, S.Pd.I (operator) - Pengampu: Semua - NIP: ",
+      "ip_address": "",
+      "created_at": "2026-06-10 13:58:10"
+    },
+    {
+      "id": 1455,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Endang S. Hasan, S.Pd.I (Guru Agama) - Pengampu: Kelas 1A,Kelas 1B,Kelas 1C,Kelas 1D,Kelas 2A,Kelas 2B,Kelas 2C,Kelas 2D,Kelas 3A,Kelas 3B,Kelas 3C,Kelas 3D - NIP: 197605052003012019",
+      "ip_address": "",
+      "created_at": "2026-06-10 13:59:53"
+    },
+    {
+      "id": 1456,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Rina Fadzillah, S.Pd.I (guru_bidang) - Pengampu: Kelas 4A,Kelas 4B,Kelas 4C,Kelas 4D,Kelas 5A,Kelas 5B,Kelas 5C,Kelas 5D,Kelas 6A,Kelas 6B,Kelas 6C,Kelas 6D - NIP: 198706242009012016",
+      "ip_address": "",
+      "created_at": "2026-06-10 14:01:15"
+    },
+    {
+      "id": 1457,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: asdsad (guru) - Pengampu: Semua - NIP: ",
+      "ip_address": "",
+      "created_at": "2026-06-10 14:27:29"
+    },
+    {
+      "id": 1458,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus User",
+      "detail": "Hapus: asdsad (guru) - NIP: ",
+      "ip_address": "",
+      "created_at": "2026-06-10 14:27:33"
+    },
+    {
+      "id": 1459,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: asda (guru) - Pengampu: Semua - NIP: ",
+      "ip_address": "",
+      "created_at": "2026-06-10 14:30:25"
+    },
+    {
+      "id": 1460,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus User",
+      "detail": "Hapus: asda (guru) - NIP: ",
+      "ip_address": "",
+      "created_at": "2026-06-10 14:30:28"
+    },
+    {
+      "id": 1461,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Endang S. Hasan, S.Pd.I (Guru Agama) - Pengampu: Kelas 1A,Kelas 1B,Kelas 1C,Kelas 1D,Kelas 2A,Kelas 2B,Kelas 2C,Kelas 2D,Kelas 3A,Kelas 3B,Kelas 3C,Kelas 3D - NIP: 197605052003012019",
+      "ip_address": "",
+      "created_at": "2026-06-10 14:48:37"
+    },
+    {
+      "id": 1462,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: asdadad (Guru Seni) - Pengampu: Kelas 1A,Kelas 1B - NIP: 12321321312312",
+      "ip_address": "",
+      "created_at": "2026-06-10 14:58:23"
+    },
+    {
+      "id": 1463,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus User",
+      "detail": "Hapus: asdadad (Guru Seni) - NIP: 12321321312312",
+      "ip_address": "",
+      "created_at": "2026-06-10 14:58:31"
+    },
+    {
+      "id": 1464,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: asdadasdad (Guru Olahraga) - Pengampu: Kelas 1D,Kelas 2B,Kelas 2D - NIP: 1312312312312",
+      "ip_address": "",
+      "created_at": "2026-06-10 15:14:25"
+    },
+    {
+      "id": 1465,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus User",
+      "detail": "Hapus: asdadasdad (Guru Olahraga) - NIP: 1312312312312",
+      "ip_address": "",
+      "created_at": "2026-06-10 15:14:35"
+    },
+    {
+      "id": 1466,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Euis Usnia, S.Pd (Guru Seni) - Pengampu: Kelas 4A,Kelas 4B,Kelas 4C,Kelas 4D,Kelas 5A,Kelas 5B,Kelas 5C,Kelas 5D,Kelas 6A,Kelas 6B,Kelas 6C,Kelas 6D - NIP: 197812282005012018",
+      "ip_address": "",
+      "created_at": "2026-06-10 15:31:26"
+    },
+    {
+      "id": 1467,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Rina Fadzillah, S.Pd.I (Guru Seni) - Pengampu: Kelas 4A,Kelas 4B,Kelas 4C,Kelas 4D,Kelas 5A,Kelas 5B,Kelas 5C,Kelas 5D,Kelas 6A,Kelas 6B,Kelas 6C,Kelas 6D - NIP: 198706242009012016",
+      "ip_address": "",
+      "created_at": "2026-06-10 15:33:19"
+    },
+    {
+      "id": 1468,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Rika Robiah. A, S.Pd (guru) - Pengampu: Kelas 6A - NIP: 198401192008012015",
+      "ip_address": "",
+      "created_at": "2026-06-10 15:34:41"
+    },
+    {
+      "id": 1469,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Ajeng Mardalena, S.Pd (guru) - Pengampu: Kelas 6C - NIP: 199103152012012017",
+      "ip_address": "",
+      "created_at": "2026-06-10 15:36:43"
+    },
+    {
+      "id": 1470,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Sigit Fadilla, S.Kom. (operator) - Pengampu: Semua - NIP: 32100000123",
+      "ip_address": "",
+      "created_at": "2026-06-10 15:38:37"
+    },
+    {
+      "id": 1471,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Yuyu Wahyuni, S.Pd (guru) - Pengampu: Kelas 5A - NIP: 198810302010012014",
+      "ip_address": "",
+      "created_at": "2026-06-10 15:39:46"
+    },
+    {
+      "id": 1472,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Neli Sri Lestari, S.Pd (guru) - Pengampu: Kelas 5B - NIP: 198502062007012013",
+      "ip_address": "",
+      "created_at": "2026-06-10 15:41:29"
+    },
+    {
+      "id": 1473,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Kartini, S.Pd (guru) - Pengampu: Kelas 5C - NIP: 197909142006012012",
+      "ip_address": "",
+      "created_at": "2026-06-10 15:42:41"
+    },
+    {
+      "id": 1474,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Mulyanah, S.Pd (guru) - Pengampu: Kelas 4A - NIP: 197704222004012011",
+      "ip_address": "",
+      "created_at": "2026-06-10 15:43:40"
+    },
+    {
+      "id": 1475,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Ima Arina. D, S.Pd (guru) - Pengampu: Kelas 4B - NIP: 198611132009012010",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:02:56"
+    },
+    {
+      "id": 1476,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Sriastutik Andoyani, S.Pd (guru) - Pengampu: Kelas 4C - NIP: 198309252008012009",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:04:37"
+    },
+    {
+      "id": 1477,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Tati Rusmiati, S.Pd (guru) - Pengampu: Kelas 3A - NIP: 197508082003012008",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:05:46"
+    },
+    {
+      "id": 1478,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Eli Komalasari, S.Pd (guru) - Pengampu: Kelas 3B - NIP: 197706112004012007",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:06:57"
+    },
+    {
+      "id": 1479,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Auliya Rizki. J, S.Pd (operator) - Pengampu: Semua - NIP: 198805172010012006",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:07:50"
+    },
+    {
+      "id": 1480,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Auliya Rizki. J, S.Pd (guru) - Pengampu: Kelas 3C - NIP: 198805172010012006",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:08:23"
+    },
+    {
+      "id": 1481,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Saskia Choirunnisa. K, S.Pd (guru) - Pengampu: Kelas 2C - NIP: 199001202011012005",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:09:21"
+    },
+    {
+      "id": 1482,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Hj. Enung Nurhasanah, S.Pd (guru) - Pengampu: Kelas 2A - NIP: 197912102005012004",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:11:10"
+    },
+    {
+      "id": 1483,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Siti Fatimah, S.Pd (guru) - Pengampu: Kelas 1A - NIP: 198104152006042002",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:13:48"
+    },
+    {
+      "id": 1484,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Ii Rosmiati, S.Pd (guru) - Pengampu: Kelas 1C - NIP: 197803122005012001",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:15:01"
+    },
+    {
+      "id": 1485,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Rina Fadzillah, S.Pd.I (Guru Agama) - Pengampu: Kelas 4A,Kelas 4B,Kelas 4C,Kelas 4D,Kelas 5A,Kelas 5B,Kelas 5C,Kelas 5D,Kelas 6A,Kelas 6B,Kelas 6C,Kelas 6D - NIP: 198706242009012016",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:23:17"
+    },
+    {
+      "id": 1486,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: Elsi Dwi Tiani, S.Pd., Gr. (guru) - Pengampu: Kelas 2B - NIP: 198207182007012003",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:25:27"
+    },
+    {
+      "id": 1487,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah Siswa",
+      "detail": "asdasda (sadads)",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:28:53"
+    },
+    {
+      "id": 1488,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: asdasdasd (guru) - Pengampu: Kelas 4D - NIP: 13131231231",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:35:04"
+    },
+    {
+      "id": 1489,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: asdasda (guru) - Pengampu: Kelas 4C - NIP: 1231231312312",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:37:45"
+    },
+    {
+      "id": 1490,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: asdasds (guru) - Pengampu: Kelas 4D - NIP: 123131312312",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:38:07"
+    },
+    {
+      "id": 1491,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: asdadsd (guru) - Pengampu: Kelas 3D - NIP: 2131232131231",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:39:03"
+    },
+    {
+      "id": 1492,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: fggsdf (guru) - Pengampu: Kelas 4C - NIP: 1232342342",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:40:20"
+    },
+    {
+      "id": 1493,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Scan Presensi",
+      "detail": "Jaizan - Terlambat pukul 16:40",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:40:45"
+    },
+    {
+      "id": 1494,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: asdagfh (guru) - Pengampu: Kelas 6B - NIP: 676575675",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:47:24"
+    },
+    {
+      "id": 1495,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Backup Database (JSON)",
+      "detail": "File: backup_2026-06-10T09-48-20.json",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:48:20"
+    },
+    {
+      "id": 1496,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-10T09-48-29.json",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:48:29"
+    },
+    {
+      "id": 1497,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: imported_2026-06-10T09-48-29.json",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:48:33"
+    },
+    {
+      "id": 1498,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Backup",
+      "detail": "File: backup_2026-06-10T09-48-20.json",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:48:35"
+    },
+    {
+      "id": 1499,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus User",
+      "detail": "Hapus massal: 6 pengguna",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:49:06"
+    },
+    {
+      "id": 1500,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-10 16:52:08"
+    },
+    {
+      "id": 1501,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Tambah User",
+      "detail": "User baru: asdgfg (guru) - Pengampu: Kelas 4B - NIP: 435243242",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:52:45"
+    },
+    {
+      "id": 1502,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Ajeng Mardalena, S.Pd (guru) - Pengampu: Kelas 6C - NIP: 199103152012012017",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:53:04"
+    },
+    {
+      "id": 1503,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus Pindahan",
+      "detail": "Hapus: Ahmad Fauzi (2024001)",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:54:22"
+    },
+    {
+      "id": 1504,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Siswa",
+      "detail": "Dewi Rahayu (2024004)",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:55:20"
+    },
+    {
+      "id": 1505,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit User",
+      "detail": "Edit: Ajeng Mardalena, S.Pd (guru) - Pengampu: Kelas 6C - NIP: 199103152012012017",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:57:17"
+    },
+    {
+      "id": 1506,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Siswa",
+      "detail": "Dewi Rahayu (2024004)",
+      "ip_address": "",
+      "created_at": "2026-06-10 16:59:42"
+    },
+    {
+      "id": 1507,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Alumni",
+      "detail": "Edit: Budi Santoso (2024003)",
+      "ip_address": "",
+      "created_at": "2026-06-10 17:03:04"
+    },
+    {
+      "id": 1508,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Hapus User",
+      "detail": "Hapus massal: 1 pengguna",
+      "ip_address": "",
+      "created_at": "2026-06-10 17:07:27"
+    },
+    {
+      "id": 1509,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Edit Settings",
+      "detail": "Mengubah pengaturan jam masuk",
+      "ip_address": "",
+      "created_at": "2026-06-10 17:07:59"
+    },
+    {
+      "id": 1510,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Import Backup",
+      "detail": "File: imported_2026-06-10T10-10-50.json",
+      "ip_address": "",
+      "created_at": "2026-06-10 17:10:50"
+    },
+    {
+      "id": 1511,
+      "user_id": 1,
+      "user_nama": "Sigit Fadilla, S.Kom.",
+      "role": "operator",
+      "aksi": "Login",
+      "detail": "Login dari IP: ::ffff:127.0.0.1",
+      "ip_address": "::ffff:127.0.0.1",
+      "created_at": "2026-06-10 17:18:12"
+    }
+  ],
+  "kelas": [
+    {
+      "id": 1,
+      "nama": "1A"
+    },
+    {
+      "id": 2,
+      "nama": "1B"
+    },
+    {
+      "id": 3,
+      "nama": "1C"
+    },
+    {
+      "id": 4,
+      "nama": "1D"
+    },
+    {
+      "id": 5,
+      "nama": "2A"
+    },
+    {
+      "id": 6,
+      "nama": "2B"
+    },
+    {
+      "id": 7,
+      "nama": "2C"
+    },
+    {
+      "id": 8,
+      "nama": "2D"
+    },
+    {
+      "id": 9,
+      "nama": "3A"
+    },
+    {
+      "id": 10,
+      "nama": "3B"
+    },
+    {
+      "id": 11,
+      "nama": "3C"
+    },
+    {
+      "id": 12,
+      "nama": "3D"
+    },
+    {
+      "id": 13,
+      "nama": "4A"
+    },
+    {
+      "id": 14,
+      "nama": "4B"
+    },
+    {
+      "id": 15,
+      "nama": "4C"
+    },
+    {
+      "id": 16,
+      "nama": "4D"
+    },
+    {
+      "id": 17,
+      "nama": "5A"
+    },
+    {
+      "id": 18,
+      "nama": "5B"
+    },
+    {
+      "id": 19,
+      "nama": "5C"
+    },
+    {
+      "id": 20,
+      "nama": "5D"
+    },
+    {
+      "id": 21,
+      "nama": "6A"
+    },
+    {
+      "id": 22,
+      "nama": "6B"
+    },
+    {
+      "id": 23,
+      "nama": "6C"
+    },
+    {
+      "id": 24,
+      "nama": "6D"
+    }
+  ],
+  "alumni": [
+    {
+      "id": 30,
+      "nama": "Lestari Wulandari",
+      "nisn": "2024010",
+      "kelas_lulus": "Kelas 5A",
+      "tahun_lulus": "2026",
+      "foto": "",
+      "ijazah": "",
+      "created_at": "2026-06-06 23:34:40",
+      "updated_at": "2026-06-06 23:34:40",
+      "jenis_kelamin": "",
+      "nik": "",
+      "tempat_lahir": "",
+      "tanggal_lahir": "",
+      "agama": "",
+      "alamat": "",
+      "no_hp_ortu": ""
+    },
+    {
+      "id": 31,
+      "nama": "Budi Santoso",
+      "nisn": "2024003",
+      "kelas_lulus": "Kelas 2A",
+      "tahun_lulus": "2027",
+      "foto": "",
+      "ijazah": "/uploads/ijazah/Budi_Santoso_1781085784227.png",
+      "created_at": "2026-06-06 23:53:43",
+      "updated_at": "2026-06-10 17:03:04",
+      "jenis_kelamin": "",
+      "nik": "",
+      "tempat_lahir": "",
+      "tanggal_lahir": "",
+      "agama": "",
+      "alamat": "",
+      "no_hp_ortu": ""
+    },
+    {
+      "id": 32,
+      "nama": "Kakanda",
+      "nisn": "321412",
+      "kelas_lulus": "Kelas 6D",
+      "tahun_lulus": "2026",
+      "foto": "/uploads/foto-siswa/siswa_1780765757273.png",
+      "ijazah": "",
+      "created_at": "2026-06-07 00:09:28",
+      "updated_at": "2026-06-07 00:09:28",
+      "jenis_kelamin": "",
+      "nik": "",
+      "tempat_lahir": "",
+      "tanggal_lahir": "",
+      "agama": "",
+      "alamat": "",
+      "no_hp_ortu": ""
+    },
+    {
+      "id": 33,
+      "nama": "Eko Prasetyo",
+      "nisn": "2024009",
+      "kelas_lulus": "Kelas 5A",
+      "tahun_lulus": "2026",
+      "foto": "",
+      "ijazah": "/uploads/ijazah/Eko_Prasetyo_1781011267092.jpg",
+      "created_at": "2026-06-07 00:16:15",
+      "updated_at": "2026-06-09 20:21:07",
+      "jenis_kelamin": "",
+      "nik": "",
+      "tempat_lahir": "",
+      "tanggal_lahir": "",
+      "agama": "",
+      "alamat": "",
+      "no_hp_ortu": ""
+    },
+    {
+      "id": 34,
+      "nama": "Citra",
+      "nisn": "211222111",
+      "kelas_lulus": "Kelas 6D",
+      "tahun_lulus": "2026",
+      "foto": "/uploads/foto-siswa/siswa_1780767010721.png",
+      "ijazah": "/uploads/ijazah/ijazah_1780831868778.pdf",
+      "created_at": "2026-06-07 00:30:23",
+      "updated_at": "2026-06-07 18:31:08",
+      "jenis_kelamin": "",
+      "nik": "",
+      "tempat_lahir": "",
+      "tanggal_lahir": "",
+      "agama": "",
+      "alamat": "",
+      "no_hp_ortu": ""
+    },
+    {
+      "id": 36,
+      "nama": "Sumanto",
+      "nisn": "312727427",
+      "kelas_lulus": "Kelas 4A",
+      "tahun_lulus": "2027",
+      "foto": "",
+      "ijazah": "/uploads/ijazah/Sumanto_1780853801200.pdf",
+      "created_at": "2026-06-07 18:36:49",
+      "updated_at": "2026-06-08 00:36:41",
+      "jenis_kelamin": "Laki-laki",
+      "nik": "312312312",
+      "tempat_lahir": "karawang",
+      "tanggal_lahir": "0232-04-15",
+      "agama": "Islam",
+      "alamat": "karawang",
+      "no_hp_ortu": "0123881238"
+    },
+    {
+      "id": 38,
+      "nama": "Dani Kurniawan",
+      "nisn": "2024007",
+      "kelas_lulus": "Kelas 4A",
+      "tahun_lulus": "2027",
+      "foto": "/uploads/foto-siswa/siswa_1780999846897.png",
+      "ijazah": "",
+      "created_at": "2026-06-09 17:17:48",
+      "updated_at": "2026-06-09 17:17:48",
+      "jenis_kelamin": "Laki-laki",
+      "nik": "30303030",
+      "tempat_lahir": "",
+      "tanggal_lahir": "",
+      "agama": "",
+      "alamat": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since 1966, when designers at Letraset and James Mosley, the librarian at St Bride Printing Library, took a 1914 Cicero translation and scrambled it to make dummy text for Letraset's Body Type sheets.",
+      "no_hp_ortu": ""
+    }
+  ]
+}
