@@ -111,6 +111,54 @@ async function initDB() {
   try { db.run("ALTER TABLE siswa RENAME COLUMN nis TO nisn"); saveDB(); console.log('[DB] Migrasi: siswa.nis -> nisn'); } catch(e) {}
   try { db.run("ALTER TABLE alumni RENAME COLUMN nis TO nisn"); saveDB(); console.log('[DB] Migrasi: alumni.nis -> nisn'); } catch(e) {}
 
+  // CREATE TABLE alumni/pindahan SEBELUM migrasi agar kolom tambahan bisa diterapkan
+  db.run(`
+    CREATE TABLE IF NOT EXISTS alumni (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nama TEXT NOT NULL,
+      nisn TEXT NOT NULL,
+      kelas_lulus TEXT NOT NULL,
+      tahun_lulus TEXT NOT NULL,
+      foto TEXT DEFAULT '',
+      ijazah TEXT DEFAULT '',
+      jenis_kelamin TEXT DEFAULT '',
+      nik TEXT DEFAULT '',
+      tempat_lahir TEXT DEFAULT '',
+      tanggal_lahir TEXT DEFAULT '',
+      agama TEXT DEFAULT '',
+      alamat TEXT DEFAULT '',
+      no_hp_ortu TEXT DEFAULT '',
+      nipd TEXT DEFAULT '',
+      created_at TEXT DEFAULT (datetime('now','localtime')),
+      updated_at TEXT DEFAULT (datetime('now','localtime'))
+    );
+  `);
+  db.run(`
+    CREATE TABLE IF NOT EXISTS pindahan (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nama TEXT NOT NULL,
+      nisn TEXT NOT NULL,
+      kelas TEXT NOT NULL,
+      alasan TEXT DEFAULT '',
+      tanggal_pindah TEXT DEFAULT (date('now','localtime')),
+      foto TEXT DEFAULT '',
+      surat_pindah TEXT DEFAULT '',
+      sekolah_tujuan TEXT DEFAULT '',
+      nomor_surat TEXT DEFAULT '',
+      tanggal_surat TEXT DEFAULT '',
+      jenis_kelamin TEXT DEFAULT '',
+      nik TEXT DEFAULT '',
+      tempat_lahir TEXT DEFAULT '',
+      tanggal_lahir TEXT DEFAULT '',
+      agama TEXT DEFAULT '',
+      alamat TEXT DEFAULT '',
+      no_hp_ortu TEXT DEFAULT '',
+      nipd TEXT DEFAULT '',
+      created_at TEXT DEFAULT (datetime('now','localtime')),
+      updated_at TEXT DEFAULT (datetime('now','localtime'))
+    );
+  `);
+
   // Migrasi: tambah kolom baru jika belum ada
   const migrations = [
     "ALTER TABLE operators ADD COLUMN foto TEXT DEFAULT ''",
@@ -145,6 +193,10 @@ async function initDB() {
     "ALTER TABLE pindahan ADD COLUMN nomor_surat TEXT DEFAULT ''",
     "ALTER TABLE pindahan ADD COLUMN tanggal_surat TEXT DEFAULT ''",
     "ALTER TABLE siswa DROP COLUMN status",
+    "ALTER TABLE siswa ADD COLUMN nipd TEXT DEFAULT ''",
+    "ALTER TABLE siswa ADD COLUMN uid TEXT DEFAULT ''",
+    "ALTER TABLE alumni ADD COLUMN nipd TEXT DEFAULT ''",
+    "ALTER TABLE pindahan ADD COLUMN nipd TEXT DEFAULT ''",
   ];
   migrations.forEach(sql => { try { db.run(sql); saveDB(); } catch(e) {} });
 
@@ -178,38 +230,6 @@ async function initDB() {
       console.error('[DB] Gagal migrasi operators:', e2.message);
     }
   }
-
-  db.run(`
-    CREATE TABLE IF NOT EXISTS alumni (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nama TEXT NOT NULL,
-      nisn TEXT NOT NULL,
-      kelas_lulus TEXT NOT NULL,
-      tahun_lulus TEXT NOT NULL,
-      foto TEXT DEFAULT '',
-      ijazah TEXT DEFAULT '',
-      created_at TEXT DEFAULT (datetime('now','localtime')),
-      updated_at TEXT DEFAULT (datetime('now','localtime'))
-    );
-  `);
-
-  db.run(`
-    CREATE TABLE IF NOT EXISTS pindahan (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nama TEXT NOT NULL,
-      nisn TEXT NOT NULL,
-      kelas TEXT NOT NULL,
-      alasan TEXT DEFAULT '',
-      tanggal_pindah TEXT DEFAULT (date('now','localtime')),
-      foto TEXT DEFAULT '',
-      surat_pindah TEXT DEFAULT '',
-      sekolah_tujuan TEXT DEFAULT '',
-      nomor_surat TEXT DEFAULT '',
-      tanggal_surat TEXT DEFAULT '',
-      created_at TEXT DEFAULT (datetime('now','localtime')),
-      updated_at TEXT DEFAULT (datetime('now','localtime'))
-    );
-  `);
 
   // Data awal siswa
   if (queryCount('SELECT COUNT(*) as c FROM siswa') === 0) {
@@ -265,6 +285,10 @@ function run(sql, params = []) {
   saveDB();
 }
 
+function runWithoutSave(sql, params = []) {
+  db.run(sql, params);
+}
+
 function queryAll(sql, params = []) {
   try {
     const stmt = db.prepare(sql);
@@ -313,4 +337,4 @@ function reloadDB() {
   });
 }
 
-module.exports = { initDB, run, queryAll, queryOne, queryCount, logActivity, getSetting, hitungStatus, saveDB, reloadDB, DB_PATH };
+module.exports = { initDB, run, runWithoutSave, queryAll, queryOne, queryCount, logActivity, getSetting, hitungStatus, saveDB, reloadDB, DB_PATH };

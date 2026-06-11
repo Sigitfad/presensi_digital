@@ -42,6 +42,11 @@
     #modalTambah .form-control-modern,
     #modalEdit .form-control-modern{padding:5px 8px;font-size:11px;}
     .swal-kecil{font-size:12px!important;border-radius:12px!important;}.swal-title-kecil{font-size:14px!important;padding:0!important;margin:0 0 4px!important;}.swal-text-kecil{font-size:12px!important;margin:0!important;}.swal-btn-kecil{font-size:11px!important;padding:5px 14px!important;border-radius:8px!important;}
+    .uid-hidden{display:none!important;}
+    #toggleEditUidBtnSiswa:hover{background:rgba(255,255,255,0.3)!important;transform:translateY(-1px);}
+    .btn-close-custom{background:#1E293B;color:white;border:none;padding:6px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all 0.25s ease;text-decoration:none;font-family:var(--font-body);}
+    .btn-close-custom:hover{background:#000;transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,0.3);color:white;}
+    .btn-close-custom:active{transform:translateY(0);box-shadow:none;}
   </style>
   
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
@@ -52,7 +57,11 @@
       <div class="page-title" id="page-title-siswa">Data Siswa</div>
       <div class="page-subtitle" id="page-sub-siswa">Kelola Data Siswa SDN Karangpawitan 1</div>
     </div>
-    <button class="btn-primary-custom" onclick="bukaTambah()"><i class="bi bi-person-plus"></i> Tambah Siswa</button>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-primary-custom" onclick="bukaTambah()"><i class="bi bi-person-plus"></i> Tambah Siswa</button>
+      <button class="btn-primary-custom" onclick="bukaImportCsv()" style="background:linear-gradient(135deg,#059669,#047857);"><i class="bi bi-file-earmark-arrow-up"></i> Import CSV</button>
+      <button class="btn-primary-custom" onclick="exportCsv()" style="background:linear-gradient(135deg,#059669,#047857);"><i class="bi bi-download"></i> Export CSV</button>
+    </div>
   </div>
 
   <!-- Tombol Aksi Massal -->
@@ -75,7 +84,7 @@
     <div class="card-modern-header flex-wrap gap-2">
       <div class="d-flex gap-2 flex-wrap">
       <div style="position:relative;display:inline-block;">
-        <input type="text" id="searchInput" class="form-control-modern" placeholder="Cari nama / NISN..."
+        <input type="text" id="searchInput" class="form-control-modern" placeholder="Cari NISN / NIPD / Nama / Kelas / UID..."
                style="width:210px;padding-right:30px;" oninput="clearTimeout(window._dS);window._dS=setTimeout(()=>loadSiswa(),300);document.getElementById('clearSearch').style.display=this.value?'block':'none'">
         <button id="clearSearch" type="button" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94A3B8;cursor:pointer;display:none;font-size:16px;padding:2px 4px;line-height:1;" onclick="document.getElementById('searchInput').value='';loadSiswa();this.style.display='none'">&times;</button>
       </div>
@@ -83,14 +92,17 @@
           <option value="">Semua Kelas</option>
         </select>
       </div>
-      <span id="totalLabel" style="font-size:13px;color:white;background:#2563EB;border-radius:8px;padding:4px 14px;display:inline-block;font-weight:700;"></span>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button class="btn-primary-custom" onclick="bukaModalUidMassalSiswa()" style="padding:5px 12px;font-size:11px;white-space:nowrap;">Update UID</button>
+        <span id="totalLabel" style="font-size:13px;color:white;background:#2563EB;border-radius:8px;padding:4px 14px;display:inline-block;font-weight:700;"></span>
+      </div>
     </div>
     <div class="table-responsive">
       <table class="table-modern">
         <thead><tr>
           <th style="width:36px;"><input type="checkbox" id="selectAllSiswa" onchange="toggleSelectAllSiswa()" style="cursor:pointer;accent-color:var(--primary);"></th>
-          <th>#</th><th>Foto</th><th>NISN</th><th>Nama Siswa</th><th>Kelas</th><th>J.K</th><th>QR</th><th>Aksi</th></tr></thead>
-        <tbody id="tableSiswa"><tr><td colspan="9" class="text-center py-4"><div class="loading-spinner"></div></td></tr></tbody>
+          <th>#</th><th>Foto</th><th>NISN</th><th>NIPD</th><th>Nama Siswa</th><th>Kelas</th><th>J.K</th><th>UID</th><th>Aksi</th></tr></thead>
+        <tbody id="tableSiswa"><tr><td colspan="10" class="text-center py-4"><div class="loading-spinner"></div></td></tr></tbody>
       </table>
     </div>
   </div>
@@ -120,12 +132,14 @@
           <div class="col-md-6">
             <label class="form-label-modern">Nama Lengkap *</label><input type="text" id="nama_baru" class="form-control-modern" placeholder="Nama siswa" required>
             <label class="form-label-modern mt-2">NIK *</label><input type="number" id="nik_baru" class="form-control-modern" placeholder="Nomor Induk Kependudukan" required>
+            <label class="form-label-modern mt-2">NIPD *</label><input type="number" id="nipd_baru" class="form-control-modern" placeholder="Nomor Induk Peserta Didik" required>
             <label class="form-label-modern mt-2">Tempat Lahir *</label><input type="text" id="ttlahir_baru" class="form-control-modern" placeholder="Contoh: Garut" required>
             <label class="form-label-modern mt-2">Tanggal Lahir *</label><input type="date" id="tanggallahir_baru" class="form-control-modern" required>
             <label class="form-label-modern mt-2">Alamat *</label><textarea id="alamat_baru" class="form-control-modern" rows="2" placeholder="Alamat lengkap siswa" required></textarea>
           </div>
           <div class="col-md-6">
             <label class="form-label-modern">NISN *</label><input type="number" id="nisn_baru" class="form-control-modern" placeholder="Nomor Induk Siswa" required>
+            <label class="form-label-modern mt-2">UID RFID *</label><input type="text" id="uid_baru" class="form-control-modern" placeholder="10 digit" maxlength="10" required oninput="this.value=this.value.replace(/\D/g,'');checkUIDLiveSiswa(this,null)">
             <label class="form-label-modern mt-2">Kelas *</label>
             <select id="kelas_baru" class="form-control-modern" required><option value="">Pilih Kelas</option></select>
             <label class="form-label-modern mt-2">Jenis Kelamin *</label>
@@ -162,12 +176,14 @@
           <div class="col-md-6">
             <label class="form-label-modern">Nama Lengkap *</label><input type="text" id="edit_nama" class="form-control-modern" required>
             <label class="form-label-modern mt-2">NIK *</label><input type="number" id="edit_nik" class="form-control-modern" required>
+            <label class="form-label-modern mt-2">NIPD *</label><input type="number" id="edit_nipd" class="form-control-modern" required>
             <label class="form-label-modern mt-2">Tempat Lahir *</label><input type="text" id="edit_ttlahir" class="form-control-modern" required>
             <label class="form-label-modern mt-2">Tanggal Lahir *</label><input type="date" id="edit_tanggallahir" class="form-control-modern" required>
             <label class="form-label-modern mt-2">Alamat *</label><textarea id="edit_alamat" class="form-control-modern" rows="2" required></textarea>
           </div>
           <div class="col-md-6">
             <label class="form-label-modern">NISN *</label><input type="number" id="edit_nisn" class="form-control-modern" required>
+            <label class="form-label-modern mt-2">UID RFID *</label><input type="text" id="edit_uid" class="form-control-modern" placeholder="10 digit" maxlength="10" required oninput="this.value=this.value.replace(/\D/g,'');checkUIDLiveSiswa(this,editSiswaId)">
             <label class="form-label-modern mt-2">Kelas *</label>
             <select id="edit_kelas" class="form-control-modern" required></select>
             <label class="form-label-modern mt-2">Jenis Kelamin *</label>
@@ -181,26 +197,6 @@
       <div class="modal-footer">
         <button class="btn-batal" data-bs-dismiss="modal">Batal</button>
         <button class="btn-edit-custom" style="padding:8px 18px;font-size:13px;" onclick="updateSiswa()">Update</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal QR -->
-<div class="modal fade" id="modalQR" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered" style="max-width:440px;">
-    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
-      <div class="modal-header" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
-        <h5 class="modal-title text-white fw-bold"><i class="bi bi-qr-code me-2"></i>QR Code</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body p-4 text-center">
-        <div id="qrCodeDisplay"></div>
-        <div id="qrInfoDisplay" class="mt-2"></div>
-      </div>
-      <div class="modal-footer justify-content-center">
-        <button class="btn-primary-custom" onclick="downloadQR()"><i class="bi bi-download"></i> Download</button>
-        <button class="btn btn-light" data-bs-dismiss="modal">Tutup</button>
       </div>
     </div>
   </div>
@@ -238,11 +234,71 @@
   </div>
 </div>
 
+<!-- Modal Update UID Massal Siswa -->
+<div class="modal fade" id="modalUidMassalSiswa" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:500px;">
+    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
+      <div class="modal-header" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
+        <h5 class="modal-title text-white fw-bold">UID Siswa</h5>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <select id="filterKelasMassalSiswa" class="form-control-modern" style="width:95px;padding:3px 6px;font-size:10px;background:rgba(255,255,255,0.85);border:1px solid rgba(255,255,255,0.5);color:#1E293B;border-radius:6px;" onchange="filterUidMassalSiswa(document.getElementById('uidSearchMassalSiswa').value)"><option value="">Semua</option></select>
+          <div style="position:relative;display:inline-block;">
+            <input type="text" id="uidSearchMassalSiswa" class="form-control-modern" placeholder="Cari nama / UID..." style="width:130px;padding:3px 8px;font-size:11px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:6px;padding-right:20px;" oninput="filterUidMassalSiswa(this.value);document.getElementById('clearUidSearchSiswa').style.display=this.value?'block':'none'" onfocus="this.style.background='rgba(255,255,255,0.3)'" onblur="this.style.background='rgba(255,255,255,0.2)'">
+            <button type="button" id="clearUidSearchSiswa" style="display:none;position:absolute;right:4px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;cursor:pointer;font-size:14px;line-height:1;padding:0 2px;opacity:0.7;" onclick="document.getElementById('uidSearchMassalSiswa').value='';filterUidMassalSiswa('');this.style.display='none';document.getElementById('uidSearchMassalSiswa').focus()">&times;</button>
+          </div>
+          <button type="button" id="toggleEditUidBtnSiswa" class="btn btn-sm text-white" style="background:rgba(255,255,255,0.15);border:none;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;" onclick="toggleEditUidMassalSiswa()">Edit</button>
+          <button type="button" class="btn-close btn-close-white" onclick="closeModalUidMassalSiswa()"></button>
+        </div>
+      </div>
+      <div class="modal-body p-3" style="max-height:480px;overflow-y:auto;" id="uidMassalBodySiswa"></div>
+      <div class="modal-footer d-flex justify-content-between">
+        <span id="uidMassalCountSiswa" style="font-size:11px;color:#fff;background:#2563EB;padding:3px 12px;border-radius:12px;font-weight:600;"></span>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-close-custom" onclick="closeModalUidMassalSiswa()">Tutup</button>
+          <button class="btn-primary-custom" id="simpanUidBtnSiswa" onclick="simpanUidMassalSiswa()" style="padding:6px 16px;font-size:12px;">Simpan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Import CSV -->
+<div class="modal fade" id="modalImportCsv" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:520px;">
+    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
+      <div class="modal-header" style="background:linear-gradient(135deg,#059669,#047857);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
+        <h5 class="modal-title text-white fw-bold">Import Data Siswa (.CSV)</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div id="alertImportCsv" style="font-size:12px;"></div>
+        <div id="importStepFile">
+          <p style="font-size:12px;color:#64748B;margin-bottom:12px;">Pilih file CSV dengan format:</p>
+          <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:12px;font-size:11px;font-family:monospace;margin-bottom:14px;word-break:break-all;">
+            nisn,nipd,nama,kelas,jenis_kelamin,uid,nik,tempat_lahir,tanggal_lahir,agama,alamat,no_hp_ortu
+          </div>
+          <div style="border:2px dashed #CBD5E1;border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all 0.2s;" id="dropArea" onclick="document.getElementById('csvFileInput').click()" onmouseover="this.style.borderColor='#059669';this.style.background='#F0FDF4'" onmouseout="this.style.borderColor='#CBD5E1';this.style.background=''">
+            <i class="bi bi-cloud-arrow-up" style="font-size:32px;color:#94A3B8;"></i>
+            <p style="font-size:12px;color:#64748B;margin:8px 0 0;">Klik disini pilih file CSV</p>
+          </div>
+          <input type="file" id="csvFileInput" accept=".csv" style="display:none;" onchange="onCsvFileSelect(this)">
+          <div id="csvFileName" style="display:none;margin-top:10px;font-size:12px;color:#059669;font-weight:600;"><i class="bi bi-check-circle-fill"></i> <span></span></div>
+        </div>
+        <div id="importStepResult" style="display:none;">
+          <div id="importResultContent" style="font-size:12px;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-close-custom" data-bs-dismiss="modal">Tutup</button>
+        <button class="btn-primary-custom" id="btnImportUpload" onclick="uploadImportCsv()" style="display:none;background:linear-gradient(135deg,#059669,#047857);">Upload & Import</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="/js/app.js?v=5"></script>
 <script>
-let currentQRNISN='', currentQRNama='';
 let tambahFotoBlob=null, tambahFotoUrl='';
 let editFotoBlob=null,   editFotoUrl='',  editFotoSrcLama='', editSiswaId=null;
 
@@ -324,10 +380,11 @@ function renderSiswaRow(d, i) {
     <td style="color:var(--gray)">${i+1}</td>
     <td>${fotoHtml}</td>
     <td style="font-weight:600">${d.nisn}</td>
+    <td style="font-size:12px">${d.nipd||'-'}</td>
     <td style="font-weight:700;color:var(--dark)">${d.nama}</td>
     <td>${d.kelas}</td>
     <td style="font-size:12px;color:${d.jenis_kelamin==='Laki-laki'?'#2563EB':'#DB2777'};font-weight:700;">${jkLabel}</td>
-    <td><button class="btn-action" title="QR Code" onclick="lihatQR(_siswaData[${i}].nisn,_siswaData[${i}].nama,_siswaData[${i}].kelas)"><i class="bi bi-qr-code"></i></button></td>
+    <td style="font-size:11px;font-family:monospace;color:#6366F1;font-weight:600;">${d.uid||'-'}</td>
     <td>
       <div class="d-flex gap-1">
         <button class="btn-grad view" title="Lihat Detail" onclick="viewSiswa(_siswaData[${i}])"><i class="bi bi-eye-fill"></i></button>
@@ -341,7 +398,7 @@ function renderSiswaRow(d, i) {
 function renderSiswaPage(){
   const tbody=document.getElementById('tableSiswa');
   if(!_siswaData.length){
-    tbody.innerHTML='<tr><td colspan="9"><div class="empty-state"><i class="bi bi-people"></i><p>Tidak ada data</p></div></td></tr>';
+    tbody.innerHTML='<tr><td colspan="10"><div class="empty-state"><i class="bi bi-people"></i><p>Tidak ada data</p></div></td></tr>';
     document.getElementById('paginationSiswa').style.display='none';
     return;
   }
@@ -365,7 +422,7 @@ async function loadSiswa(){
   const search=document.getElementById('searchInput').value;
   const kelas =document.getElementById('filterKelas').value.trim();
   const tbody =document.getElementById('tableSiswa');
-  tbody.innerHTML='<tr><td colspan="9" class="text-center py-4"><div class="loading-spinner"></div></td></tr>';
+  tbody.innerHTML='<tr><td colspan="10" class="text-center py-4"><div class="loading-spinner"></div></td></tr>';
   const res=await fetchAPI(`/api/siswa?${new URLSearchParams({search,kelas})}`);
   if(!res) return;
   _siswaData=res.data||[];
@@ -382,7 +439,9 @@ function bukaTambah(){
   ['nisn_baru','nama_baru'].forEach(id=>document.getElementById(id).value='');
   const kb=document.getElementById('kelas_baru'); if(!kb.disabled) kb.value='';
   document.getElementById('jk_baru').value='';
-  ['nik_baru','ttlahir_baru','alamat_baru','nohp_ortu_baru'].forEach(id=>document.getElementById(id).value='');
+  ['nik_baru','nipd_baru','ttlahir_baru','alamat_baru','nohp_ortu_baru'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('uid_baru').value='';
+  document.getElementById('uid_baru').previousElementSibling?.querySelector('.uid-error')?.remove();
   document.getElementById('tanggallahir_baru').value='';
   document.getElementById('agama_baru').value='';
   document.getElementById('alertTambah').innerHTML='';
@@ -392,15 +451,17 @@ function bukaTambah(){
 async function simpanSiswa(){
   const alertEl=document.getElementById('alertTambah');
   const required=[
-    {id:'nama_baru',l:'Nama Lengkap'},{id:'nik_baru',l:'NIK'},{id:'ttlahir_baru',l:'Tempat Lahir'},
+    {id:'nama_baru',l:'Nama Lengkap'},{id:'nik_baru',l:'NIK'},{id:'nipd_baru',l:'NIPD'},{id:'ttlahir_baru',l:'Tempat Lahir'},
     {id:'tanggallahir_baru',l:'Tanggal Lahir'},{id:'alamat_baru',l:'Alamat'},
     {id:'nisn_baru',l:'NISN'},{id:'kelas_baru',l:'Kelas'},{id:'jk_baru',l:'Jenis Kelamin'},
-    {id:'agama_baru',l:'Agama'},{id:'nohp_ortu_baru',l:'No. HP Orang Tua'}
+    {id:'agama_baru',l:'Agama'},{id:'nohp_ortu_baru',l:'No. HP Orang Tua'},{id:'uid_baru',l:'UID RFID'}
   ];
   for(const f of required){
     const el=document.getElementById(f.id);
     if(!el.value||!el.value.trim()){alertEl.innerHTML=`<div class="alert-msg error">${f.l} wajib diisi</div>`;el.focus();return;}
   }
+  const uidBaru=document.getElementById('uid_baru').value.trim();
+  if(uidBaru.length>=3&&_siswaData.some(s=>s.uid===uidBaru)){alertEl.innerHTML='<div class="alert-msg error">UID sudah digunakan oleh siswa lain</div>';document.getElementById('uid_baru').focus();return;}
   const fd=new FormData();
   fd.append('nisn',document.getElementById('nisn_baru').value.trim());fd.append('nama',document.getElementById('nama_baru').value.trim());fd.append('kelas',document.getElementById('kelas_baru').value);fd.append('jenis_kelamin',document.getElementById('jk_baru').value);
   fd.append('nik',document.getElementById('nik_baru').value.trim());
@@ -409,6 +470,8 @@ async function simpanSiswa(){
   fd.append('agama',document.getElementById('agama_baru').value);
   fd.append('alamat',document.getElementById('alamat_baru').value.trim());
   fd.append('no_hp_ortu',document.getElementById('nohp_ortu_baru').value.trim());
+  fd.append('nipd',document.getElementById('nipd_baru').value.trim());
+  fd.append('uid',document.getElementById('uid_baru').value.trim());
   if(tambahFotoBlob) fd.append('foto',tambahFotoBlob,'foto.png');
   const {isConfirmed:konfirmTambah}=await Swal.fire({title:'Konfirmasi Simpan',text:'Apakah data yang diisi sudah benar?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Simpan',cancelButtonText:'Batal',confirmButtonColor:'#2563EB',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
   if(!konfirmTambah) return;
@@ -425,12 +488,17 @@ function bukaEdit(s){
   document.getElementById('edit_kelas').value=s.kelas;
   document.getElementById('edit_jk').value=s.jenis_kelamin;
   document.getElementById('edit_nik').value=s.nik||'';
+  document.getElementById('edit_nipd').value=s.nipd||'';
   document.getElementById('edit_ttlahir').value=s.tempat_lahir||'';
-  document.getElementById('edit_tanggallahir').value=s.tanggal_lahir||'';
+  let tglVal=s.tanggal_lahir||'';
+  if(tglVal&&/^\d{2}\/\d{2}\/\d{4}$/.test(tglVal)){const[d,m,y]=tglVal.split('/');tglVal=y+'-'+m+'-'+d;}
+  document.getElementById('edit_tanggallahir').value=tglVal;
   document.getElementById('edit_agama').value=s.agama||'';
   document.getElementById('edit_alamat').value=s.alamat||'';
   document.getElementById('edit_nohp_ortu').value=s.no_hp_ortu||'';
+  document.getElementById('edit_uid').value=s.uid||'';
   document.getElementById('alertEdit').innerHTML='';
+  checkUIDLiveSiswa(document.getElementById('edit_uid'),editSiswaId);
   const ini=s.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
   document.getElementById('edit-foto-preview').innerHTML= s.foto
     ? `<img src="${s.foto}" class="foto-circle-lg" onerror="this.outerHTML='<div class=\\'foto-ini-lg\\'>${ini}</div>'">`
@@ -441,15 +509,17 @@ function bukaEdit(s){
 async function updateSiswa(){
   const alertEl=document.getElementById('alertEdit');
   const required=[
-    {id:'edit_nama',l:'Nama Lengkap'},{id:'edit_nik',l:'NIK'},{id:'edit_ttlahir',l:'Tempat Lahir'},
+    {id:'edit_nama',l:'Nama Lengkap'},{id:'edit_nik',l:'NIK'},{id:'edit_nipd',l:'NIPD'},{id:'edit_ttlahir',l:'Tempat Lahir'},
     {id:'edit_tanggallahir',l:'Tanggal Lahir'},{id:'edit_alamat',l:'Alamat'},
     {id:'edit_nisn',l:'NISN'},{id:'edit_kelas',l:'Kelas'},{id:'edit_jk',l:'Jenis Kelamin'},
-    {id:'edit_agama',l:'Agama'},{id:'edit_nohp_ortu',l:'No. HP Orang Tua'}
+    {id:'edit_agama',l:'Agama'},{id:'edit_nohp_ortu',l:'No. HP Orang Tua'},{id:'edit_uid',l:'UID RFID'}
   ];
   for(const f of required){
     const el=document.getElementById(f.id);
     if(!el.value||!el.value.trim()){alertEl.innerHTML=`<div class="alert-msg error">${f.l} wajib diisi</div>`;el.focus();return;}
   }
+  const uidEdit=document.getElementById('edit_uid').value.trim();
+  if(uidEdit.length>=3&&_siswaData.some(s=>s.uid===uidEdit&&s.id!==editSiswaId)){alertEl.innerHTML='<div class="alert-msg error">UID sudah digunakan oleh siswa lain</div>';document.getElementById('edit_uid').focus();return;}
   const fd=new FormData();
   fd.append('id',document.getElementById('edit_id').value);
   fd.append('nisn',document.getElementById('edit_nisn').value.trim());
@@ -462,6 +532,8 @@ async function updateSiswa(){
   fd.append('agama',document.getElementById('edit_agama').value);
   fd.append('alamat',document.getElementById('edit_alamat').value.trim());
   fd.append('no_hp_ortu',document.getElementById('edit_nohp_ortu').value.trim());
+  fd.append('nipd',document.getElementById('edit_nipd').value.trim());
+  fd.append('uid',document.getElementById('edit_uid').value.trim());
 
   if(editFotoBlob) fd.append('foto',editFotoBlob,'foto.png');
   const {isConfirmed:konfirmEdit}=await Swal.fire({title:'Konfirmasi Update',text:'Apakah perubahan data sudah benar?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Update',cancelButtonText:'Batal',confirmButtonColor:'#F59E0B',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
@@ -498,8 +570,12 @@ function hapusMassalSiswa(){
   if(!checked.length) return;
   konfirmasiHapus('Hapus Massal Siswa?',`${checked.length} siswa dan presensinya akan dihapus permanen.`,async()=>{
     const res=await fetchAPI('/api/siswa/hapus-massal','POST',{ids:checked});
-    if(res?.success){showToast(res.message,'success');loadSiswa();}
-    else showToast(res?.message||'Gagal','error');
+    if(res?.success){
+      document.getElementById('selectAllSiswa').checked=false;
+      document.querySelectorAll('.siswa-check').forEach(c=>c.checked=false);
+      updateBulkSiswa();
+      showToast(res.message,'success');loadSiswa();
+    } else showToast(res?.message||'Gagal','error');
   });
 }
 
@@ -527,16 +603,6 @@ function pindahMassalSiswa(){
   },'Pindahkan','btn-primary');
 }
 
-function lihatQR(nisn,nama,kelas){
-  currentQRNISN=nisn;currentQRNama=nama;
-  document.getElementById('qrCodeDisplay').innerHTML='';
-  document.getElementById('qrInfoDisplay').innerHTML=
-    `<div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:var(--dark);margin-top:10px;">${nama}</div>
-     <div style="font-size:12px;color:var(--gray)">NISN: ${nisn} &bull; ${kelas}</div>`;
-  new QRCode(document.getElementById('qrCodeDisplay'),{text:nisn,width:200,height:200,colorDark:'#1E293B',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.H});
-  openModal('modalQR');
-}
-
 async function viewSiswa(d){
   _viewSiswaData = d; _rekapSiswaId = d.id; _rekapSiswaNama = d.nama;
   const g = await fetchAPI('/api/siswa/pengampu/'+d.id);
@@ -551,16 +617,18 @@ async function viewSiswa(d){
     ? `<img src="${d.foto}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;cursor:pointer;" onclick="showFotoDialog({fotoSrc:'${(d.foto||'').replace(/'/g,"\\'")}',noButtons:true})">`
     : `<div style="width:56px;height:56px;border-radius:50%;background:${d.jenis_kelamin==='Perempuan'?'#FCE7F3':'#DBEAFE'};display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:${d.jenis_kelamin==='Perempuan'?'#BE185D':'#1E40AF'};border:2px solid #E2E8F0;cursor:pointer;" onclick="showFotoDialog({fotoSrc:'',noButtons:true})">${ini}</div>`;
   document.getElementById('detailProfile').innerHTML=
-    `<div style="display:flex;gap:12px;margin-bottom:14px;align-items:center;">${fotoHtml}<div><div style="font-weight:700;font-size:15px;">${d.nama}</div><div style="font-size:12px;color:#64748B;">NISN: ${d.nisn} &middot; ${d.kelas}</div></div></div>`;
+    `<div style="display:flex;gap:12px;margin-bottom:14px;align-items:center;">${fotoHtml}<div><div style="font-weight:700;font-size:15px;">${d.nama}</div><div style="font-size:12px;color:#64748B;">NISN: ${d.nisn}${d.nipd?' &middot; NIPD: '+d.nipd:''}${d.uid?' &middot; UID: '+d.uid:''} &middot; ${d.kelas}</div></div></div>`;
   const fmt=dt=>dt?dt.split('-').reverse().join('/'):'-';
    const t=(l,v)=>`<tr><td style="padding:1px 0;color:#64748B;font-size:11px;">${l}</td></tr><tr><td style="padding:0 0 1px 0;font-weight:600;font-size:12px;">${v||'-'}</td></tr>`;
   document.getElementById('detailSiswaKiri').innerHTML=
     t('Nama Lengkap',d.nama)+
     t('NISN',d.nisn)+
+    t('NIPD',d.nipd||'-')+
     t('Kelas',d.kelas)+
     t('NIK',d.nik)+
     t('Agama',d.agama);
   document.getElementById('detailSiswaKanan').innerHTML=
+    t('UID RFID',d.uid||'-')+
     t('Tempat Lahir',d.tempat_lahir)+
     t('Tanggal Lahir',fmt(d.tanggal_lahir))+
     t('Jenis Kelamin',d.jenis_kelamin==='Laki-laki'?'Laki-laki':'Perempuan')+
@@ -647,16 +715,6 @@ async function loadRekapSiswa(siswaId, nama){
   document.getElementById('rkKalender').innerHTML=html;
 }
 
-function downloadQR(){
-  setTimeout(()=>{
-    const c=document.querySelector('#qrCodeDisplay canvas');
-    if(!c){showToast('QR belum siap','error');return;}
-    const a=document.createElement('a');
-    a.download=`QR_${currentQRNISN}_${currentQRNama.replace(/\s+/g,'_')}.png`;
-    a.href=c.toDataURL('image/png');a.click();
-    showToast('QR didownload!','success');
-  },100);
-}
 
 async function init(){
   await loadLayout('siswa','Data Siswa');
@@ -707,6 +765,188 @@ async function init(){
   document.getElementById('tanggalPindah').value=new Date().toISOString().split('T')[0];
   loadSiswa();
 }
+
+function checkUIDLiveSiswa(inp,excludeId){
+  const val=inp.value.trim();
+  const duplicate=val.length>=3&&_siswaData.some(s=>s.uid===val&&s.id!==excludeId);
+  const label=inp.previousElementSibling;
+  let errEl=label?label.querySelector('.uid-error'):null;
+  if(duplicate){
+    if(!errEl){errEl=document.createElement('span');errEl.className='uid-error';errEl.style.cssText='color:#DC2626;font-size:10.5px;font-weight:400;margin-left:6px;';errEl.textContent='UID sudah digunakan!';label.appendChild(errEl);}
+  } else{if(errEl) errEl.remove();}
+}
+
+let _uidEditModeSiswa=false;
+
+function toggleEditUidMassalSiswa(){
+  _uidEditModeSiswa=!_uidEditModeSiswa;
+  const btn=document.getElementById('toggleEditUidBtnSiswa');
+  const inputs=document.querySelectorAll('.uid-massal-input-siswa');
+  inputs.forEach(inp=>{
+    if(_uidEditModeSiswa){inp.removeAttribute('disabled');inp.style.background='#fff';checkUIDLiveMassalSiswa(inp);}
+    else{inp.setAttribute('disabled','');inp.style.background='#F1F5F9';}
+  });
+  btn.innerHTML=_uidEditModeSiswa?'Lihat':'Edit';
+}
+
+function checkUIDLiveMassalSiswa(inp){
+  const val=inp.value.trim();
+  const currentId=parseInt(inp.dataset.id);
+  const duplicate=val.length>=3&&_siswaData.some(s=>s.uid===val&&s.id!==currentId);
+  const errorEl=inp.parentElement.querySelector('.uid-massal-error-siswa');
+  if(duplicate){errorEl.style.display='inline';inp.style.borderColor='#DC2626';}
+  else{errorEl.style.display='none';inp.style.borderColor='';}
+}
+
+function filterUidMassalSiswa(q){
+  const keyword=q.toLowerCase().trim();
+  const filterKelas=document.getElementById('filterKelasMassalSiswa').value;
+  const rows=document.querySelectorAll('#uidMassalBodySiswa > .uid-row');
+  let visible=0;
+  rows.forEach(row=>{
+    const nama=row.querySelector('.uid-row-nama')?.textContent.toLowerCase()||'';
+    const kelas=row.querySelector('.uid-row-kelas')?.textContent||'';
+    const uid=row.querySelector('.uid-massal-input-siswa')?.value.toLowerCase()||'';
+    const matchKelas=!filterKelas||kelas.includes(filterKelas);
+    const matchSearch=!keyword||nama.includes(keyword)||kelas.toLowerCase().includes(keyword)||uid.includes(keyword);
+    const match=matchKelas&&matchSearch;
+    row.classList.toggle('uid-hidden',!match);
+    if(match) visible++;
+  });
+  document.getElementById('uidMassalCountSiswa').textContent=`${visible} siswa`;
+}
+
+function bukaModalUidMassalSiswa(){
+  _uidEditModeSiswa=false;
+  document.getElementById('uidSearchMassalSiswa').value='';
+  document.getElementById('clearUidSearchSiswa').style.display='none';
+  const kelasSet=[...new Set(_siswaData.map(s=>s.kelas).filter(Boolean))];
+  const filterKelas=document.getElementById('filterKelasMassalSiswa');
+  filterKelas.innerHTML='<option value="">Semua</option>'+kelasSet.map(k=>`<option value="${k}">${k}</option>`).join('');
+  filterKelas.value='';
+  const body=document.getElementById('uidMassalBodySiswa');
+  body.innerHTML=_siswaData.map((s,i)=>`
+    <div class="uid-row" style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #F1F5F9;">
+      <div style="flex-shrink:0;width:32px;font-size:11px;color:var(--gray);font-weight:600;text-align:center;">${i+1}</div>
+      <div style="flex-shrink:0;">${
+        s.foto
+          ? `<img src="${s.foto}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:1px solid #E2E8F0;">`
+          : `<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#2563EB;border:1px solid #E2E8F0;">${s.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?'}</div>`
+      }</div>
+      <div class="uid-row-nama" style="flex:1;font-size:12px;font-weight:600;">${s.nama}</div>
+      <div class="uid-row-kelas" style="font-size:10px;color:var(--gray);margin-right:4px;">${s.kelas}</div>
+      <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;">
+        <input type="text" class="form-control-modern uid-massal-input-siswa" data-id="${s.id}" value="${s.uid||''}" placeholder="10 digit" maxlength="10" style="width:110px;padding:3px 6px;font-size:11px;font-family:monospace;background:#F1F5F9;" disabled oninput="this.value=this.value.replace(/\D/g,'');checkUIDLiveMassalSiswa(this)">
+        <span class="uid-massal-error-siswa" style="display:none;color:#DC2626;font-size:10.5px;font-weight:400;">UID sudah digunakan!</span>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('toggleEditUidBtnSiswa').innerHTML='Edit';
+  document.getElementById('uidMassalCountSiswa').textContent=`${_siswaData.length} siswa`;
+  openModal('modalUidMassalSiswa');
+}
+
+function closeModalUidMassalSiswa(){
+  const inputs=document.querySelectorAll('.uid-massal-input-siswa');
+  let adaPerubahan=false;
+  for(const inp of inputs){
+    const val=inp.value.trim();
+    const siswa=_siswaData.find(s=>s.id==inp.dataset.id);
+    if(siswa&&(siswa.uid||'')!==val){adaPerubahan=true;break;}
+  }
+  if(!adaPerubahan){closeModal('modalUidMassalSiswa');return;}
+  Swal.fire({text:'Apakah anda yakin ingin membatalkan perubahan?',icon:'question',showCancelButton:true,confirmButtonText:'Discard',cancelButtonText:'Lanjut Edit',confirmButtonColor:'#EF4444',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}}).then(r=>{if(r.isConfirmed)closeModal('modalUidMassalSiswa');});
+}
+
+async function simpanUidMassalSiswa(){
+  const inputs=document.querySelectorAll('.uid-massal-input-siswa');
+  const updates=[];
+  for(const inp of inputs){
+    const uid=inp.value.trim();
+    if(uid&&uid.length!==10){showToast('UID harus 10 digit!','error');inp.focus();return;}
+    const siswa=_siswaData.find(s=>s.id==inp.dataset.id);
+    if(!siswa) continue;
+    if((siswa.uid||'')===uid) continue;
+    updates.push({...siswa,uid});
+  }
+  if(!updates.length){showToast('Tidak ada perubahan UID','info');closeModal('modalUidMassalSiswa');return;}
+  for(const inp of inputs){
+    const errEl=inp.parentElement.querySelector('.uid-massal-error-siswa');
+    if(errEl&&errEl.style.display!=='none'){showToast('UID '+inp.value.trim()+' sudah digunakan oleh siswa lain!','error');inp.focus();return;}
+  }
+  const {isConfirmed:konfirm}=await Swal.fire({title:'Konfirmasi Update UID',text:`${updates.length} siswa akan diperbarui UID-nya.`,icon:'question',showCancelButton:true,confirmButtonText:'Ya, Update',cancelButtonText:'Batal',confirmButtonColor:'#7C3AED',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!konfirm) return;
+  let sukses=0, gagal=0, errMsg='';
+  for(const u of updates){
+    const fd=new FormData();
+    ['id','nisn','nama','kelas','jenis_kelamin','no_hp_ortu','nik','tempat_lahir','tanggal_lahir','agama','alamat','nipd','uid'].forEach(k=>fd.append(k,u[k]||''));
+    const res=await fetchAPI('/api/siswa/edit','POST',fd);
+    if(res?.success){sukses++;const siswa=_siswaData.find(x=>x.id==u.id);if(siswa) siswa.uid=u.uid;}
+    else{gagal++;errMsg=res?.message||'Gagal terhubung ke server';}
+  }
+  if(gagal) showToast(`${sukses} berhasil, ${gagal} gagal: ${errMsg}`,'error');
+  else showToast(`${sukses} UID diperbarui`,'success');
+  closeModal('modalUidMassalSiswa');
+  loadSiswa();
+}
+
+function bukaImportCsv(){
+  document.getElementById('alertImportCsv').innerHTML='';
+  document.getElementById('importStepFile').style.display='';
+  document.getElementById('importStepResult').style.display='none';
+  document.getElementById('csvFileInput').value='';
+  document.getElementById('csvFileName').style.display='none';
+  document.getElementById('btnImportUpload').style.display='none';
+  openModal('modalImportCsv');
+}
+
+function onCsvFileSelect(inp){
+  const file=inp.files[0];
+  if(!file) return;
+  const nameEl=document.getElementById('csvFileName');
+  nameEl.style.display='block';
+  nameEl.querySelector('span').textContent=file.name;
+  document.getElementById('btnImportUpload').style.display='inline-flex';
+}
+
+async function uploadImportCsv(){
+  const file=document.getElementById('csvFileInput').files[0];
+  if(!file){showToast('Pilih file CSV terlebih dahulu','error');return;}
+  const {isConfirmed}=await Swal.fire({title:'Konfirmasi Import',text:'Yakin ingin mengimport file CSV ini?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Import',cancelButtonText:'Batal',confirmButtonColor:'#059669',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!isConfirmed) return;
+  const fd=new FormData();
+  fd.append('file',file);
+  const btn=document.getElementById('btnImportUpload');
+  btn.disabled=true;btn.textContent='Memproses...';
+  const tStart=Date.now();
+  closeModal('modalImportCsv');
+  Swal.fire({title:'Mengimport data...',text:'Harap tunggu, sedang memproses file CSV',allowOutsideClick:false,allowEscapeKey:false,showConfirmButton:false,didOpen:()=>Swal.showLoading(),width:'320px',padding:'24px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil'}});
+  const res=await fetchAPI('/api/siswa/import','POST',fd);
+  btn.disabled=false;btn.textContent='Upload & Import';
+  if(!res){Swal.close();return;}
+  if(!res.success){Swal.close();document.getElementById('alertImportCsv').innerHTML=`<div class="alert-msg error">${res.message||'Gagal import'}</div>`;return;}
+  const elapsed=Date.now()-tStart;
+  if(elapsed<5000) await new Promise(r=>setTimeout(r,5000-elapsed));
+  Swal.close();
+  if(res.gagal){
+    let errList='';
+    if(res.errors&&res.errors.length){
+      errList='<div style="text-align:left;max-height:200px;overflow-y:auto;margin-top:8px;font-size:12px;">';
+      res.errors.forEach(e=>{errList+=`<div style="padding:3px 0;border-bottom:1px solid #F1F5F9;">${e}</div>`;});
+      errList+='</div>';
+    }
+    Swal.fire({icon:'warning',title:res.message,html:errList,confirmButtonColor:'#1E293B',confirmButtonText:'Tutup',width:'400px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil'}});
+  } else {
+    Swal.fire({icon:'success',title:res.message,toast:true,position:'center',showConfirmButton:false,timer:2500,padding:'12px 16px',customClass:{popup:'swal-kecil'}});
+  }
+  loadSiswa();
+}
+
+function exportCsv(){
+  const params=new URLSearchParams({search:document.getElementById('searchInput').value,kelas:document.getElementById('filterKelas').value.trim()});
+  const a=document.createElement('a');a.href='/api/siswa/export?'+params;a.download='data_siswa.csv';document.body.appendChild(a);a.click();a.remove();
+}
+
 init();
 </script>
 </body>

@@ -39,7 +39,7 @@ router.get('/', (req,res) => {
   const { search='', tahun_lulus='' } = req.query;
   let sql = 'SELECT * FROM alumni WHERE 1=1';
   const p = [];
-  if(search){ sql += ' AND (nama LIKE ? OR nisn LIKE ?)'; p.push(`%${search}%`,`%${search}%`); }
+  if(search){ sql += ' AND (nama LIKE ? OR nisn LIKE ? OR nipd LIKE ?)'; p.push(`%${search}%`,`%${search}%`,`%${search}%`); }
   if(tahun_lulus){ sql += ' AND tahun_lulus=?'; p.push(tahun_lulus); }
   sql += ' ORDER BY tahun_lulus DESC, nama ASC';
   res.json({success:true, data:queryAll(sql,p)});
@@ -62,7 +62,7 @@ router.get('/:id', (req,res) => {
 
 // POST: tambah alumni
 router.post('/tambah', upload.single('ijazah'), (req,res) => {
-  const {nama,nisn,kelas_lulus,tahun_lulus,foto=''} = req.body;
+  const {nama,nisn,kelas_lulus,tahun_lulus,foto='',nipd=''} = req.body;
   if(!nama||!nisn||!kelas_lulus||!tahun_lulus)
     return res.json({success:false,message:'Semua field wajib diisi!'});
   try {
@@ -74,8 +74,8 @@ router.post('/tambah', upload.single('ijazah'), (req,res) => {
       fs.renameSync(req.file.path, path.join(uploadDir,baru));
       ijazah = `/uploads/ijazah/${baru}`;
     }
-    run('INSERT INTO alumni (nama,nisn,kelas_lulus,tahun_lulus,foto,ijazah) VALUES (?,?,?,?,?,?)',
-        [nama,nisn,kelas_lulus,tahun_lulus,foto,ijazah]);
+    run('INSERT INTO alumni (nama,nisn,kelas_lulus,tahun_lulus,foto,ijazah,nipd) VALUES (?,?,?,?,?,?,?)',
+        [nama,nisn,kelas_lulus,tahun_lulus,foto,ijazah,nipd]);
     logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,
                 'Tambah Alumni',`${nama} (${nisn}) - Kelas ${kelas_lulus} Lulus ${tahun_lulus}`);
     res.json({success:true,message:'Alumni berhasil ditambahkan'});
@@ -84,7 +84,7 @@ router.post('/tambah', upload.single('ijazah'), (req,res) => {
 
 // POST: edit alumni
 router.post('/edit', upload.single('ijazah'), (req,res) => {
-  const {id,nama,nisn,kelas_lulus,tahun_lulus} = req.body;
+  const {id,nama,nisn,kelas_lulus,tahun_lulus,nipd} = req.body;
   if(!id||!nama||!nisn||!kelas_lulus||!tahun_lulus)
     return res.json({success:false,message:'Semua field wajib diisi!'});
   const lama = queryOne('SELECT ijazah,foto FROM alumni WHERE id=?',[id]);
@@ -100,8 +100,8 @@ router.post('/edit', upload.single('ijazah'), (req,res) => {
   }
   if(req.body.foto) foto = req.body.foto;
   try {
-    run('UPDATE alumni SET nama=?,nisn=?,kelas_lulus=?,tahun_lulus=?,foto=?,ijazah=?,updated_at=datetime("now","localtime") WHERE id=?',
-        [nama,nisn,kelas_lulus,tahun_lulus,foto,ijazah,id]);
+    run('UPDATE alumni SET nama=?,nisn=?,kelas_lulus=?,tahun_lulus=?,foto=?,ijazah=?,nipd=?,updated_at=datetime("now","localtime") WHERE id=?',
+        [nama,nisn,kelas_lulus,tahun_lulus,foto,ijazah,nipd||'',id]);
     logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,
                 'Edit Alumni',`Edit: ${nama} (${nisn})`);
     res.json({success:true,message:'Data alumni berhasil diperbarui'});

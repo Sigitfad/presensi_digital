@@ -40,12 +40,12 @@ router.get('/', (req,res) => {
   res.json({success:true,data:queryAll(sql,params)});
 });
 
-// POST: scan presensi
+// POST: scan presensi via UID RFID
 router.post('/scan', (req,res) => {
-  const {nisn}=req.body;
-  if(!nisn) return res.json({success:false,message:'NISN kosong'});
-  const siswa=queryOne('SELECT * FROM siswa WHERE nisn=?',[nisn.trim()]);
-  if(!siswa) return res.json({success:false,message:`Siswa NISN "${nisn}" tidak ditemukan!`});
+  const {uid}=req.body;
+  if(!uid) return res.json({success:false,message:'UID kosong'});
+  const siswa=queryOne('SELECT * FROM siswa WHERE uid=?',[uid.trim()]);
+  if(!siswa) return res.json({success:false,message:`Siswa dengan UID "${uid}" tidak ditemukan!`});
   const now=new Date();
   const tanggal=now.toLocaleDateString('sv-SE');
   const jam=now.toTimeString().slice(0,8);

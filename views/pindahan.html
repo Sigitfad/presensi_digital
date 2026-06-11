@@ -83,7 +83,7 @@
       <table class="table-modern">
         <thead><tr>
           <th style="width:36px;"><input type="checkbox" id="selectAllPindahan" onchange="toggleSelectAllPindahan()" style="cursor:pointer;accent-color:var(--primary);"></th>
-          <th>#</th><th>Foto</th><th>Nama</th><th>NISN</th><th>Kelas</th><th>Surat</th><th>Aksi</th>
+          <th>#</th><th>Foto</th><th>Nama</th><th>NISN</th><th>NIPD</th><th>Kelas</th><th>Surat</th><th>Aksi</th>
         </tr></thead>
         <tbody id="pindahanBody"></tbody>
       </table>
@@ -245,6 +245,7 @@ function renderPindahanRow(d,i){
     <td>${fotoHTML}</td>
     <td class="fw-semibold">${d.nama}</td>
     <td><span style="font-weight:700;color:var(--primary);">${d.nisn}</span></td>
+    <td style="font-size:12px">${d.nipd||'-'}</td>
     <td>${d.kelas}</td>
     <td>${suratText}</td>
     <td style="white-space:nowrap;">
@@ -257,7 +258,7 @@ function renderPindahanRow(d,i){
 function renderPindahanPage(){
   const tbody=document.getElementById('pindahanBody');
   if(!_pindahanData.length){
-    tbody.innerHTML='<tr><td colspan="8"><div class="empty-state"><i class="bi bi-arrow-right-circle"></i><p>Belum ada data pindahan</p></div></td></tr>';
+    tbody.innerHTML='<tr><td colspan="9"><div class="empty-state"><i class="bi bi-arrow-right-circle"></i><p>Belum ada data pindahan</p></div></td></tr>';
     const pc=document.getElementById('paginationPindahan'); if(pc) pc.style.display='none';
     return;
   }
@@ -278,7 +279,7 @@ function renderPindahanPage(){
 async function loadPindahan(){
   const search=document.getElementById('searchPindahan').value;
   const tbody=document.getElementById('pindahanBody');
-  tbody.innerHTML='<tr><td colspan="8" class="text-center py-4"><div class="loading-spinner"></div></td></tr>';
+  tbody.innerHTML='<tr><td colspan="9" class="text-center py-4"><div class="loading-spinner"></div></td></tr>';
   const res=await fetchAPI('/api/pindahan?search='+encodeURIComponent(search));
   if(!res) return;
   _pindahanData=res.data||[];
@@ -551,7 +552,7 @@ function detailPindahan(d){
     (d.foto
       ? '<img src="'+d.foto+'" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;cursor:pointer;" onclick="showFotoDialog({fotoSrc:\''+(d.foto||'').replace(/'/g,"\\'")+'\',noButtons:true})">'
       : '<div style="width:56px;height:56px;border-radius:50%;background:'+(d.jenis_kelamin==='Perempuan'?'#FCE7F3':'#DBEAFE')+';display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:'+(d.jenis_kelamin==='Perempuan'?'#BE185D':'#1E40AF')+';cursor:pointer;" onclick="showFotoDialog({fotoSrc:\'\',noButtons:true})">'+ini+'</div>')+
-    '<div><div style="font-weight:700;font-size:15px;">'+d.nama+'</div><div style="font-size:12px;color:#64748B;">NISN: '+d.nisn+' &middot; '+d.kelas+'</div></div>'+
+    '<div><div style="font-weight:700;font-size:15px;">'+d.nama+'</div><div style="font-size:12px;color:#64748B;">NISN: '+d.nisn+(d.nipd?' &middot; NIPD: '+d.nipd:'')+' &middot; '+d.kelas+'</div></div>'+
     '</div>'+
     '<div style="display:flex;border-bottom:2px solid #E2E8F0;margin-bottom:14px;">'+
     '<div id="_dt1" onclick="pilihTabDetail(1)" style="flex:1;text-align:center;padding:8px 16px;font-size:13px;font-weight:600;color:#6366F1;border-bottom:2px solid #6366F1;cursor:pointer;margin-bottom:-2px;transition:all 0.2s;">Data Diri Lengkap</div>'+
@@ -573,6 +574,7 @@ function detailPindahan(d){
   document.getElementById('_dtKiri').innerHTML=
     tr('Nama Lengkap',d.nama)+
     tr('NISN',d.nisn)+
+    tr('NIPD',d.nipd||'-')+
     tr('Kelas',d.kelas)+
     tr('NIK',d.nik)+
     tr('Agama',d.agama);
@@ -585,6 +587,7 @@ function detailPindahan(d){
   document.getElementById('_dtPindahKiri').innerHTML=
     tr('Nama Lengkap',d.nama)+
     tr('NISN',d.nisn)+
+    tr('NIPD',d.nipd||'-')+
     tr('Kelas',d.kelas)+
     tr('Tanggal Pindah',fmtDate(d.tanggal_pindah))+
     tr('Sekolah Tujuan',d.sekolah_tujuan);

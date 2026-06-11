@@ -104,9 +104,8 @@
         <div class="card-modern-header"><div class="card-modern-title"><i class="bi bi-file-post" style="color:var(--primary)"></i> Aksi Cepat</div></div>
         <div class="card-modern-body">
           <div class="d-grid gap-2">
-            <a href="/pages/scan"    class="btn-success-custom justify-content-center"><i class="bi bi-qr-code-scan"></i> Scan Presensi</a>
+            <a href="/pages/scan"    class="btn-success-custom justify-content-center"><i class="bi bi-credit-card-2-front"></i> Scan Presensi</a>
             <a href="/pages/rekap"   class="btn-primary-custom justify-content-center"><i class="bi bi-bar-chart-fill"></i> Rekap Presensi</a>
-            <a href="/pages/qrcode"  class="btn-primary-custom justify-content-center" style="background:linear-gradient(135deg,#7C3AED,#6D28D9)"><i class="bi bi-qr-code"></i> Cetak QR Code</a>
             <a href="/pages/riwayat" class="btn-primary-custom justify-content-center" style="background:linear-gradient(135deg,#0EA5E9,#0284C7)"><i class="bi bi-download"></i> Export Presensi</a>
           </div>
         </div>
@@ -216,7 +215,7 @@ async function init(){
   document.getElementById('inf-sekolah').textContent=data.identitas?.nama_sekolah||'-';
 
   if(!data.presensiHariIni?.length){
-    document.getElementById('tbl-today').innerHTML=`<tr><td colspan="6"><div class="empty-state"><i class="bi bi-inbox"></i><p>Belum ada presensi hari ini</p><a href="/pages/scan" class="btn-primary-custom mt-2"><i class="bi bi-qr-code-scan"></i> Mulai Scan</a></div></td></tr>`;
+    document.getElementById('tbl-today').innerHTML=`<tr><td colspan="6"><div class="empty-state"><i class="bi bi-inbox"></i><p>Belum ada presensi hari ini</p><a href="/pages/scan" class="btn-primary-custom mt-2"><i class="bi bi-credit-card-2-front"></i> Mulai Scan</a></div></td></tr>`;
     return;
   }
   _todayData=data.presensiHariIni;

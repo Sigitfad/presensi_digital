@@ -48,9 +48,20 @@ router.post('/tambah', requireOperator, upload.single('foto'), (req,res) => {
 });
 
 router.post('/edit', requireOperator, upload.single('foto'), (req,res) => {
-  const {id,nama,role,no_hp='',email='',pengampu_kelas='Semua',nip='',alamat='',bidang_keahlian='',uid=''} = req.body;
+  let {id,nama,role,no_hp='',email='',pengampu_kelas='',nip='',alamat='',bidang_keahlian='',uid=''} = req.body;
   if(!id||!nama||!role)
     return res.json({success:false,message:'Field wajib tidak boleh kosong!'});
+  // Fall back ke nilai database untuk field yang tidak dikirim
+  const ex=queryOne('SELECT * FROM operators WHERE id=?',[id]);
+  if(ex){
+    if(!no_hp) no_hp=ex.no_hp||'';
+    if(!email) email=ex.email||'';
+    if(!pengampu_kelas) pengampu_kelas=ex.pengampu_kelas||'Semua';
+    if(!nip) nip=ex.nip||'';
+    if(!alamat) alamat=ex.alamat||'';
+    if(!bidang_keahlian) bidang_keahlian=ex.bidang_keahlian||'';
+    if(!uid) uid=ex.uid||'';
+  }
   if(uid&&queryOne('SELECT id FROM operators WHERE uid=? AND id!=?',[uid,id]))
     return res.json({success:false,message:'UID sudah digunakan!'});
 

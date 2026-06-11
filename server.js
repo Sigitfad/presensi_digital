@@ -7,16 +7,19 @@ const session   = require('express-session');
 const FileStore = require('session-file-store')(session);
 const path      = require('path');
 const fs        = require('fs');
+const os        = require('os');
 const { initDB } = require('./database');
 
 const app  = express();
 const BASE_PORT = parseInt(process.env.PORT, 10) || 3000;
+const SESSION_DIR = path.join(os.tmpdir(), 'presensi_sessions');
 
 // Pastikan semua folder upload dan session ada
-['public/uploads/foto-siswa','public/uploads/foto-user','public/uploads/logo','public/uploads/ijazah','public/uploads/surat-pindah','database/sessions'].forEach(d => {
+['public/uploads/foto-siswa','public/uploads/foto-user','public/uploads/logo','public/uploads/ijazah','public/uploads/surat-pindah'].forEach(d => {
   const p = path.join(__dirname, d);
   if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true });
 });
+if (!fs.existsSync(SESSION_DIR)) fs.mkdirSync(SESSION_DIR, { recursive: true });
 
 app.use(express.json({ limit:'10mb' }));
 app.use(express.urlencoded({ extended:true, limit:'10mb' }));
@@ -24,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
   store: new FileStore({
-    path     : path.join(__dirname, 'database/sessions'),
+    path     : SESSION_DIR,
     ttl      : 28800,
     retries  : 5,
     reapInterval: 300,

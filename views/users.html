@@ -853,10 +853,24 @@ function toggleEditUidMassal(){
   const btn=document.getElementById('toggleEditUidBtn');
   const inputs=document.querySelectorAll('.uid-massal-input');
   inputs.forEach(inp=>{
-    if(_uidEditMode){inp.removeAttribute('disabled');inp.style.background='#fff';}
+    if(_uidEditMode){inp.removeAttribute('disabled');inp.style.background='#fff';checkUIDLiveMassal(inp);}
     else{inp.setAttribute('disabled','');inp.style.background='#F1F5F9';}
   });
   btn.innerHTML=_uidEditMode?'Lihat':'Edit';
+}
+
+function checkUIDLiveMassal(inp){
+  const val=inp.value.trim();
+  const currentId=parseInt(inp.dataset.id);
+  const duplicate=val.length>=3&&_usersData.some(u=>u.uid===val&&u.id!==currentId);
+  const errorEl=inp.parentElement.querySelector('.uid-massal-error');
+  if(duplicate){
+    errorEl.style.display='inline';
+    inp.style.borderColor='#DC2626';
+  } else {
+    errorEl.style.display='none';
+    inp.style.borderColor='';
+  }
 }
 
 function filterUidMassal(q){
@@ -887,7 +901,10 @@ function bukaModalUidMassal(){
           : `<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#2563EB;border:1px solid #E2E8F0;">${u.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?'}</div>`
       }</div>
       <div class="uid-row-nama" style="flex:1;font-size:12px;font-weight:600;">${u.nama}</div>
-      <input type="text" class="form-control-modern uid-massal-input" data-id="${u.id}" value="${u.uid||''}" placeholder="10 digit" maxlength="10" style="width:110px;padding:3px 6px;font-size:11px;font-family:monospace;background:#F1F5F9;" disabled oninput="this.value=this.value.replace(/\D/g,'')">
+      <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;">
+        <input type="text" class="form-control-modern uid-massal-input" data-id="${u.id}" value="${u.uid||''}" placeholder="10 digit" maxlength="10" style="width:110px;padding:3px 6px;font-size:11px;font-family:monospace;background:#F1F5F9;" disabled oninput="this.value=this.value.replace(/\D/g,'');checkUIDLiveMassal(this)">
+        <span class="uid-massal-error" style="display:none;color:#DC2626;font-size:10.5px;font-weight:400;">UID sudah digunakan!</span>
+      </div>
     </div>
   `).join('');
   document.getElementById('toggleEditUidBtn').innerHTML='Edit';
@@ -916,21 +933,27 @@ async function simpanUidMassal(){
     const user=_usersData.find(u=>u.id==inp.dataset.id);
     if(!user) continue;
     if((user.uid||'')===uid) continue;
-    updates.push({id:user.id,uid,nama:user.nama,role:user.role});
+    updates.push({...user,uid});
   }
   if(!updates.length){showToast('Tidak ada perubahan UID','info');closeModal('modalUidMassal');return;}
+  for(const inp of inputs){
+    const errEl=inp.parentElement.querySelector('.uid-massal-error');
+    if(errEl&&errEl.style.display!=='none'){showToast('UID '+inp.value.trim()+' sudah digunakan oleh pengguna lain!','error');inp.focus();return;}
+  }
   const {isConfirmed:konfirm}=await Swal.fire({title:'Konfirmasi Update UID',text:`${updates.length} pengguna akan diperbarui UID-nya.`,icon:'question',showCancelButton:true,confirmButtonText:'Ya, Update',cancelButtonText:'Batal',confirmButtonColor:'#7C3AED',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
   if(!konfirm) return;
-  let sukses=0;
+  let sukses=0, gagal=0, errMsg='';
   for(const u of updates){
-    const fd=new FormData();fd.append('id',u.id);fd.append('uid',u.uid);
-    fd.append('nama',u.nama);fd.append('role',u.role);
+    const fd=new FormData();
+    ['id','nama','role','no_hp','email','pengampu_kelas','nip','alamat','bidang_keahlian','uid'].forEach(k=>fd.append(k,u[k]||''));
     const res=await fetchAPI('/api/users/edit','POST',fd);
     if(res?.success){sukses++;const user=_usersData.find(x=>x.id==u.id);if(user) user.uid=u.uid;}
+    else{gagal++;errMsg=res?.message||'Gagal terhubung ke server';}
   }
-  showToast(`${sukses} UID diperbarui`,'success');
+  if(gagal) showToast(`${sukses} berhasil, ${gagal} gagal: ${errMsg}`,'error');
+  else showToast(`${sukses} UID diperbarui`,'success');
   closeModal('modalUidMassal');
-  renderUsersPage();
+  loadUsers();
 }
 
 async function init(){await loadLayout('users','Data Guru dan Tenaga Kependidikan (GTK)');loadUsers();}

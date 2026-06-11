@@ -70,8 +70,8 @@
       <table class="table-modern">
         <thead><tr>
           <th style="width:36px;"><input type="checkbox" id="selectAllAlumni" onchange="toggleSelectAllAlumni()" style="cursor:pointer;accent-color:var(--primary);"></th>
-          <th>#</th><th>Foto</th><th>NISN</th><th>Nama</th><th>Kelas</th><th>Tahun Lulus</th><th>Ijazah</th><th>Aksi</th></tr></thead>
-        <tbody id="tblAlumni"><tr><td colspan="9" class="text-center py-4"><div class="loading-spinner"></div></td></tr></tbody>
+          <th>#</th><th>Foto</th><th>NISN</th><th>NIPD</th><th>Nama</th><th>Kelas</th><th>Tahun Lulus</th><th>Ijazah</th><th>Aksi</th></tr></thead>
+        <tbody id="tblAlumni"><tr><td colspan="10" class="text-center py-4"><div class="loading-spinner"></div></td></tr></tbody>
       </table>
     </div>
   </div>
@@ -203,6 +203,7 @@ function renderAlumniRow(d, i) {
     <td style="color:var(--gray)">${i+1}</td>
     <td>${fotoHtml}</td>
     <td style="font-weight:600">${d.nisn}</td>
+    <td style="font-size:12px">${d.nipd||'-'}</td>
     <td style="font-weight:700;color:var(--dark)">${d.nama}</td>
     <td>${d.kelas_lulus}</td>
     <td><span style="background:#EDE9FE;color:#7C3AED;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:700;">${d.tahun_lulus}</span></td>
@@ -220,7 +221,7 @@ function renderAlumniRow(d, i) {
 function renderAlumniPage(){
   const tbody=document.getElementById('tblAlumni');
   if(!_alumniData.length){
-    tbody.innerHTML='<tr><td colspan="9"><div class="empty-state"><i class="bi bi-mortarboard"></i><p>Belum ada data alumni</p></div></td></tr>';
+    tbody.innerHTML='<tr><td colspan="10"><div class="empty-state"><i class="bi bi-mortarboard"></i><p>Belum ada data alumni</p></div></td></tr>';
     document.getElementById('paginationAlumni').style.display='none';
     return;
   }
@@ -244,7 +245,7 @@ async function loadAlumni(){
   const search=document.getElementById('searchInput').value;
   const tahun=document.getElementById('filterTahun').value;
   const tbody=document.getElementById('tblAlumni');
-  tbody.innerHTML='<tr><td colspan="9" class="text-center py-4"><div class="loading-spinner"></div></td></tr>';
+  tbody.innerHTML='<tr><td colspan="10" class="text-center py-4"><div class="loading-spinner"></div></td></tr>';
   const res=await fetchAPI(`/api/alumni?${new URLSearchParams({search,tahun_lulus:tahun})}`);
   if(!res) return;
   _alumniData=res.data||[];
@@ -356,11 +357,12 @@ function bukaViewAlumni(a){
     ? `<button class="btn-grad view" title="Lihat Ijazah" onclick="lihatIjazah('${a.nama.replace(/'/g,"\\'")}','${a.ijazah}')"><i class="bi bi-file-earmark-text-fill"></i></button>`
     : '<span style="color:var(--gray);font-size:12px;">-</span>';
   document.getElementById('detailContent').innerHTML=`
-    <div style="display:flex;gap:12px;margin-bottom:14px;align-items:center;">${fotoHtml}<div><div style="font-weight:700;font-size:15px;">${a.nama}</div><div style="font-size:12px;color:#64748B;">NISN: ${a.nisn} &middot; ${a.kelas_lulus}</div></div></div>
+    <div style="display:flex;gap:12px;margin-bottom:14px;align-items:center;">${fotoHtml}<div><div style="font-weight:700;font-size:15px;">${a.nama}</div><div style="font-size:12px;color:#64748B;">NISN: ${a.nisn}${a.nipd?' &middot; NIPD: '+a.nipd:''} &middot; ${a.kelas_lulus}</div></div></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
       <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
         ${row('Nama Lengkap',a.nama)}
         ${row('NISN',a.nisn)}
+        ${row('NIPD',a.nipd||'-')}
         ${row('Kelas',`<span style="background:var(--primary-light);color:var(--primary);padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;">${a.kelas_lulus}</span>`)}
         ${row('NIK',a.nik)}
         ${row('Agama',a.agama)}

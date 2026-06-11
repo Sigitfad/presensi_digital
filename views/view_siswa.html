@@ -107,6 +107,12 @@ async function init(){
           <div style="margin-top:10px;">
             <span style="background:var(--primary-light);color:var(--primary);padding:4px 16px;border-radius:20px;font-size:13px;font-weight:700;">NISN: ${siswa.nisn}</span>
           </div>
+          <div style="margin-top:6px;">
+            <span style="background:#F0FDF4;color:#16A34A;padding:4px 16px;border-radius:20px;font-size:12px;font-weight:600;">NIPD: ${siswa.nipd||'-'}</span>
+          </div>
+          <div style="margin-top:6px;">
+            <span style="background:#EEF2FF;color:#4F46E5;padding:4px 16px;border-radius:20px;font-size:12px;font-weight:600;font-family:monospace;">UID: ${siswa.uid||'-'}</span>
+          </div>
           <div style="margin-top:10px;">
             <div style="font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Pengampu Kelas</div>
             <div>${pengampuHTML}</div>
@@ -148,6 +154,14 @@ async function init(){
             <div class="info-row">
               <div class="info-label">NISN</div>
               <div class="info-value"><strong style="font-family:var(--font-main);color:var(--primary);">${siswa.nisn}</strong></div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">NIPD</div>
+              <div class="info-value"><strong style="font-family:var(--font-main);">${siswa.nipd||'-'}</strong></div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">UID RFID</div>
+              <div class="info-value"><code style="font-size:13px;background:#F1F5F9;padding:3px 10px;border-radius:6px;">${siswa.uid||'-'}</code></div>
             </div>
             <div class="info-row">
               <div class="info-label">Nama Lengkap</div>

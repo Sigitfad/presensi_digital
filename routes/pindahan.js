@@ -38,7 +38,7 @@ router.get('/', (req,res) => {
   const { search='' } = req.query;
   let sql = 'SELECT * FROM pindahan WHERE 1=1';
   const p = [];
-  if(search){ sql += ' AND (nama LIKE ? OR nisn LIKE ?)'; p.push(`%${search}%`,`%${search}%`); }
+  if(search){ sql += ' AND (nama LIKE ? OR nisn LIKE ? OR nipd LIKE ?)'; p.push(`%${search}%`,`%${search}%`,`%${search}%`); }
   sql += ' ORDER BY tanggal_pindah DESC, nama ASC';
   res.json({success:true, data:queryAll(sql,p)});
 });
@@ -52,19 +52,19 @@ router.get('/:id', (req,res) => {
 });
 
 router.post('/tambah', (req,res) => {
-  const {nama,nisn,kelas,alasan='',tanggal_pindah='',foto='',jenis_kelamin='',nik='',tempat_lahir='',tanggal_lahir='',agama='',alamat='',no_hp_ortu=''} = req.body;
+  const {nama,nisn,kelas,alasan='',tanggal_pindah='',foto='',jenis_kelamin='',nik='',tempat_lahir='',tanggal_lahir='',agama='',alamat='',no_hp_ortu='',nipd=''} = req.body;
   if(!nama||!nisn||!kelas)
     return res.json({success:false,message:'Nama, NISN, dan kelas wajib diisi!'});
   try {
-    run('INSERT INTO pindahan (nama,nisn,kelas,alasan,tanggal_pindah,foto,jenis_kelamin,nik,tempat_lahir,tanggal_lahir,agama,alamat,no_hp_ortu) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',
-        [nama,nisn,kelas,alasan,tanggal_pindah,foto,jenis_kelamin,nik,tempat_lahir,tanggal_lahir,agama,alamat,no_hp_ortu]);
+    run('INSERT INTO pindahan (nama,nisn,kelas,alasan,tanggal_pindah,foto,jenis_kelamin,nik,tempat_lahir,tanggal_lahir,agama,alamat,no_hp_ortu,nipd) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+        [nama,nisn,kelas,alasan,tanggal_pindah,foto,jenis_kelamin,nik,tempat_lahir,tanggal_lahir,agama,alamat,no_hp_ortu,nipd]);
     logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,'Tambah Pindahan',`${nama} (${nisn})`);
     res.json({success:true,message:'Data pindahan berhasil ditambahkan'});
   } catch(e){res.json({success:false,message:e.message});}
 });
 
 router.post('/edit', upload.single('surat_pindah'), (req,res) => {
-  const {id,sekolah_tujuan='',nomor_surat='',tanggal_surat=''} = req.body;
+  const {id,sekolah_tujuan='',nomor_surat='',tanggal_surat='',nipd=''} = req.body;
   if(!id) return res.json({success:false,message:'ID tidak valid'});
   const lama = queryOne('SELECT * FROM pindahan WHERE id=?',[id]);
   if(!lama) return res.json({success:false,message:'Data tidak ditemukan'});
@@ -78,8 +78,8 @@ router.post('/edit', upload.single('surat_pindah'), (req,res) => {
     surat_pindah = `/uploads/surat-pindah/${baru}`;
   }
   try {
-    run('UPDATE pindahan SET sekolah_tujuan=?,nomor_surat=?,tanggal_surat=?,surat_pindah=?,updated_at=datetime("now","localtime") WHERE id=?',
-        [sekolah_tujuan,nomor_surat,tanggal_surat,surat_pindah,id]);
+    run('UPDATE pindahan SET sekolah_tujuan=?,nomor_surat=?,tanggal_surat=?,surat_pindah=?,nipd=?,updated_at=datetime("now","localtime") WHERE id=?',
+        [sekolah_tujuan,nomor_surat,tanggal_surat,surat_pindah,nipd,id]);
     logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,'Edit Pindahan',`Edit surat: ${lama.nama} (${lama.nisn})`);
     res.json({success:true,message:'Data surat pindahan berhasil diperbarui'});
   } catch(e){res.json({success:false,message:e.message});}
