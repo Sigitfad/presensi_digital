@@ -1,5 +1,4 @@
 const express  = require('express');
-const bcrypt   = require('bcryptjs');
 const path     = require('path');
 const { queryOne, run, logActivity } = require('../database');
 const router   = express.Router();
@@ -11,23 +10,14 @@ router.get('/login', (req,res) => {
 });
 
 router.post('/login', (req,res) => {
-  const { username, password, uid } = req.body;
-  let op;
-  if(uid){
-    if(uid.length!==10) return res.json({success:false,message:'UID harus 10 digit!'});
-    op = queryOne('SELECT * FROM operators WHERE uid=?', [uid]);
-    if(!op) return res.json({success:false,message:'UID tidak terdaftar!'});
-  } else {
-    if (!username || !password)
-      return res.json({ success:false, message:'Username dan password wajib diisi!' });
-    op = queryOne('SELECT * FROM operators WHERE username=?', [username]);
-    if (!op || !bcrypt.compareSync(password, op.password))
-      return res.json({ success:false, message:'Username atau password salah!' });
-  }
+  const { uid } = req.body;
+  if(!uid) return res.json({success:false,message:'UID wajib diisi!'});
+  if(uid.length!==10) return res.json({success:false,message:'UID harus 10 digit!'});
+  const op = queryOne('SELECT * FROM operators WHERE uid=?', [uid]);
+  if(!op) return res.json({success:false,message:'UID tidak terdaftar!'});
 
   req.session.operatorId        = op.id;
   req.session.operatorNama      = op.nama;
-  req.session.operatorUsername  = op.username;
   req.session.operatorRole      = op.role;
   req.session.operatorFoto      = op.foto || '';
   req.session.pengampuKelas     = op.pengampu_kelas || 'Semua';
@@ -35,25 +25,7 @@ router.post('/login', (req,res) => {
 
   const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '';
   logActivity(op.id, op.nama, op.role, 'Login', `Login dari IP: ${ip}`, ip);
-  res.json({ success:true, redirect:'/pages/dashboard' });
-});
-
-router.get('/register', (req,res) => {
-  if (req.session.operatorId) return res.redirect('/pages/dashboard');
-  res.sendFile(path.join(VIEWS,'register.html'));
-});
-
-router.post('/register', (req,res) => {
-  const { nama, username, password, konfirmasi } = req.body;
-  if (!nama||!username||!password) return res.json({success:false,message:'Semua field wajib diisi!'});
-  if (password.length<6) return res.json({success:false,message:'Password minimal 6 karakter!'});
-  if (password!==konfirmasi) return res.json({success:false,message:'Konfirmasi password tidak cocok!'});
-  if (queryOne('SELECT id FROM operators WHERE username=?',[username]))
-    return res.json({success:false,message:'Username sudah digunakan!'});
-  const hash = bcrypt.hashSync(password,10);
-  run('INSERT INTO operators (nama,username,password,role,pengampu_kelas) VALUES (?,?,?,?,?)',
-      [nama,username,hash,'operator','Semua']);
-  res.json({success:true,message:'Registrasi berhasil! Silakan login.'});
+  return res.json({ success:true, redirect:'/pages/dashboard' });
 });
 
 router.get('/logout', (req,res) => {
@@ -75,7 +47,6 @@ router.get('/api/session', (req,res) => {
     loggedIn       : true,
     id             : req.session.operatorId,
     nama           : req.session.operatorNama,
-    username       : req.session.operatorUsername,
     role           : req.session.operatorRole,
     foto           : req.session.operatorFoto || '',
     pengampuKelas  : req.session.pengampuKelas || 'Semua',

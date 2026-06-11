@@ -4,7 +4,7 @@
  */
 const fs     = require('fs');
 const path   = require('path');
-const bcrypt = require('bcryptjs');
+
 
 const DB_DIR  = path.join(__dirname, 'database');
 const DB_PATH = path.join(DB_DIR, 'presensi.db');
@@ -30,8 +30,6 @@ async function initDB() {
     CREATE TABLE IF NOT EXISTS operators (
       id              INTEGER PRIMARY KEY AUTOINCREMENT,
       nama            TEXT NOT NULL,
-      username        TEXT NOT NULL UNIQUE,
-      password        TEXT NOT NULL,
       role            TEXT NOT NULL DEFAULT 'operator'
                         CHECK(role IN ('operator','guru','kepala_sekolah','penjaga_sekolah','guru_bidang')),
       no_hp           TEXT DEFAULT '',
@@ -128,7 +126,6 @@ async function initDB() {
     "ALTER TABLE siswa ADD COLUMN alamat TEXT DEFAULT ''",
     "ALTER TABLE siswa ADD COLUMN status TEXT DEFAULT 'Aktif'",
     "ALTER TABLE operators ADD COLUMN uid TEXT DEFAULT ''",
-    "ALTER TABLE operators ADD COLUMN password_plain TEXT DEFAULT ''",
     "ALTER TABLE alumni ADD COLUMN jenis_kelamin TEXT DEFAULT ''",
     "ALTER TABLE alumni ADD COLUMN nik TEXT DEFAULT ''",
     "ALTER TABLE alumni ADD COLUMN tempat_lahir TEXT DEFAULT ''",
@@ -151,19 +148,15 @@ async function initDB() {
   ];
   migrations.forEach(sql => { try { db.run(sql); saveDB(); } catch(e) {} });
 
-  // Migrasi: periksa apakah CHECK constraint operators mendukung guru_bidang
-  try {
-    db.run("INSERT INTO operators (nama,username,password,role) VALUES ('__test_gb','__test_gb','x','guru_bidang')");
-    db.run("DELETE FROM operators WHERE username='__test_gb'");
-  } catch(e) {
-    // guru_bidang belum didukung — recreate tabel
+  // Migrasi: hapus kolom username, password, password_plain jika masih ada
+  const cols = queryAll("PRAGMA table_info('operators')").map(c=>c.name);
+  if(cols.includes('username')||cols.includes('password')||cols.includes('password_plain')){
+    console.log('[DB] Migrasi: hapus kolom username/password dari operators...');
     try {
       db.run("ALTER TABLE operators RENAME TO operators_old");
       db.run(`CREATE TABLE IF NOT EXISTS operators (
         id              INTEGER PRIMARY KEY AUTOINCREMENT,
         nama            TEXT NOT NULL,
-        username        TEXT NOT NULL UNIQUE,
-        password        TEXT NOT NULL,
         role            TEXT NOT NULL DEFAULT 'operator'
                           CHECK(role IN ('operator','guru','kepala_sekolah','penjaga_sekolah','guru_bidang')),
         no_hp           TEXT DEFAULT '',
@@ -176,11 +169,11 @@ async function initDB() {
         uid             TEXT DEFAULT '',
         created_at      TEXT DEFAULT (datetime('now','localtime'))
       )`);
-      db.run(`INSERT INTO operators (id,nama,username,password,role,no_hp,email,foto,pengampu_kelas,nip,alamat,bidang_keahlian,uid,created_at)
-               SELECT id,nama,username,password,role,no_hp,email,foto,pengampu_kelas,nip,alamat,bidang_keahlian,uid,created_at FROM operators_old`);
+      db.run(`INSERT INTO operators (id,nama,role,no_hp,email,foto,pengampu_kelas,nip,alamat,bidang_keahlian,uid,created_at)
+               SELECT id,nama,role,no_hp,email,foto,pengampu_kelas,nip,alamat,bidang_keahlian,uid,created_at FROM operators_old`);
       db.run("DROP TABLE operators_old");
       saveDB();
-      console.log('[DB] Tabel operators dimigrasi (CHECK constraint guru_bidang)');
+      console.log('[DB] Migrasi: username/password berhasil dihapus dari tabel operators');
     } catch(e2) {
       console.error('[DB] Gagal migrasi operators:', e2.message);
     }
@@ -217,13 +210,6 @@ async function initDB() {
       updated_at TEXT DEFAULT (datetime('now','localtime'))
     );
   `);
-
-  // Data awal operator
-  if (queryCount('SELECT COUNT(*) as c FROM operators') === 0) {
-    run('INSERT INTO operators (nama,username,password,role,pengampu_kelas) VALUES (?,?,?,?,?)',
-        ['Administrator','admin', bcrypt.hashSync('password',10), 'operator', 'Semua']);
-    console.log('[DB] Akun default: admin / password (Operator)');
-  }
 
   // Data awal siswa
   if (queryCount('SELECT COUNT(*) as c FROM siswa') === 0) {

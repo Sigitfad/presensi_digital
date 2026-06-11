@@ -72,7 +72,6 @@ async function init(){
           : `<div class="foto-profil-ini" style="margin:0 auto 16px;">${ini}</div>`
         }
         <div style="font-family:var(--font-main);font-size:20px;font-weight:800;color:var(--dark);">${user.nama}</div>
-        <div style="font-size:13px;color:var(--gray);margin-top:4px;">@${user.username}</div>
         <div style="margin-top:12px;">
           <span style="background:${role.bg};color:${role.color};padding:5px 16px;border-radius:20px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:6px;">
             <i class="bi ${role.icon}"></i>${role.label}
@@ -89,16 +88,6 @@ async function init(){
         </div>
         <div class="card-modern-body">
           <div class="info-row"><div class="info-label">Nama Lengkap</div><div class="info-value"><strong>${user.nama}</strong></div></div>
-          <div class="info-row"><div class="info-label">Username</div><div class="info-value">@${user.username}</div></div>
-          <div class="info-row">
-            <div class="info-label">Password</div>
-            <div class="info-value">
-              <span style="display:inline-flex;align-items:center;gap:6px;">
-                <span id="pwdDisplay" style="font-family:monospace;">${user.password_plain?'••••••••':'-'}</span>
-                ${user.password_plain?`<i class="bi bi-eye" id="pwdToggle" style="cursor:pointer;font-size:14px;color:var(--gray);" onclick="togglePassword()"></i>`:''}
-              </span>
-            </div>
-          </div>
           <div class="info-row">
             <div class="info-label">Role / Jabatan</div>
             <div class="info-value">
@@ -139,21 +128,6 @@ async function init(){
         </div>
       </div>
     </div>`;
-  // Define password toggle
-  window.togglePassword=function(){
-    const el=document.getElementById('pwdDisplay');
-    const icon=document.getElementById('pwdToggle');
-    if(!el||!icon) return;
-    if(el.dataset.visible==='true'){
-      el.textContent='••••••••';
-      icon.className='bi bi-eye';
-      el.dataset.visible='false';
-    } else {
-      el.textContent=user.password_plain||'';
-      icon.className='bi bi-eye-slash';
-      el.dataset.visible='true';
-    }
-  };
 }
 init();
 </script>

@@ -203,13 +203,13 @@ router.post('/restore-json', async (req,res) => {
     // Restore operators
     if(backup.operators && backup.operators.length){
       backup.operators.forEach(op => {
-        const existing = queryAll('SELECT id FROM operators WHERE username=?',[op.username]);
-        if(existing.length){
-          run('UPDATE operators SET nama=?,role=?,no_hp=?,email=?,foto=?,pengampu_kelas=?,nip=?,alamat=?,bidang_keahlian=? WHERE username=?',
-            [op.nama,op.role,op.no_hp||'',op.email||'',op.foto||'',op.pengampu_kelas||'Semua',op.nip||'',op.alamat||'',op.bidang_keahlian||'',op.username]);
+        const existing = queryOne('SELECT id FROM operators WHERE id=?',[op.id]);
+        if(existing){
+          run('UPDATE operators SET nama=?,role=?,no_hp=?,email=?,foto=?,pengampu_kelas=?,nip=?,alamat=?,bidang_keahlian=?,uid=? WHERE id=?',
+            [op.nama,op.role,op.no_hp||'',op.email||'',op.foto||'',op.pengampu_kelas||'Semua',op.nip||'',op.alamat||'',op.bidang_keahlian||'',op.uid||'',op.id]);
         } else {
-          run('INSERT INTO operators (nama,username,password,role,no_hp,email,foto,pengampu_kelas,nip,alamat,bidang_keahlian) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
-            [op.nama,op.username,op.password,op.role,op.no_hp||'',op.email||'',op.foto||'',op.pengampu_kelas||'Semua',op.nip||'',op.alamat||'',op.bidang_keahlian||'']);
+          run('INSERT INTO operators (nama,role,no_hp,email,foto,pengampu_kelas,nip,alamat,bidang_keahlian,uid) VALUES (?,?,?,?,?,?,?,?,?,?)',
+            [op.nama,op.role,op.no_hp||'',op.email||'',op.foto||'',op.pengampu_kelas||'Semua',op.nip||'',op.alamat||'',op.bidang_keahlian||'',op.uid||'']);
         }
       });
     }

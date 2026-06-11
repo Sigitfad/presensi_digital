@@ -1,0 +1,14 @@
+[DB] Database dimuat: database/presensi.db
+[DB] Migrasi: hapus kolom username/password dari operators...
+[DB] Migrasi: username/password berhasil dihapus dari tabel operators
+[DB] Siap
+[Server] Port 3000 digunakan, coba port 3001...
+[Server] Port 3001 digunakan, coba port 3002...
+
+==============================================
+ PRESENSI SDN KARANGPAWITAN 1 v2.1 - SIAP!
+==============================================
+ Buka: http://localhost:3002
+ Login: Gunakan UID Kartu RFID
+==============================================
+

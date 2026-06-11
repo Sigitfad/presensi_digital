@@ -65,7 +65,7 @@ initDB().then(() => {
       console.log(' PRESENSI SDN KARANGPAWITAN 1 v2.1 - SIAP!');
       console.log('==============================================');
       console.log(` Buka: http://localhost:${port}`);
-      console.log(' Login: admin / password');
+      console.log(' Login: Gunakan UID Kartu RFID');
       console.log('==============================================');
       console.log('');
     });

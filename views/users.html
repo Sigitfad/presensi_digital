@@ -74,7 +74,7 @@
       <div style="display:flex;gap:6px;align-items:center;">
         <button class="btn-primary-custom" onclick="bukaModalUidMassal()" style="padding:5px 12px;font-size:11px;white-space:nowrap;">Update UID</button>
         <div style="position:relative;">
-          <input type="text" id="searchUsers" class="form-control-modern" placeholder="Cari Nama, Username, Role, Bidang..." style="width:240px;padding-right:30px;padding:5px 30px 5px 10px;font-size:12px;" oninput="clearTimeout(window._dU);window._dU=setTimeout(()=>loadUsers(),300);document.getElementById('clearSearchUsers').style.display=this.value?'block':'none'">
+          <input type="text" id="searchUsers" class="form-control-modern" placeholder="Cari Nama, Role, Bidang..." style="width:240px;padding-right:30px;padding:5px 30px 5px 10px;font-size:12px;" oninput="clearTimeout(window._dU);window._dU=setTimeout(()=>loadUsers(),300);document.getElementById('clearSearchUsers').style.display=this.value?'block':'none'">
           <button id="clearSearchUsers" type="button" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94A3B8;cursor:pointer;display:none;font-size:16px;padding:2px 4px;line-height:1;" onclick="document.getElementById('searchUsers').value='';loadUsers();this.style.display='none'">&times;</button>
         </div>
       </div>
@@ -83,8 +83,8 @@
       <table class="table-modern">
         <thead><tr>
           <th style="width:36px;"><input type="checkbox" id="selectAllUser" onchange="toggleSelectAllUser()" style="cursor:pointer;accent-color:var(--primary);"></th>
-          <th>#</th><th>Foto</th><th>Nama</th><th>Username</th><th>UID</th><th>Role</th><th>Pengampu Kelas</th><th>NIP</th><th>Email</th><th>No HP</th><th>Aksi</th></tr></thead>
-        <tbody id="tblUsers"><tr><td colspan="12" class="text-center py-4"><div class="loading-spinner"></div></td></tr></tbody>
+          <th>#</th><th>Foto</th><th>Nama</th><th>UID</th><th>Role</th><th>Pengampu Kelas</th><th>NIP</th><th>Email</th><th>No HP</th><th>Aksi</th></tr></thead>
+        <tbody id="tblUsers"><tr><td colspan="11" class="text-center py-4"><div class="loading-spinner"></div></td></tr></tbody>
       </table>
     </div>
   </div>
@@ -124,7 +124,6 @@
         </div>
         <div class="row g-2">
           <div class="col-md-6"><label class="form-label-modern">Nama Lengkap *</label><input type="text" id="u_nama" class="form-control-modern" placeholder="Nama pengguna" required></div>
-          <div class="col-md-6"><label class="form-label-modern">Username *</label><input type="text" id="u_username" class="form-control-modern" placeholder="Username login" required></div>
           <div class="col-md-6">
             <label class="form-label-modern">Role *</label>
             <select id="u_role" class="form-control-modern" onchange="toggleKelasSelect('u_pengampu','u_role')" required>
@@ -149,17 +148,11 @@
             </select>
             <div id="u_pengampu_checkboxes" style="display:none;max-height:150px;overflow-y:auto;border:1px solid #E2E8F0;border-radius:8px;padding:6px 8px;grid-template-columns:repeat(4,1fr);gap:4px;"></div>
           </div>
-          <div class="col-md-6"><label class="form-label-modern">Password *</label>
-            <div style="position:relative;">
-              <input type="password" id="u_password" class="form-control-modern" placeholder="Min. 6 karakter" style="padding-right:36px;" required>
-              <i class="bi bi-eye" id="u_pwdToggle" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;color:#64748B;" onclick="togglePassword()"></i>
-            </div>
-          </div>
           <div class="col-md-6"><label class="form-label-modern">No HP *</label><input type="number" id="u_nohp" class="form-control-modern" placeholder="08xx" required></div>
           <div class="col-md-6"><label class="form-label-modern">NIP *</label><input type="number" id="u_nip" class="form-control-modern" placeholder="Nomor Induk Pegawai" required></div>
           <div class="col-md-6"><label class="form-label-modern">Email *</label><input type="email" id="u_email" class="form-control-modern" placeholder="email@sekolah.com" required></div>
-          <div class="col-md-6"><label class="form-label-modern">Alamat *</label><input type="text" id="u_alamat" class="form-control-modern" placeholder="Alamat lengkap" required></div>
-          <div class="col-md-6"><label class="form-label-modern">UID Kartu *</label><input type="text" id="u_uid" class="form-control-modern" placeholder="10 digit" maxlength="10" required oninput="this.value=this.value.replace(/\D/g,'')"></div>
+          <div class="col-12"><label class="form-label-modern">Alamat *</label><input type="text" id="u_alamat" class="form-control-modern" placeholder="Alamat lengkap" required></div>
+          <div class="col-md-6"><label class="form-label-modern">UID Kartu *</label><input type="text" id="u_uid" class="form-control-modern" placeholder="10 digit" maxlength="10" required oninput="this.value=this.value.replace(/\D/g,'');checkUIDLive(this)"></div>
         </div>
       </div>
       <div class="modal-footer">
@@ -186,7 +179,6 @@
         </div>
         <div class="row g-2">
           <div class="col-md-6"><label class="form-label-modern">Nama Lengkap *</label><input type="text" id="eu_nama" class="form-control-modern" required></div>
-          <div class="col-md-6"><label class="form-label-modern">Username *</label><input type="text" id="eu_username" class="form-control-modern" required></div>
           <div class="col-md-6">
             <label class="form-label-modern">Role *</label>
             <select id="eu_role" class="form-control-modern" onchange="toggleKelasSelect('eu_pengampu','eu_role')" required>
@@ -211,18 +203,11 @@
             </select>
             <div id="eu_pengampu_checkboxes" style="display:none;max-height:150px;overflow-y:auto;border:1px solid #E2E8F0;border-radius:8px;padding:6px 8px;grid-template-columns:repeat(4,1fr);gap:4px;"></div>
           </div>
-          <div class="col-md-6">
-            <label class="form-label-modern">Password Baru *</label>
-            <div style="position:relative;">
-              <input type="password" id="eu_password" class="form-control-modern" placeholder="Kosongkan jika tidak diubah" style="padding-right:36px;">
-              <i class="bi bi-eye" id="eu_pwdToggle" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;color:#64748B;" onclick="toggleEuPassword()"></i>
-            </div>
-          </div>
           <div class="col-md-6"><label class="form-label-modern">No HP *</label><input type="number" id="eu_nohp" class="form-control-modern" required></div>
           <div class="col-md-6"><label class="form-label-modern">NIP *</label><input type="number" id="eu_nip" class="form-control-modern" required></div>
           <div class="col-md-6"><label class="form-label-modern">Email *</label><input type="email" id="eu_email" class="form-control-modern" required></div>
           <div class="col-12"><label class="form-label-modern">Alamat *</label><input type="text" id="eu_alamat" class="form-control-modern" required></div>
-          <div class="col-md-6"><label class="form-label-modern">UID Kartu *</label><input type="text" id="eu_uid" class="form-control-modern" placeholder="10 digit" maxlength="10" required oninput="this.value=this.value.replace(/\D/g,'')"></div>
+          <div class="col-md-6"><label class="form-label-modern">UID Kartu *</label><input type="text" id="eu_uid" class="form-control-modern" placeholder="10 digit" maxlength="10" required oninput="this.value=this.value.replace(/\D/g,'');checkUIDLive(this)"></div>
         </div>
       </div>
       <div class="modal-footer">
@@ -240,7 +225,10 @@
       <div class="modal-header" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
         <h5 class="modal-title text-white fw-bold">Update UID</h5>
         <div style="display:flex;align-items:center;gap:4px;">
-          <input type="text" id="uidSearchMassal" class="form-control-modern" placeholder="Cari nama / UID..." style="width:150px;padding:3px 8px;font-size:11px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:6px;" oninput="filterUidMassal(this.value)" onfocus="this.style.background='rgba(255,255,255,0.3)'" onblur="this.style.background='rgba(255,255,255,0.2)'">
+          <div style="position:relative;display:inline-block;">
+            <input type="text" id="uidSearchMassal" class="form-control-modern" placeholder="Cari nama / UID..." style="width:150px;padding:3px 8px;font-size:11px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:6px;padding-right:20px;" oninput="filterUidMassal(this.value);document.getElementById('clearUidSearch').style.display=this.value?'block':'none'" onfocus="this.style.background='rgba(255,255,255,0.3)'" onblur="this.style.background='rgba(255,255,255,0.2)'">
+            <button type="button" id="clearUidSearch" style="display:none;position:absolute;right:4px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;cursor:pointer;font-size:14px;line-height:1;padding:0 2px;opacity:0.7;" onclick="document.getElementById('uidSearchMassal').value='';filterUidMassal('');this.style.display='none';document.getElementById('uidSearchMassal').focus()">&times;</button>
+          </div>
           <button type="button" id="toggleEditUidBtn" class="btn btn-sm text-white" style="background:rgba(255,255,255,0.15);border:none;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;" onclick="toggleEditUidMassal()">Edit</button>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
@@ -300,10 +288,6 @@ function toggleKelasSelect(kelasId, roleId){
   sel.style.display='';
 
   const isTambah = kelasId === 'u_pengampu';
-  const usernameId = isTambah ? 'u_username' : 'eu_username';
-  const passwordId = isTambah ? 'u_password' : 'eu_password';
-  const usernameWrap = document.getElementById(usernameId)?.closest('.col-md-6');
-  const passwordWrap = document.getElementById(passwordId)?.closest('.col-md-6');
   const roleWrap = document.getElementById(roleId)?.closest('.col-md-6');
   const alamatId = isTambah ? 'u_alamat' : 'eu_alamat';
   const alamatWrap = document.getElementById(alamatId)?.closest('.col-md-6, .col-12');
@@ -317,16 +301,8 @@ function toggleKelasSelect(kelasId, roleId){
     if(wrap) wrap.style.display='none';
     if(bidangSel){ bidangSel.style.display='none'; bidangSel.value=''; }
     if(bidangWrap) bidangWrap.style.display='none';
-    if(role==='penjaga_sekolah'){
-      if(usernameWrap) usernameWrap.style.display='none';
-      if(passwordWrap) passwordWrap.style.display='none';
-    } else {
-      if(usernameWrap) usernameWrap.style.display='';
-      if(passwordWrap) passwordWrap.style.display='';
-    }
     // Reset pengampu layout
     if(wrap && wrap.classList.contains('col-md-6')) wrap.classList.replace('col-md-6','col-12');
-    if(wrap && alamatWrap && alamatWrap.classList.contains('col-12') && isTambah) alamatWrap.classList.replace('col-12','col-md-6');
   } else if(role==='guru_bidang'){
     if(wrap) wrap.style.display='';
     sel.style.display='none'; // hide the select entirely
@@ -374,9 +350,6 @@ function toggleKelasSelect(kelasId, roleId){
     if(wrap && bidangWrap && roleWrap && bidangWrap.parentNode===roleWrap.parentNode){
       if(bidangWrap.nextElementSibling!==wrap) bidangWrap.after(wrap);
     }
-    if(alamatWrap && alamatWrap.classList.contains('col-12') && isTambah) alamatWrap.classList.replace('col-12','col-md-6');
-    if(usernameWrap) usernameWrap.style.display='';
-    if(passwordWrap) passwordWrap.style.display='';
   } else {
     sel.disabled=false; sel.style.opacity='1';
     sel.multiple = false;
@@ -387,11 +360,76 @@ function toggleKelasSelect(kelasId, roleId){
     // Guru/Kepsek: Pengampu di sebelah Role (col-md-6), Alamat full width
     if(wrap && wrap.classList.contains('col-12')) wrap.classList.replace('col-12','col-md-6');
     if(wrap && roleWrap && roleWrap.parentNode===wrap.parentNode){
-      if(roleWrap.nextElementSibling!==wrap) roleWrap.after(wrap);
+      // penataan posisi diatur di blok layout bawah
     }
     if(alamatWrap && !alamatWrap.classList.contains('col-12')) alamatWrap.classList.replace('col-md-6','col-12');
-    if(usernameWrap) usernameWrap.style.display='';
-    if(passwordWrap) passwordWrap.style.display='';
+  }
+  // Urutan UID / Alamat + lebar UID
+  const uidId = isTambah ? 'u_uid' : 'eu_uid';
+  const uidW = document.getElementById(uidId)?.closest('.col-md-6,.col-12');
+  const alW = document.getElementById(alamatId)?.closest('.col-md-6,.col-12');
+  // UID lebar penuh (col-12) untuk Guru/Kepsek & Guru Bidang
+  if(role==='guru'||role==='kepala_sekolah'||role==='guru_bidang'){
+    if(uidW && !uidW.classList.contains('col-12')) uidW.classList.replace('col-md-6','col-12');
+  } else {
+    if(uidW && uidW.classList.contains('col-12')) uidW.classList.replace('col-12','col-md-6');
+  }
+  // Swap posisi UID ↔ Alamat
+  if(uidW && alW && uidW.parentNode===alW.parentNode){
+    const pr = uidW.parentNode;
+    if(role==='guru'||role==='kepala_sekolah'){
+      // Guru/Kepsek: UID sebelum Alamat
+      if(!(uidW.compareDocumentPosition(alW)&Node.DOCUMENT_POSITION_FOLLOWING)) pr.insertBefore(uidW,alW);
+    } else {
+      // Non-Guru: Email|UID, Alamat di baris sendiri
+      if(alW.compareDocumentPosition(uidW)&Node.DOCUMENT_POSITION_FOLLOWING) pr.insertBefore(uidW,alW);
+    }
+  }
+  // Layout khusus Guru/Kepsek: Nama|NIP, Pengampu|Role, No HP|Email, UID, Alamat
+  if(role==='guru'||role==='kepala_sekolah'){
+    const namaId = isTambah ? 'u_nama' : 'eu_nama';
+    const nipId = isTambah ? 'u_nip' : 'eu_nip';
+    const emailId = isTambah ? 'u_email' : 'eu_email';
+    const hpId = isTambah ? 'u_nohp' : 'eu_nohp';
+    const namaWrap = document.getElementById(namaId)?.closest('.col-md-6');
+    const nipW = document.getElementById(nipId)?.closest('.col-md-6');
+    const emailW = document.getElementById(emailId)?.closest('.col-md-6');
+    const hpW = document.getElementById(hpId)?.closest('.col-md-6');
+    const roleW = document.getElementById(roleId)?.closest('.col-md-6');
+    const pengampuW = document.getElementById(kelasId)?.closest('.col-md-6,.col-12');
+    if(namaWrap && nipW && roleW && hpW && namaWrap.parentNode===nipW.parentNode){
+      const p = namaWrap.parentNode;
+      const order = [namaWrap, nipW, pengampuW, roleW, bidangWrap, hpW, emailW, uidW, alW];
+      for(let i=1;i<order.length;i++){
+        const prev = order[i-1];
+        const cur  = order[i];
+        if(!prev || !cur || prev.parentNode!==p) continue;
+        if(prev.nextElementSibling!==cur) p.insertBefore(cur, prev.nextElementSibling);
+      }
+    }
+  }
+  // Layout khusus Guru Bidang: Nama|NIP, Role|Bidang, Pengampu(full), No HP|Email, UID, Alamat
+  if(role==='guru_bidang'){
+    const namaId = isTambah ? 'u_nama' : 'eu_nama';
+    const nipId = isTambah ? 'u_nip' : 'eu_nip';
+    const emailId = isTambah ? 'u_email' : 'eu_email';
+    const hpId = isTambah ? 'u_nohp' : 'eu_nohp';
+    const namaWrap = document.getElementById(namaId)?.closest('.col-md-6');
+    const nipW = document.getElementById(nipId)?.closest('.col-md-6');
+    const emailW = document.getElementById(emailId)?.closest('.col-md-6');
+    const hpW = document.getElementById(hpId)?.closest('.col-md-6');
+    const roleW = document.getElementById(roleId)?.closest('.col-md-6');
+    const pengampuW = document.getElementById(kelasId)?.closest('.col-md-6,.col-12');
+    if(namaWrap && nipW && roleW && hpW && namaWrap.parentNode===nipW.parentNode){
+      const p = namaWrap.parentNode;
+      const order = [namaWrap, nipW, roleW, bidangWrap, pengampuW, hpW, emailW, uidW, alW];
+      for(let i=1;i<order.length;i++){
+        const prev = order[i-1];
+        const cur  = order[i];
+        if(!prev || !cur || prev.parentNode!==p) continue;
+        if(prev.nextElementSibling!==cur) p.insertBefore(cur, prev.nextElementSibling);
+      }
+    }
   }
 }
 
@@ -428,7 +466,7 @@ function bukaTabelFotoUser(u){
   showFotoDialog({
     fotoSrc:u.foto||'',
     onGanti:async(blob,url)=>{
-      const fd=new FormData();fd.append('id',u.id);fd.append('nama',u.nama);fd.append('username',u.username);fd.append('role',u.role);fd.append('foto',blob,'foto.png');
+      const fd=new FormData();fd.append('id',u.id);fd.append('nama',u.nama);fd.append('role',u.role);fd.append('foto',blob,'foto.png');
       const r=await fetchAPI('/api/users/edit','POST',fd);
       if(r?.success){showToast('Foto diperbarui!','success');loadUsers();}else showToast(r?.message||'Gagal','error');
     },
@@ -455,7 +493,6 @@ function renderUsersRow(d, i) {
     <td style="color:var(--gray)">${i+1}</td>
     <td>${fotoHtml}</td>
     <td style="font-weight:700;color:var(--dark);font-size:12.5px;">${d.nama}</td>
-    <td style="font-weight:600">${d.username}</td>
     <td style="font-family:monospace;font-size:12px;color:var(--gray);">${d.uid||'-'}</td>
     <td>${roleBadge}</td>
     <td style="font-size:12px;color:var(--gray);text-align:center;">
@@ -483,7 +520,6 @@ function renderUsersPage(){
   if(search){
     _usersFiltered = _usersData.filter(u=>
       (u.nama||'').toLowerCase().includes(search) ||
-      (u.username||'').toLowerCase().includes(search) ||
       (u.role||'').toLowerCase().includes(search) ||
       (u.pengampu_kelas||'').toLowerCase().includes(search) ||
       (u.nip||'').toLowerCase().includes(search) ||
@@ -496,8 +532,8 @@ function renderUsersPage(){
   const tbody=document.getElementById('tblUsers');
   if(!_usersFiltered.length){
     tbody.innerHTML=search
-      ? '<tr><td colspan="12"><div class="empty-state"><i class="bi bi-people"></i><p>Tidak ditemukan</p></div></td></tr>'
-      : '<tr><td colspan="12"><div class="empty-state"><i class="bi bi-people"></i><p>Belum ada pengguna</p></div></td></tr>';
+      ? '<tr><td colspan="11"><div class="empty-state"><i class="bi bi-people"></i><p>Tidak ditemukan</p></div></td></tr>'
+      : '<tr><td colspan="11"><div class="empty-state"><i class="bi bi-people"></i><p>Belum ada pengguna</p></div></td></tr>';
     document.getElementById('pagination').style.display='none';
     return;
   }
@@ -549,8 +585,9 @@ async function bukaTambah(){
   tambahUserBlob=null;
   document.getElementById('tambah-foto-preview').innerHTML=`<div class="foto-ini-lg"><i class="bi bi-person-fill" style="font-size:32px;"></i></div>`;
   document.getElementById('tambah-foto-btn').innerHTML='<i class="bi bi-camera me-1"></i>Tambah Foto';
-  ['u_nama','u_username','u_password','u_nohp','u_email'].forEach(id=>document.getElementById(id).value='');
+  ['u_nama','u_nohp','u_email'].forEach(id=>document.getElementById(id).value='');
   ['u_nip','u_alamat','u_uid'].forEach(id=>document.getElementById(id).value='');
+  checkUIDLive(document.getElementById('u_uid'));
   document.getElementById('u_bidang').value='';
   document.getElementById('u_role').value='operator';
   document.getElementById('alertTambah').innerHTML='';
@@ -562,8 +599,8 @@ async function bukaTambah(){
 async function simpanUser(){
   const alertEl=document.getElementById('alertTambah');
   const required = [
-    {id:'u_nama', l:'Nama Lengkap'}, {id:'u_username', l:'Username'},
-    {id:'u_role', l:'Role'}, {id:'u_password', l:'Password'},
+    {id:'u_nama', l:'Nama Lengkap'},
+    {id:'u_role', l:'Role'},
     {id:'u_nohp', l:'No HP'}, {id:'u_nip', l:'NIP'},
     {id:'u_email', l:'Email'}, {id:'u_alamat', l:'Alamat'}
   ];
@@ -579,8 +616,6 @@ async function simpanUser(){
   }
   const fd=new FormData();
   fd.append('nama',document.getElementById('u_nama').value.trim());
-  fd.append('username',document.getElementById('u_username').value.trim());
-  fd.append('password',document.getElementById('u_password').value);
   fd.append('role',document.getElementById('u_role').value);
   const cbContainer = document.getElementById('u_pengampu_checkboxes');
   let pengampuVal;
@@ -611,6 +646,26 @@ async function simpanUser(){
 
 let _viewUserData=null;
 
+function checkUIDLive(inp){
+  const val = inp.value.trim();
+  const isEdit = inp.id === 'eu_uid';
+  const excludeId = isEdit ? editUserId : null;
+  const duplicate = val.length >= 3 && _usersData.some(u => u.uid === val && u.id !== excludeId);
+  const label = inp.previousElementSibling;
+  let errEl = label.querySelector('.uid-error');
+  if(duplicate){
+    if(!errEl){
+      errEl = document.createElement('span');
+      errEl.className = 'uid-error';
+      errEl.style.cssText = 'color:#DC2626;font-size:10.5px;font-weight:400;margin-left:6px;';
+      errEl.textContent = 'UID sudah digunakan!';
+      label.appendChild(errEl);
+    }
+  } else {
+    if(errEl) errEl.remove();
+  }
+}
+
 function viewUser(d){
   _viewUserData=d;
   const ini = d.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
@@ -619,39 +674,35 @@ function viewUser(d){
     : `<div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#2563EB;border:2px solid #E2E8F0;margin:0 auto;cursor:pointer;" onclick="showFotoDialog({fotoSrc:'',noButtons:true})">${ini}</div>`;
   const roleLabel = {kepala_sekolah:'Kepala Sekolah',guru:'Guru',operator:'Operator',penjaga_sekolah:'Penjaga Sekolah',guru_bidang:'Guru Bidang'}[d.role]||d.role;
   const r = (label, val) => `<div style="padding:4px 0;border-bottom:1px solid #F1F5F9;"><div style="color:var(--gray);font-size:10.5px;font-weight:500;">${label}</div><div style="font-weight:600;font-size:12.5px;">${val||'-'}</div></div>`;
-  const sessionRole = window._session?.role || '';
-  const pwdHtml = sessionRole==='operator'
-    ? `<div style="padding:4px 0;border-bottom:1px solid #F1F5F9;"><div style="color:var(--gray);font-size:10.5px;font-weight:500;">Password</div><div style="font-weight:600;font-size:12.5px;display:flex;align-items:center;gap:6px;"><span id="viewUserPwdText" style="-webkit-text-security:disc;">${d.password_plain||'-'}</span><i class="bi bi-eye-slash" id="viewUserPwdToggle" style="cursor:pointer;font-size:14px;color:#64748B;" onclick="toggleViewUserPwd()"></i></div></div>`
-    : '';
+  const role = d.role;
+  let leftCol, rightCol, fullWidth;
+  if(role==='guru'||role==='kepala_sekolah'){
+    leftCol = r('Nama Lengkap',d.nama)+r('Pengampu Kelas',d.pengampu_kelas||'-')+r('No. HP',d.no_hp);
+    rightCol = r('NIP',d.nip)+r('Role',roleLabel)+r('Email',d.email);
+    fullWidth = r('UID Kartu',d.uid||'-')+r('Alamat',d.alamat);
+  } else if(role==='guru_bidang'){
+    leftCol = r('Nama Lengkap',d.nama)+r('Role',roleLabel)+r('No. HP',d.no_hp);
+    rightCol = r('NIP',d.nip)+r('Bidang Keahlian',d.bidang_keahlian||'-')+r('Email',d.email);
+    fullWidth = r('UID Kartu',d.uid||'-')+r('Pengampu Kelas',d.pengampu_kelas||'-')+r('Alamat',d.alamat);
+  } else {
+    leftCol = r('Nama Lengkap',d.nama)+r('No. HP',d.no_hp)+r('Email',d.email);
+    rightCol = r('Role',roleLabel)+r('NIP',d.nip)+r('UID Kartu',d.uid||'-');
+    fullWidth = r('Pengampu Kelas',d.pengampu_kelas||'-')+r('Alamat',d.alamat);
+  }
   document.getElementById('viewUserBody').innerHTML=`
     <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:12px;">${fotoHtml}</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-      <div>${r('Nama Lengkap',d.nama)}${r('Username',d.username)}${pwdHtml}${r('NIP',d.nip)}</div>
-      <div>${r('No. HP',d.no_hp)}${r('Email',d.email)}${r('Role',roleLabel)}${d.role==='guru_bidang'?r('Bidang Keahlian',d.bidang_keahlian||'-'):''}</div>
+      <div>${leftCol}</div>
+      <div>${rightCol}</div>
     </div>
-    ${r('UID Kartu',d.uid||'-')}
-    ${r('Pengampu Kelas',d.pengampu_kelas||'-')}
-    ${r('Alamat',d.alamat)}`;
+    ${fullWidth}`;
   openModal('modalViewUser');
-}
-
-function toggleViewUserPwd(){
-  const txt=document.getElementById('viewUserPwdText');
-  const icon=document.getElementById('viewUserPwdToggle');
-  if(txt.style.webkitTextSecurity==='disc'||txt.style.webkitTextSecurity==='disc'){
-    txt.style.webkitTextSecurity='none';
-    icon.className='bi bi-eye-slash';
-  } else {
-    txt.style.webkitTextSecurity='disc';
-    icon.className='bi bi-eye';
-  }
 }
 
 async function bukaEdit(u){
   editUserId=u.id;editUserBlob=null;editUserFotoSrc=u.foto||'';
   document.getElementById('eu_id').value=u.id;
   document.getElementById('eu_nama').value=u.nama;
-  document.getElementById('eu_username').value=u.username;
   document.getElementById('eu_role').value=u.role;
   document.getElementById('eu_nohp').value=u.no_hp||'';
   document.getElementById('eu_email').value=u.email||'';
@@ -659,9 +710,7 @@ async function bukaEdit(u){
   document.getElementById('eu_alamat').value=u.alamat||'';
   document.getElementById('eu_bidang').value=u.bidang_keahlian||'';
   document.getElementById('eu_uid').value=u.uid||'';
-  const pwdPlain = u.password_plain || '';
-  document.getElementById('eu_password').value = pwdPlain ? '********' : '';
-  document.getElementById('eu_password').dataset.plain = pwdPlain;
+  checkUIDLive(document.getElementById('eu_uid'));
   document.getElementById('alertEdit').innerHTML='';
   await isiKelasOptions('eu_pengampu');
   toggleKelasSelect('eu_pengampu','eu_role');
@@ -688,7 +737,7 @@ async function bukaEdit(u){
 async function updateUser(){
   const alertEl=document.getElementById('alertEdit');
   const required = [
-    {id:'eu_nama', l:'Nama Lengkap'}, {id:'eu_username', l:'Username'},
+    {id:'eu_nama', l:'Nama Lengkap'},
     {id:'eu_role', l:'Role'}, {id:'eu_nohp', l:'No HP'},
     {id:'eu_nip', l:'NIP'}, {id:'eu_email', l:'Email'},
     {id:'eu_alamat', l:'Alamat'}
@@ -706,7 +755,6 @@ async function updateUser(){
   const fd=new FormData();
   fd.append('id',document.getElementById('eu_id').value);
   fd.append('nama',document.getElementById('eu_nama').value.trim());
-  fd.append('username',document.getElementById('eu_username').value.trim());
   fd.append('role',document.getElementById('eu_role').value);
   const cbContainer = document.getElementById('eu_pengampu_checkboxes');
   let pengampuVal;
@@ -727,35 +775,12 @@ async function updateUser(){
   fd.append('alamat',document.getElementById('eu_alamat').value.trim());
   fd.append('bidang_keahlian',document.getElementById('eu_bidang').value);
   fd.append('uid',eu_uid);
-  fd.append('password',document.getElementById('eu_password').value);
   if(editUserBlob) fd.append('foto',editUserBlob,'foto.png');
   const {isConfirmed:konfirmEdit}=await Swal.fire({title:'Konfirmasi Update',text:'Apakah perubahan data sudah benar?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Update',cancelButtonText:'Batal',confirmButtonColor:'#F59E0B',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
   if(!konfirmEdit) return;
   const res=await fetchAPI('/api/users/edit','POST',fd);
   if(res?.success){closeModal('modalEdit');showToast('Pengguna diperbarui!','success');editUserBlob=null;loadUsers();}
   else alertEl.innerHTML=`<div class="alert-msg error">${res?.message||'Gagal'}</div>`;
-}
-
-function togglePassword(){
-  const el=document.getElementById('u_password');
-  const icon=document.getElementById('u_pwdToggle');
-  if(el.type==='password'){el.type='text';icon.className='bi bi-eye-slash';}
-  else{el.type='password';icon.className='bi bi-eye';}
-}
-function toggleEuPassword(){
-  const el=document.getElementById('eu_password');
-  const icon=document.getElementById('eu_pwdToggle');
-  if(el.dataset.show==='true'){
-    el.value='********';
-    el.type='password';
-    icon.className='bi bi-eye';
-    el.dataset.show='false';
-  } else {
-    el.value=el.dataset.plain||'';
-    el.type='text';
-    icon.className='bi bi-eye-slash';
-    el.dataset.show='true';
-  }
 }
 
 function hapusUser(id,nama){
@@ -851,6 +876,7 @@ function filterUidMassal(q){
 function bukaModalUidMassal(){
   _uidEditMode=false;
   document.getElementById('uidSearchMassal').value='';
+  document.getElementById('clearUidSearch').style.display='none';
   const body=document.getElementById('uidMassalBody');
   body.innerHTML=_usersData.map((u,i)=>`
     <div class="uid-row" style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #F1F5F9;">
@@ -890,7 +916,7 @@ async function simpanUidMassal(){
     const user=_usersData.find(u=>u.id==inp.dataset.id);
     if(!user) continue;
     if((user.uid||'')===uid) continue;
-    updates.push({id:user.id,uid,nama:user.nama,username:user.username,role:user.role});
+    updates.push({id:user.id,uid,nama:user.nama,role:user.role});
   }
   if(!updates.length){showToast('Tidak ada perubahan UID','info');closeModal('modalUidMassal');return;}
   const {isConfirmed:konfirm}=await Swal.fire({title:'Konfirmasi Update UID',text:`${updates.length} pengguna akan diperbarui UID-nya.`,icon:'question',showCancelButton:true,confirmButtonText:'Ya, Update',cancelButtonText:'Batal',confirmButtonColor:'#7C3AED',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
@@ -898,7 +924,7 @@ async function simpanUidMassal(){
   let sukses=0;
   for(const u of updates){
     const fd=new FormData();fd.append('id',u.id);fd.append('uid',u.uid);
-    fd.append('nama',u.nama);fd.append('username',u.username);fd.append('role',u.role);
+    fd.append('nama',u.nama);fd.append('role',u.role);
     const res=await fetchAPI('/api/users/edit','POST',fd);
     if(res?.success){sukses++;const user=_usersData.find(x=>x.id==u.id);if(user) user.uid=u.uid;}
   }
