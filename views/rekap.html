@@ -153,7 +153,12 @@
         <h5 class="modal-title text-white fw-bold" id="detailTitle">
           <i class="bi bi-calendar3 me-2"></i>Detail Presensi
         </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button type="button" onclick="closeModal('modalDetail');openModal('modalViewKelas');" style="background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:white;transition:background .2s;" title="Kembali">
+            <i class="bi bi-arrow-left" style="font-size:14px;"></i>
+          </button>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
       </div>
       <div class="modal-body p-4" id="detailBody">
         <div class="text-center py-4"><div class="loading-spinner"></div></div>
@@ -164,13 +169,16 @@
 
 <!-- Modal View Kelas -->
 <div class="modal fade" id="modalViewKelas" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
-      <div class="modal-header" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
-        <h5 class="modal-title text-white fw-bold" id="viewKelasTitle">
-          <i class="bi bi-people-fill me-2"></i>Detail Rekap Kelas
+      <div class="modal-header" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;flex-wrap:nowrap;gap:8px;">
+        <h5 class="modal-title text-white fw-bold" id="viewKelasTitle" style="white-space:nowrap;">
+          Detail Rekap Kelas
         </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <input type="text" id="searchKelasDetail" placeholder="Cari Nama/NISN..." style="width:180px;font-size:12px;padding:5px 10px;border-radius:8px;border:none;background:rgba(255,255,255,0.2);color:white;outline:none;" oninput="filterKelasDetail(this.value)">
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
       </div>
       <div class="modal-body p-3" id="viewKelasBody">
         <div class="text-center py-4"><div class="loading-spinner"></div></div>
@@ -375,21 +383,38 @@ async function viewKelas(kelas){
   const bulan=document.getElementById('filterBulan').value;
   const tahun=document.getElementById('filterTahun').value;
   document.getElementById('viewKelasTitle').innerHTML=
-    `<i class="bi bi-people-fill me-2"></i>${kelas} &mdash; ${BULAN_NAMA[parseInt(bulan)]} ${tahun}`;
+    `${kelas} &mdash; ${BULAN_NAMA[parseInt(bulan)]} ${tahun}`;
   document.getElementById('viewKelasBody').innerHTML='<div class="text-center py-4"><div class="loading-spinner"></div></div>';
   openModal('modalViewKelas');
 
   const res=await fetchAPI(`/api/rekap/kelas-detail?bulan=${bulan}&tahun=${tahun}&kelas=${encodeURIComponent(kelas)}`);
   if(!res?.success) return;
   const data=res.data||[];
+  window._viewKelasData=data;
 
   if(!data.length){
     document.getElementById('viewKelasBody').innerHTML=
       '<div class="empty-state"><i class="bi bi-inbox"></i><p>Tidak ada data</p></div>'; return;
   }
 
-  let html=`<div class="table-responsive"><table class="table-modern">
-    <thead><tr>
+  const sb=document.getElementById('searchKelasDetail');
+  if(sb) sb.value='';
+  renderKelasDetail(data);
+}
+
+function filterKelasDetail(q){
+  const data=window._viewKelasData||[];
+  const s=q.toLowerCase();
+  const filtered=data.filter(r=>(r.nama||'').toLowerCase().includes(s)||(r.nisn||'').includes(s));
+  renderKelasDetail(filtered);
+}
+
+function renderKelasDetail(data){
+  if(!data.length){
+    document.getElementById('viewKelasBody').innerHTML='<div class="empty-state"><i class="bi bi-inbox"></i><p>Tidak ada data yang cocok</p></div>'; return;
+  }
+  let html=`<div style="max-height:326px;overflow-y:auto;"><table class="table-modern">
+    <thead style="position:sticky;top:0;z-index:2;background:var(--gray-light);"><tr>
       <th>#</th><th>NISN</th><th>Nama Siswa</th><th>J.K</th>
       <th style="color:#059669">H</th><th style="color:#D97706">T</th>
       <th style="color:#2563EB">I</th><th style="color:#7C3AED">S</th>

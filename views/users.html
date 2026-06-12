@@ -53,7 +53,11 @@
 <div id="page-content" class="page-content">
   <div class="page-header d-flex align-items-center justify-content-between flex-wrap gap-2">
     <div><div class="page-title">Data Guru dan Tenaga Kependidikan (GTK)</div><div class="page-subtitle">Kelola Data Guru dan Tenaga Kependidikan</div></div>
-    <button class="btn-primary-custom" onclick="bukaTambah()"><i class="bi bi-person-plus"></i> Tambah Pengguna</button>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-primary-custom" onclick="bukaTambah()"><i class="bi bi-person-plus"></i> Tambah Pengguna</button>
+      <button class="btn-primary-custom" onclick="bukaImportCsvGtk()" style="background:linear-gradient(135deg,#059669,#047857);"><i class="bi bi-file-earmark-arrow-up"></i> Import CSV</button>
+      <button class="btn-primary-custom" onclick="exportCsvGtk()" style="background:linear-gradient(135deg,#059669,#047857);"><i class="bi bi-download"></i> Export CSV</button>
+    </div>
   </div>
 
   <!-- Tombol Hapus Massal -->
@@ -245,11 +249,46 @@
   </div>
 </div>
 
+<!-- Modal Import CSV GTK -->
+<div class="modal fade" id="modalImportCsvGtk" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:520px;">
+    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
+      <div class="modal-header" style="background:linear-gradient(135deg,#059669,#047857);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
+        <h5 class="modal-title text-white fw-bold">Import Data GTK (.CSV)</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div id="alertImportCsvGtk" style="font-size:12px;"></div>
+        <div id="importStepFileGtk">
+          <p style="font-size:12px;color:#64748B;margin-bottom:12px;">Pilih file CSV dengan format:</p>
+          <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:12px;font-size:11px;font-family:monospace;margin-bottom:14px;word-break:break-all;">
+            nama,role,no_hp,email,pengampu_kelas,nip,alamat,bidang_keahlian,uid
+          </div>
+          <p style="font-size:11px;color:#94A3B8;margin:-8px 0 12px;">Role: operator / guru / guru_bidang / kepala_sekolah / penjaga_sekolah</p>
+          <div style="border:2px dashed #CBD5E1;border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all 0.2s;" onclick="document.getElementById('csvFileInputGtk').click()" onmouseover="this.style.borderColor='#059669';this.style.background='#F0FDF4'" onmouseout="this.style.borderColor='#CBD5E1';this.style.background=''">
+            <i class="bi bi-cloud-arrow-up" style="font-size:32px;color:#94A3B8;"></i>
+            <p style="font-size:12px;color:#64748B;margin:8px 0 0;">Klik disini pilih file CSV</p>
+          </div>
+          <input type="file" id="csvFileInputGtk" accept=".csv" style="display:none;" onchange="onCsvFileSelectGtk(this)">
+          <div id="csvFileNameGtk" style="display:none;margin-top:10px;font-size:12px;color:#059669;font-weight:600;"><i class="bi bi-check-circle-fill"></i> <span></span></div>
+        </div>
+        <div id="importStepResultGtk" style="display:none;">
+          <div id="importResultContentGtk" style="font-size:12px;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-close-custom" data-bs-dismiss="modal">Tutup</button>
+        <button class="btn-primary-custom" id="btnImportUploadGtk" onclick="uploadImportCsvGtk()" style="display:none;background:linear-gradient(135deg,#059669,#047857);">Upload & Import</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/app.js?v=5"></script>
 <script>
 const ROLE_BADGE={
-  kepala_sekolah:`<span style="background:#EDE9FE;color:#7C3AED;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;">Kepala Sekolah</span>`,
+  kepala_sekolah:`<span style="background:#EDE9FE;color:#7C3AED;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap;">Kepala Sekolah</span>`,
   guru:`<span style="background:#D1FAE5;color:#059669;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;">Guru</span>`,
   operator:`<span style="background:#DBEAFE;color:#2563EB;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;">Operator</span>`,
   penjaga_sekolah:`<span style="background:#FEF3C7;color:#D97706;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;">Penjaga Sekolah</span>`,
@@ -954,6 +993,62 @@ async function simpanUidMassal(){
   else showToast(`${sukses} UID diperbarui`,'success');
   closeModal('modalUidMassal');
   loadUsers();
+}
+
+function bukaImportCsvGtk(){
+  document.getElementById('alertImportCsvGtk').innerHTML='';
+  document.getElementById('importStepFileGtk').style.display='';
+  document.getElementById('importStepResultGtk').style.display='none';
+  document.getElementById('csvFileInputGtk').value='';
+  document.getElementById('csvFileNameGtk').style.display='none';
+  document.getElementById('btnImportUploadGtk').style.display='none';
+  openModal('modalImportCsvGtk');
+}
+
+function onCsvFileSelectGtk(inp){
+  const file=inp.files[0];
+  if(!file) return;
+  const nameEl=document.getElementById('csvFileNameGtk');
+  nameEl.style.display='block';
+  nameEl.querySelector('span').textContent=file.name;
+  document.getElementById('btnImportUploadGtk').style.display='inline-flex';
+}
+
+async function uploadImportCsvGtk(){
+  const file=document.getElementById('csvFileInputGtk').files[0];
+  if(!file){showToast('Pilih file CSV terlebih dahulu','error');return;}
+  const {isConfirmed}=await Swal.fire({title:'Konfirmasi Import',text:'Yakin ingin mengimport file CSV ini?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Import',cancelButtonText:'Batal',confirmButtonColor:'#059669',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!isConfirmed) return;
+  const fd=new FormData();
+  fd.append('file',file);
+  const btn=document.getElementById('btnImportUploadGtk');
+  btn.disabled=true;btn.textContent='Memproses...';
+  const tStart=Date.now();
+  closeModal('modalImportCsvGtk');
+  Swal.fire({title:'Mengimport data...',text:'Harap tunggu, sedang memproses file CSV',allowOutsideClick:false,allowEscapeKey:false,showConfirmButton:false,didOpen:()=>Swal.showLoading(),width:'320px',padding:'24px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil'}});
+  const res=await fetchAPI('/api/users/import','POST',fd);
+  btn.disabled=false;btn.textContent='Upload & Import';
+  if(!res){Swal.close();return;}
+  if(!res.success){Swal.close();document.getElementById('alertImportCsvGtk').innerHTML=`<div class="alert-msg error">${res.message||'Gagal import'}</div>`;return;}
+  const elapsed=Date.now()-tStart;
+  if(elapsed<5000) await new Promise(r=>setTimeout(r,5000-elapsed));
+  Swal.close();
+  if(res.gagal){
+    let errList='';
+    if(res.errors&&res.errors.length){
+      errList='<div style="text-align:left;max-height:200px;overflow-y:auto;margin-top:8px;font-size:12px;">';
+      res.errors.forEach(e=>{errList+=`<div style="padding:3px 0;border-bottom:1px solid #F1F5F9;">${e}</div>`;});
+      errList+='</div>';
+    }
+    Swal.fire({icon:'warning',title:res.message,html:errList,confirmButtonColor:'#1E293B',confirmButtonText:'Tutup',width:'400px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil'}});
+  } else {
+    Swal.fire({icon:'success',title:res.message,toast:true,position:'center',showConfirmButton:false,timer:2500,padding:'12px 16px',customClass:{popup:'swal-kecil'}});
+  }
+  loadUsers();
+}
+
+function exportCsvGtk(){
+  const a=document.createElement('a');a.href='/api/users/export';a.download='data_gtk.csv';document.body.appendChild(a);a.click();a.remove();
 }
 
 async function init(){await loadLayout('users','Data Guru dan Tenaga Kependidikan (GTK)');loadUsers();}

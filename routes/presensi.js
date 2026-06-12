@@ -24,7 +24,7 @@ router.get('/', (req,res) => {
   const allowed = kelasFilter ? (Array.isArray(kelasFilter) ? kelasFilter : [kelasFilter]) : [];
 
   let sql=`SELECT p.id,p.tanggal,p.jam_masuk,p.status,p.keterangan,
-           s.nisn,s.nama,s.kelas,s.jenis_kelamin,s.foto
+           s.nisn,s.nama,s.kelas,s.jenis_kelamin,s.foto,s.uid
            FROM presensi p JOIN siswa s ON p.siswa_id=s.id WHERE 1=1`;
   const params=[];
   if(tanggal)       {sql+=' AND p.tanggal>=?'; params.push(tanggal);}

@@ -59,8 +59,10 @@ async function loadLayout(activePage, pageTitle) {
       { page:'rekap',   icon:'bi-bar-chart-fill',label:'Rekap Presensi',   href:'/pages/rekap' },
     ]},
     { label:'Manajemen', items:[
-      ...(isOperator ? [
+      ...(isOperator || ['guru','kepala_sekolah','guru_bidang'].includes(role) ? [
         { page:'siswa',  icon:'bi-people-fill',    label:'Data Siswa', href:'/pages/siswa' },
+      ] : []),
+      ...(isOperator ? [
         { page:'users',  icon:'bi-person-gear',    label:'Data GTK', href:'/pages/users' },
         { page:'alumni',   icon:'bi-mortarboard',      label:'Data Lulusan',  href:'/pages/alumni' },
         { page:'pindahan', icon:'bi-arrow-right-circle', label:'Data Pindahan', href:'/pages/pindahan' },

@@ -264,7 +264,12 @@ function parseCSV(text){
   const header = lines[0].split(delim).map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase());
   const rows = [];
   for(let i=1; i<lines.length; i++){
-    const vals = lines[i].split(delim).map(v=>v.trim().replace(/^"|"$/g,''));
+    const vals = lines[i].split(delim).map(v=>{
+      let x=v.trim();
+      if(/^=".+"$/.test(x)) x=x.slice(2,-1);
+      else x=x.replace(/^"|"$/g,'');
+      return x;
+    });
     const row = {};
     header.forEach((h,idx)=> row[h]=vals[idx]||'');
     rows.push(row);
@@ -293,7 +298,10 @@ router.post('/import', csvUpload.single('file'), (req,res) => {
     if(missing.length) return res.json({success:false,message:`Kolom wajib tidak ditemukan: ${missing.join(', ')}`});
 
     // Buang baris yang semua kolomnya kosong
-    const rows = rawRows.filter(r=>required.some(k=>r[k]));
+    const rows = rawRows.filter(r=>required.some(k=>r[k])).map(r=>{
+      const o={};for(const k of Object.keys(r)){let v=r[k];if(/^=".+"$/.test(v))v=v.slice(2,-1);o[k]=v;}
+      return o;
+    });
 
     let sukses=0, gagal=0, errors=[];
     const sql = 'INSERT INTO siswa (nisn,nipd,nama,kelas,jenis_kelamin,uid,nik,tempat_lahir,tanggal_lahir,agama,alamat,no_hp_ortu) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)';

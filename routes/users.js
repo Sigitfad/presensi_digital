@@ -2,7 +2,7 @@ const express  = require('express');
 const multer   = require('multer');
 const path     = require('path');
 const fs       = require('fs');
-const { queryAll, queryOne, run, logActivity } = require('../database');
+const { queryAll, queryOne, run, runWithoutSave, saveDB, logActivity } = require('../database');
 const router   = express.Router();
 
 const uploadDir = path.join(__dirname,'../public/uploads/foto-user');
@@ -132,6 +132,114 @@ router.post('/hapus-massal', requireOperator, (req,res) => {
               'Hapus User',`Hapus massal: ${count} pengguna`);
   const msg=skipped>0?`${count} dihapus, ${skipped} dilewati (Operator)`:`${count} pengguna berhasil dihapus`;
   res.json({success:true,message:msg});
+});
+
+// ── CSV Import/Export ──
+const csvUploadUser = multer({ storage: multer.memoryStorage(), limits:{fileSize:5*1024*1024},
+  fileFilter:(req,file,cb)=> {
+    const ext = path.extname(file.originalname).toLowerCase();
+    if(ext!=='.csv' && file.mimetype!=='text/csv' && file.mimetype!=='application/vnd.ms-excel')
+      return cb(new Error('Hanya file CSV'));
+    cb(null,true);
+  }
+});
+
+function detectDelimiterUser(line){
+  const commaCount = (line.match(/,/g)||[]).length;
+  const semicolonCount = (line.match(/;/g)||[]).length;
+  return semicolonCount > commaCount ? ';' : ',';
+}
+
+function parseCSVUser(text){
+  const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').filter(Boolean);
+  if(!lines.length) return {header:[],rows:[]};
+  const delim = detectDelimiterUser(lines[0]);
+  const header = lines[0].split(delim).map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase());
+  const rows = [];
+  for(let i=1; i<lines.length; i++){
+    const vals = lines[i].split(delim).map(v=>{
+      let x=v.trim();
+      if(/^="(.*)"$/.test(x)) x=x.slice(2,-1);
+      else if(x.startsWith('="')) x=x.slice(2);
+      else x=x.replace(/^"|"$/g,'');
+      return x;
+    });
+    const row = {};
+    header.forEach((h,idx)=> row[h]=vals[idx]||'');
+    rows.push(row);
+  }
+  return {header, rows};
+}
+
+// GET: export users ke CSV
+router.get('/export', (req,res) => {
+  const data = queryAll('SELECT nama,role,no_hp,email,pengampu_kelas,nip,alamat,bidang_keahlian,uid FROM operators ORDER BY role ASC,nama ASC');
+  const header = ['nama','role','no_hp','email','pengampu_kelas','nip','alamat','bidang_keahlian','uid'];
+  const textCols = ['nip','no_hp','uid'];
+  const csvRows = [header.join(';')];
+  data.forEach(r => {
+    csvRows.push(header.map(h => {
+      let v = (r[h]||'')+'';
+      if(textCols.includes(h) && /^\d+$/.test(v)) return '="'+v+'"';
+      if(/[;"\n]/.test(v)) return '"'+v.replace(/"/g,'""')+'"';
+      return v;
+    }).join(';'));
+  });
+  res.setHeader('Content-Type','text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition','attachment; filename=data_gtk.csv');
+  res.send('\uFEFF' + csvRows.join('\n'));
+});
+
+// POST: import users dari CSV
+router.post('/import', requireOperator, csvUploadUser.single('file'), (req,res) => {
+  try {
+    if(!req.file) return res.json({success:false,message:'File CSV tidak ditemukan'});
+    let text = req.file.buffer.toString('utf-8');
+    if(text.charCodeAt(0)===0xFEFF) text=text.slice(1);
+    const {header, rows: rawRows} = parseCSVUser(text);
+    const required = ['nama','role'];
+    const validRoles = ['operator','guru','kepala_sekolah','penjaga_sekolah','guru_bidang'];
+    const missing = required.filter(r=>!header.includes(r));
+    if(missing.length) return res.json({success:false,message:`Kolom wajib tidak ditemukan: ${missing.join(', ')}`});
+
+    const rows = rawRows.filter(r=>required.some(k=>r[k])).map(r=>{
+      const o={};for(const k of Object.keys(r)){let v=r[k];if(/^="(.*)"$/.test(v))v=v.slice(2,-1);else if(v.startsWith('="'))v=v.slice(2);o[k]=v;}
+      return o;
+    });
+    let sukses=0, gagal=0, errors=[];
+    const sql = 'INSERT INTO operators (nama,role,no_hp,email,pengampu_kelas,nip,alamat,bidang_keahlian,uid) VALUES (?,?,?,?,?,?,?,?,?)';
+
+    const uidSeen = {}; const rowUidErrors = {};
+    for(let i=0; i<rows.length; i++){
+      const u = rows[i].uid;
+      if(!u) continue;
+      if(uidSeen[u]!==undefined) rowUidErrors[i] = 'UID duplikat dalam file CSV (sama dengan baris '+(uidSeen[u]+2)+')';
+      else uidSeen[u] = i;
+    }
+
+    runWithoutSave('BEGIN TRANSACTION');
+    for(let i=0; i<rows.length; i++){
+      const r = rows[i];
+      const no = i+2;
+      const errs = [];
+      if(rowUidErrors[i]){ errs.push(rowUidErrors[i]); }
+      for(const f of required) if(!r[f]) errs.push(`${f} kosong`);
+      if(!validRoles.includes(r.role)) errs.push('Role harus salah satu: '+validRoles.join(', '));
+      if(r.uid&&!rowUidErrors[i]&&queryOne('SELECT id FROM operators WHERE uid=?',[r.uid])) errs.push('UID sudah terdaftar');
+      if(r.nip&&queryOne('SELECT id FROM operators WHERE nip=?',[r.nip])) errs.push('NIP sudah terdaftar');
+      if(errs.length){gagal++;errors.push(`Baris ${no}: ${errs.join('; ')}`);continue;}
+      try {
+        runWithoutSave(sql, [r.nama,r.role,r.no_hp||'',r.email||'',r.pengampu_kelas||'Semua',r.nip||'',r.alamat||'',r.bidang_keahlian||'',r.uid||'']);
+        sukses++;
+      } catch(e){gagal++;errors.push(`Baris ${no}: ${e.message}`);}
+    }
+    runWithoutSave('COMMIT');
+    saveDB();
+    logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,'Import CSV GTK',`${sukses} sukses, ${gagal} gagal`);
+    res.json({success:true, sukses, gagal, errors, message:`${sukses} berhasil, ${gagal} gagal`});
+  } catch(e){
+    res.json({success:false,message:e.message});
+  }
 });
 
 module.exports = router;
