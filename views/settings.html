@@ -8,7 +8,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="/css/style.css">
-  <style>.swal-kecil{font-size:12px!important;border-radius:12px!important;}.swal-title-kecil{font-size:14px!important;padding:0!important;margin:0 0 4px!important;}.swal-text-kecil{font-size:12px!important;margin:0!important;}.swal-btn-kecil{font-size:11px!important;padding:5px 14px!important;border-radius:8px!important;}</style>
+  <style>.swal-kecil{font-size:12px!important;border-radius:12px!important;}.swal-title-kecil{font-size:14px!important;padding:0!important;margin:0 0 4px!important;}.swal-text-kecil{font-size:12px!important;margin:0!important;}.swal-btn-kecil{font-size:11px!important;padding:5px 14px!important;border-radius:8px!important;}
+.btn-upload-logo,.btn-upload-foto,.btn-hapus{transition:all .25s ease!important;}.btn-upload-logo:hover{background:#BFDBFE!important;transform:scale(1.08);}.btn-upload-foto:hover{background:#CBD5E1!important;transform:scale(1.08);}.btn-hapus:hover{background:#FECACA!important;transform:scale(1.12);}</style>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
 <body>
 <div id="page-content" class="page-content">
@@ -33,13 +34,10 @@
             <div style="font-size:11.5px;color:var(--gray);margin-top:5px;">Siswa yang hadir <strong>sebelum atau tepat</strong> jam ini dianggap Tepat Waktu. Setelah jam ini = Terlambat.</div>
           </div>
           <div style="background:#F0F7FF;border-radius:10px;padding:14px;margin-bottom:16px;border:1px solid #BFDBFE;">
-            <div style="font-size:12.5px;font-weight:700;color:#1E40AF;margin-bottom:8px;"><i class="bi bi-info-circle me-2"></i>Contoh Pengaturan</div>
-            <div style="font-size:12px;color:#374151;line-height:2;">
-              Jam masuk: 07:00 -  Sekolah dimulai pukul 07:00<br>
-              Batas tepat waktu: 07:00 - Scan &le;07:00 = <strong>Hadir</strong>, &gt;07:00 = <strong>Terlambat</strong>
-            </div>
+            <div style="font-size:12.5px;font-weight:700;color:#1E40AF;margin-bottom:8px;"><i class="bi bi-info-circle me-2"></i>Settingan Jam Masuk Saat Ini</div>
+            <div id="jam-status-text" style="font-size:13px;color:#374151;font-weight:600;">Memuat...</div>
           </div>
-          <button class="btn-primary-custom w-100" onclick="simpanJam()"><i class="bi bi-save"></i> Simpan Pengaturan Jam</button>
+          <button class="btn-primary-custom w-100" id="btnSimpanJam" onclick="simpanJam()" disabled style="opacity:0.5;cursor:not-allowed;"><i class="bi bi-save"></i> Simpan Pengaturan Jam</button>
         </div>
       </div>
     </div>
@@ -53,14 +51,30 @@
         <div class="card-modern-body">
           <!-- Preview logo -->
           <div class="text-center mb-3">
-            <div id="logo-preview-wrap" style="width:80px;height:80px;border-radius:16px;background:#F1F5F9;border:2px solid #E2E8F0;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;overflow:hidden;">
-              <i class="bi bi-image" style="font-size:28px;color:#CBD5E1;" id="logo-placeholder"></i>
-              <img id="logo-preview" src="" style="width:100%;height:100%;object-fit:cover;display:none;">
+            <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+              <div>
+                <div style="width:80px;height:80px;border-radius:16px;background:#F1F5F9;border:2px solid #E2E8F0;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;overflow:hidden;">
+                  <i class="bi bi-image" style="font-size:28px;color:#CBD5E1;" id="logo-placeholder"></i>
+                  <img id="logo-preview" src="" style="width:100%;height:100%;object-fit:cover;display:none;">
+                </div>
+                <label class="btn-upload-logo" style="cursor:pointer;background:var(--primary-light);color:var(--primary);padding:6px 10px;border-radius:8px;font-size:14px;display:inline-flex;align-items:center;">
+                  <i class="bi bi-upload"></i>
+                  <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="previewLogo(this)">
+                </label>
+                <button class="btn-hapus" onclick="hapusGambar('logo')" style="background:#FEE2E2;color:#DC2626;border:none;padding:6px 10px;border-radius:8px;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;"><i class="bi bi-trash"></i></button>
+              </div>
+              <div>
+                <div style="width:80px;height:80px;border-radius:16px;background:#F1F5F9;border:2px solid #E2E8F0;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;overflow:hidden;">
+                  <i class="bi bi-image" style="font-size:28px;color:#CBD5E1;" id="foto-opsi-placeholder"></i>
+                  <img id="foto-opsi-preview" src="" style="width:100%;height:100%;object-fit:cover;display:none;">
+                </div>
+                <label class="btn-upload-foto" style="cursor:pointer;background:var(--gray-light);color:var(--gray);padding:6px 10px;border-radius:8px;font-size:14px;display:inline-flex;align-items:center;">
+                  <i class="bi bi-upload"></i>
+                  <input type="file" id="fotoOpsiInput" accept="image/*" style="display:none" onchange="previewFotoOpsi(this)">
+                </label>
+                <button class="btn-hapus" onclick="hapusGambar('foto-opsi')" style="background:#FEE2E2;color:#DC2626;border:none;padding:6px 10px;border-radius:8px;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;"><i class="bi bi-trash"></i></button>
+              </div>
             </div>
-            <label style="cursor:pointer;background:var(--primary-light);color:var(--primary);padding:6px 14px;border-radius:8px;font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:6px;">
-              <i class="bi bi-upload"></i> Upload Logo
-              <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="previewLogo(this)">
-            </label>
           </div>
           <div class="row g-2">
             <div class="col-12"><label class="form-label-modern">Nama Sekolah *</label><input type="text" id="nama_sekolah" class="form-control-modern"></div>
@@ -70,7 +84,7 @@
             <div class="col-md-6"><label class="form-label-modern">Email</label><input type="email" id="s_email" class="form-control-modern"></div>
             <div class="col-md-6"><label class="form-label-modern">Website</label><input type="text" id="website" class="form-control-modern" placeholder="www.sekolah.sch.id"></div>
           </div>
-          <button class="btn-primary-custom w-100 mt-3" onclick="simpanIdentitas()"><i class="bi bi-save"></i> Simpan Identitas</button>
+          <button class="btn-primary-custom w-100 mt-3" id="btnSimpanIdentitas" onclick="simpanIdentitas()" disabled style="opacity:0.5;cursor:not-allowed;"><i class="bi bi-save"></i> Simpan Identitas</button>
         </div>
       </div>
     </div>
@@ -80,33 +94,99 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/app.js?v=5"></script>
 <script>
+let _jamAwal='07:00',_batasAwal='07:00';
+let _identAwal={};
+
+function cekJamBerubah(){
+  const j=document.getElementById('jam_masuk').value;
+  const b=document.getElementById('batas_terlambat').value;
+  const btn=document.getElementById('btnSimpanJam');
+  const sama=j===_jamAwal&&b===_batasAwal;
+  btn.disabled=sama;
+  btn.style.opacity=sama?'0.5':'1';
+  btn.style.cursor=sama?'not-allowed':'pointer';
+}
+
 async function loadSettings() {
   const [rs, ri] = await Promise.all([fetchAPI('/api/settings'), fetchAPI('/api/identitas')]);
   if (rs?.success) {
-    document.getElementById('jam_masuk').value      = rs.data.jam_masuk||'07:00';
-    document.getElementById('batas_terlambat').value = rs.data.batas_terlambat||'07:00';
+    _jamAwal=rs.data.jam_masuk||'07:00';
+    _batasAwal=rs.data.batas_terlambat||'07:00';
+    document.getElementById('jam_masuk').value      = _jamAwal;
+    document.getElementById('batas_terlambat').value = _batasAwal;
+    document.getElementById('jam-status-text').textContent='Jam masuk: '+_jamAwal+'  ·  Batas tepat waktu: '+_batasAwal;
+    cekJamBerubah();
   }
   if (ri?.success && ri.data) {
     const d = ri.data;
-    document.getElementById('nama_sekolah').value  = d.nama_sekolah||'';
-    document.getElementById('alamat').value         = d.alamat||'';
-    document.getElementById('tahun_ajaran').value   = d.tahun_ajaran||'';
-    document.getElementById('telp').value           = d.telp||'';
-    document.getElementById('s_email').value        = d.email||'';
-    document.getElementById('website').value        = d.website||'';
+    _identAwal={nama_sekolah:d.nama_sekolah||'',alamat:d.alamat||'',tahun_ajaran:d.tahun_ajaran||'',telp:d.telp||'',s_email:d.email||'',website:d.website||''};
+    document.getElementById('nama_sekolah').value  = _identAwal.nama_sekolah;
+    document.getElementById('alamat').value         = _identAwal.alamat;
+    document.getElementById('tahun_ajaran').value   = _identAwal.tahun_ajaran;
+    document.getElementById('telp').value           = _identAwal.telp;
+    document.getElementById('s_email').value        = _identAwal.s_email;
+    document.getElementById('website').value        = _identAwal.website;
+    cekIdentitasBerubah();
+    ['nama_sekolah','alamat','tahun_ajaran','telp','s_email','website'].forEach(id=>document.getElementById(id).addEventListener('input',cekIdentitasBerubah));
     if (d.logo) {
       document.getElementById('logo-preview').src          = d.logo;
       document.getElementById('logo-preview').style.display= 'block';
       document.getElementById('logo-placeholder').style.display='none';
     }
+    if (d.foto_opsi) {
+      document.getElementById('foto-opsi-preview').src          = d.foto_opsi;
+      document.getElementById('foto-opsi-preview').style.display= 'block';
+      document.getElementById('foto-opsi-placeholder').style.display='none';
+    }
   }
 }
+
+function cekIdentitasBerubah(){
+  const fields=['nama_sekolah','alamat','tahun_ajaran','telp','s_email','website'];
+  const sama=fields.every(f=>document.getElementById(f).value===_identAwal[f]);
+  const btn=document.getElementById('btnSimpanIdentitas');
+  btn.disabled=sama;
+  btn.style.opacity=sama?'0.5':'1';
+  btn.style.cursor=sama?'not-allowed':'pointer';
+}
+
+document.getElementById('jam_masuk').addEventListener('input',cekJamBerubah);
+document.getElementById('batas_terlambat').addEventListener('input',cekJamBerubah);
 
 function previewLogo(input) {
   const file = input.files[0]; if(!file) return;
   document.getElementById('logo-preview').src           = URL.createObjectURL(file);
   document.getElementById('logo-preview').style.display = 'block';
   document.getElementById('logo-placeholder').style.display='none';
+  enableIdentitasBtn();
+}
+
+function previewFotoOpsi(input) {
+  const file = input.files[0]; if(!file) return;
+  document.getElementById('foto-opsi-preview').src           = URL.createObjectURL(file);
+  document.getElementById('foto-opsi-preview').style.display = 'block';
+  document.getElementById('foto-opsi-placeholder').style.display='none';
+  enableIdentitasBtn();
+}
+
+function enableIdentitasBtn(){
+  const btn=document.getElementById('btnSimpanIdentitas');
+  btn.disabled=false;
+  btn.style.opacity='1';
+  btn.style.cursor='pointer';
+}
+
+async function hapusGambar(type){
+  const label=type==='logo'?'Logo':'Foto Opsi';
+  const {isConfirmed}=await Swal.fire({title:'Hapus '+label+'?',text:'Gambar akan dihapus permanen.',icon:'warning',showCancelButton:true,confirmButtonText:'Ya, Hapus',cancelButtonText:'Batal',confirmButtonColor:'#DC2626',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!isConfirmed) return;
+  const endpoint=type==='logo'?'/api/identitas/delete-logo':'/api/identitas/delete-foto-opsi';
+  const res=await fetchAPI(endpoint,'POST');
+  if(res?.success){
+    sessionStorage.removeItem('_id');
+    showToast(label+' berhasil dihapus','success');
+    setTimeout(()=>location.reload(),1200);
+  } else showToast(res?.message||'Gagal menghapus','error');
 }
 
 async function simpanJam() {
@@ -114,8 +194,13 @@ async function simpanJam() {
   const {isConfirmed:konfirm}=await Swal.fire({title:'Konfirmasi Simpan',text:'Apakah pengaturan jam sudah benar?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Simpan',cancelButtonText:'Batal',confirmButtonColor:'#2563EB',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
   if(!konfirm) return;
   const res=await fetchAPI('/api/settings/simpan','POST',body);
-  if(res?.success) showToast('Pengaturan jam berhasil disimpan!','success');
-  else showToast(res?.message||'Gagal','error');
+  if(res?.success){
+    _jamAwal=body.jam_masuk;
+    _batasAwal=body.batas_terlambat;
+    document.getElementById('jam-status-text').textContent='Jam masuk: '+_jamAwal+'  ·  Batas tepat waktu: '+_batasAwal;
+    cekJamBerubah();
+    showToast('Pengaturan jam berhasil disimpan!','success');
+  } else showToast(res?.message||'Gagal','error');
 }
 
 async function simpanIdentitas() {
@@ -128,12 +213,18 @@ async function simpanIdentitas() {
   fd.append('website',      document.getElementById('website').value);
   const logoFile = document.getElementById('logoInput').files[0];
   if (logoFile) fd.append('logo', logoFile);
+  const fotoOpsiFile = document.getElementById('fotoOpsiInput').files[0];
+  if (fotoOpsiFile) fd.append('foto_opsi', fotoOpsiFile);
 
   const {isConfirmed:konfirm}=await Swal.fire({title:'Konfirmasi Simpan',text:'Apakah data identitas sekolah sudah benar?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Simpan',cancelButtonText:'Batal',confirmButtonColor:'#2563EB',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
   if(!konfirm) return;
   const res=await fetchAPI('/api/identitas/simpan','POST',fd);
-  if(res?.success){showToast('Identitas sekolah disimpan!','success'); setTimeout(()=>location.reload(),1500);}
-  else showToast(res?.message||'Gagal','error');
+  if(res?.success){
+    _identAwal={nama_sekolah:fd.get('nama_sekolah'),alamat:fd.get('alamat'),tahun_ajaran:fd.get('tahun_ajaran'),telp:fd.get('telp'),s_email:fd.get('email'),website:fd.get('website')};
+    cekIdentitasBerubah();
+    sessionStorage.removeItem('_id');
+    showToast('Identitas sekolah disimpan!','success'); setTimeout(()=>location.reload(),1500);
+  } else showToast(res?.message||'Gagal','error');
 }
 
 async function init(){await loadLayout('settings','Pengaturan');loadSettings();}

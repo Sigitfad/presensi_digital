@@ -258,6 +258,10 @@ async function initDB() {
     run(`INSERT INTO identitas_sekolah (id,nama_sekolah,alamat,tahun_ajaran)
          VALUES (1,'SDN Karangpawitan 1','Jl. Karangpawitan No.1','2024/2025')`);
   }
+  // Migration: add foto_opsi column if not exists
+  const _idCols=queryAll('PRAGMA table_info(identitas_sekolah)');
+  if (!_idCols.find(c=>c.name==='foto_opsi'))
+    runWithoutSave('ALTER TABLE identitas_sekolah ADD COLUMN foto_opsi TEXT DEFAULT \'\'');
 
   // Data awal kelas
   if (queryCount('SELECT COUNT(*) as c FROM kelas') === 0) {

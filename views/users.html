@@ -919,7 +919,8 @@ function filterUidMassal(q){
   rows.forEach(row=>{
     const nama=row.querySelector('.uid-row-nama')?.textContent.toLowerCase()||'';
     const uid=row.querySelector('.uid-massal-input')?.value.toLowerCase()||'';
-    const match=!keyword||nama.includes(keyword)||uid.includes(keyword);
+    const nip=row.querySelector('.uid-row-nip')?.textContent.toLowerCase()||'';
+    const match=!keyword||nama.includes(keyword)||uid.includes(keyword)||nip.includes(keyword);
     row.classList.toggle('uid-hidden',!match);
     if(match) visible++;
   });
@@ -939,7 +940,10 @@ function bukaModalUidMassal(){
           ? `<img src="${u.foto}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:1px solid #E2E8F0;">`
           : `<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#2563EB;border:1px solid #E2E8F0;">${u.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?'}</div>`
       }</div>
-      <div class="uid-row-nama" style="flex:1;font-size:12px;font-weight:600;">${u.nama}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="uid-row-nama" style="font-size:12px;font-weight:600;">${u.nama}</div>
+        <div class="uid-row-nip" style="font-size:9.5px;color:#64748B;margin-top:1px;">NIP: ${u.nip||'-'}</div>
+      </div>
       <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;">
         <input type="text" class="form-control-modern uid-massal-input" data-id="${u.id}" value="${u.uid||''}" placeholder="10 digit" maxlength="10" style="width:110px;padding:3px 6px;font-size:11px;font-family:monospace;background:#F1F5F9;" disabled oninput="this.value=this.value.replace(/\D/g,'');checkUIDLiveMassal(this)">
         <span class="uid-massal-error" style="display:none;color:#DC2626;font-size:10.5px;font-weight:400;">UID sudah digunakan!</span>

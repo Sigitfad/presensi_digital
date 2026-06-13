@@ -807,8 +807,9 @@ function filterUidMassalSiswa(q){
     const nama=row.querySelector('.uid-row-nama')?.textContent.toLowerCase()||'';
     const kelas=row.querySelector('.uid-row-kelas')?.textContent||'';
     const uid=row.querySelector('.uid-massal-input-siswa')?.value.toLowerCase()||'';
+    const nisnNipd=row.querySelector('.uid-row-nisn-nipd')?.textContent.toLowerCase()||'';
     const matchKelas=!filterKelas||kelas.includes(filterKelas);
-    const matchSearch=!keyword||nama.includes(keyword)||kelas.toLowerCase().includes(keyword)||uid.includes(keyword);
+    const matchSearch=!keyword||nama.includes(keyword)||kelas.toLowerCase().includes(keyword)||uid.includes(keyword)||nisnNipd.includes(keyword);
     const match=matchKelas&&matchSearch;
     row.classList.toggle('uid-hidden',!match);
     if(match) visible++;
@@ -833,7 +834,10 @@ function bukaModalUidMassalSiswa(){
           ? `<img src="${s.foto}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:1px solid #E2E8F0;">`
           : `<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#2563EB;border:1px solid #E2E8F0;">${s.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?'}</div>`
       }</div>
-      <div class="uid-row-nama" style="flex:1;font-size:12px;font-weight:600;">${s.nama}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="uid-row-nama" style="font-size:12px;font-weight:600;">${s.nama}</div>
+        <div class="uid-row-nisn-nipd" style="font-size:9.5px;color:#64748B;margin-top:1px;">NISN: ${s.nisn} &middot; NIPD: ${s.nipd||'-'}</div>
+      </div>
       <div class="uid-row-kelas" style="font-size:10px;color:var(--gray);margin-right:4px;">${s.kelas}</div>
       <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;">
         <input type="text" class="form-control-modern uid-massal-input-siswa" data-id="${s.id}" value="${s.uid||''}" placeholder="10 digit" maxlength="10" style="width:110px;padding:3px 6px;font-size:11px;font-family:monospace;background:#F1F5F9;" disabled oninput="this.value=this.value.replace(/\D/g,'');checkUIDLiveMassalSiswa(this)">
