@@ -44,9 +44,38 @@
     .swal-kecil{font-size:12px!important;border-radius:12px!important;}.swal-title-kecil{font-size:14px!important;padding:0!important;margin:0 0 4px!important;}.swal-text-kecil{font-size:12px!important;margin:0!important;}.swal-btn-kecil{font-size:11px!important;padding:5px 14px!important;border-radius:8px!important;}
     .uid-hidden{display:none!important;}
     #toggleEditUidBtnSiswa:hover{background:rgba(255,255,255,0.3)!important;transform:translateY(-1px);}
+    .kelas-row-kelas{font-size:10px;padding:3px 6px;border-radius:6px;border:1.5px solid #E2E8F0;font-weight:600;outline:none;cursor:pointer;background:white;color:#1E293B;width:110px;}
+    .kelas-row-kelas:disabled{background:#F1F5F9;color:#64748B;cursor:default;opacity:0.7;}
+    .kelas-hidden{display:none!important;}
     .btn-close-custom{background:#1E293B;color:white;border:none;padding:6px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all 0.25s ease;text-decoration:none;font-family:var(--font-body);}
     .btn-close-custom:hover{background:#000;transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,0.3);color:white;}
     .btn-close-custom:active{transform:translateY(0);box-shadow:none;}
+    .kk-level-section{border:1px solid #E2E8F0;border-radius:10px;margin-bottom:12px;overflow:hidden;}
+    .kk-level-header{background:#F8FAFC;padding:10px 14px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:space-between;cursor:pointer;border-bottom:1px solid #E2E8F0;user-select:none;}
+    .kk-level-header:hover{background:#F1F5F9;}
+    .kk-level-body{padding:0;}
+    .kk-class-row{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid #F1F5F9;}
+    .kk-class-row:last-child{border-bottom:none;}
+    .kk-class-check{width:16px;height:16px;accent-color:#059669;cursor:pointer;flex-shrink:0;}
+    .kk-class-source{font-size:12px;font-weight:600;min-width:90px;color:var(--dark);}
+    .kk-class-count{font-size:10px;color:#64748B;font-weight:400;}
+    .kk-arrow{font-size:15px;color:#64748B;font-weight:900;flex-shrink:0;margin-left:-10px;}
+    .kk-target-select{width:120px;padding:3px 6px;font-size:11px;border-radius:6px;border:1.5px solid #E2E8F0;font-weight:600;outline:none;background:white;color:#1E293B;cursor:pointer;}
+    .kk-target-select:focus{border-color:#059669;}
+    .kk-target-lulus{width:80px;padding:3px 6px;font-size:11px;border-radius:6px;border:1.5px solid #059669;background:#F0FDF4;color:#059669;font-weight:700;text-align:center;display:inline-block;}
+    .kk-btn-detail{background:none;border:1px solid #E2E8F0;border-radius:6px;padding:3px 10px;font-size:10.5px;color:#64748B;cursor:pointer;transition:all 0.2s;flex-shrink:0;font-family:var(--font-body);}
+    .kk-btn-detail:hover{background:#F1F5F9;color:#1E293B;}
+    .kk-detail-body{padding:4px 14px 8px 40px;display:none;background:#FAFBFC;border-top:1px solid #F1F5F9;}
+    .kk-detail-body.open{display:flex;flex-direction:column;}
+    .kk-student-row{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:11px;border-bottom:1px dotted #E2E8F0;}
+    .kk-student-row:last-child{border-bottom:none;}
+    .kk-student-naik{width:14px;height:14px;accent-color:#EF4444;cursor:pointer;flex-shrink:0;}
+    .kk-student-name{font-weight:600;color:var(--dark);}
+    .kk-student-nisn{font-size:9.5px;color:#94A3B8;}
+    .kk-summary{font-size:12px;color:#64748B;font-weight:600;line-height:1.6;}
+    .kk-level-search{padding:8px 14px 0;display:none;}
+    .kk-level-search-input{width:100%;padding:5px 10px;font-size:11px;border-radius:6px;border:1px solid #E2E8F0;outline:none;font-family:var(--font-body);}
+    .kk-level-search-input:focus{border-color:#7C3AED;}
   </style>
   
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
@@ -68,14 +97,12 @@
   <div id="bulkActionsSiswa" style="display:none;margin-bottom:12px;padding:12px 16px;background:#F8FAFC;border:1.5px solid #CBD5E1;border-radius:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
     <div class="d-flex align-items-center gap-2 flex-wrap">
       <span style="font-size:13px;color:#1E293B;font-weight:600;"><span id="selectedCountSiswa">0</span> siswa dipilih</span>
-      <input type="number" id="tahunLulus" class="form-control-modern" placeholder="Tahun Lulus" style="width:120px;padding:5px 10px;font-size:12px;" value="">
       <input type="date" id="tanggalPindah" class="form-control-modern" style="width:140px;padding:5px 10px;font-size:12px;">
       <input type="text" id="alasanPindah" class="form-control-modern" placeholder="Alasan pindah" style="width:140px;padding:5px 10px;font-size:12px;">
     </div>
     <div class="d-flex gap-2">
       <button onclick="document.querySelectorAll('.siswa-check').forEach(c=>c.checked=false);document.getElementById('selectAllSiswa').checked=false;updateBulkSiswa();" style="background:#1E293B;border:none;color:#fff;border-radius:8px;font-size:14px;padding:6px 10px;cursor:pointer;transition:all 0.2s;line-height:1;" onmouseover="this.style.background='#334155';this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#1E293B';this.style.transform='';"><i class="bi bi-x-lg"></i></button>
       <button class="btn-danger-custom" onclick="hapusMassalSiswa()" style="padding:6px 14px;font-size:12.5px;">Hapus</button>
-      <button class="btn-primary-custom" onclick="lulusMassalSiswa()" style="padding:6px 14px;font-size:12.5px;">Update to Lulusan</button>
       <button class="btn-primary-custom" onclick="pindahMassalSiswa()" style="padding:6px 14px;font-size:12.5px;background:linear-gradient(135deg,#7C3AED,#6D28D9);" onmouseover="this.style.boxShadow='0 4px 12px rgba(124,58,237,0.35)'" onmouseout="this.style.boxShadow='none'">Update to Pindahan</button>
     </div>
   </div>
@@ -94,6 +121,8 @@
       </div>
       <div style="display:flex;gap:6px;align-items:center;">
         <button class="btn-primary-custom" onclick="bukaModalUidMassalSiswa()" style="padding:5px 12px;font-size:11px;white-space:nowrap;">Update UID</button>
+        <button class="btn-primary-custom" onclick="bukaModalKelasMassal()" style="padding:5px 12px;font-size:11px;white-space:nowrap;">Update Kelas</button>
+        <button class="btn-primary-custom" onclick="bukaModalKenaikanKelas()" style="padding:5px 12px;font-size:11px;white-space:nowrap;background:linear-gradient(135deg,#7C3AED,#6D28D9);" onmouseover="this.style.boxShadow='0 4px 12px rgba(124,58,237,0.35)'" onmouseout="this.style.boxShadow='none'">Kenaikan Kelas</button>
         <span id="totalLabel" style="font-size:13px;color:white;background:#2563EB;border-radius:8px;padding:4px 14px;display:inline-block;font-weight:700;"></span>
       </div>
     </div>
@@ -256,6 +285,58 @@
         <div style="display:flex;gap:8px;">
           <button class="btn-close-custom" onclick="closeModalUidMassalSiswa()">Tutup</button>
           <button class="btn-primary-custom" id="simpanUidBtnSiswa" onclick="simpanUidMassalSiswa()" style="padding:6px 16px;font-size:12px;">Simpan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Update Kelas Massal -->
+<div class="modal fade" id="modalKelasMassal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:560px;">
+    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
+      <div class="modal-header" style="background:linear-gradient(135deg,#059669,#047857);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
+        <h5 class="modal-title text-white fw-bold">Kelas Siswa</h5>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <div style="position:relative;display:inline-block;">
+            <input type="text" id="kelasSearchMassal" class="form-control-modern" placeholder="Cari nama / NISN..." style="width:140px;padding:3px 8px;font-size:11px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:6px;padding-right:20px;" oninput="filterKelasMassal(this.value);document.getElementById('clearKelasSearch').style.display=this.value?'block':'none'" onfocus="this.style.background='rgba(255,255,255,0.3)'" onblur="this.style.background='rgba(255,255,255,0.2)'">
+            <button type="button" id="clearKelasSearch" style="display:none;position:absolute;right:4px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;cursor:pointer;font-size:14px;line-height:1;padding:0 2px;opacity:0.7;" onclick="document.getElementById('kelasSearchMassal').value='';filterKelasMassal('');this.style.display='none';document.getElementById('kelasSearchMassal').focus()">&times;</button>
+          </div>
+          <button type="button" class="btn-close btn-close-white" onclick="closeModalKelasMassal()"></button>
+        </div>
+      </div>
+      <div class="modal-body p-3" style="max-height:480px;overflow-y:auto;" id="kelasMassalBody"></div>
+      <div class="modal-footer d-flex justify-content-between">
+        <span id="kelasMassalCount" style="font-size:11px;color:#fff;background:#059669;padding:3px 12px;border-radius:12px;font-weight:600;"></span>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-close-custom" onclick="closeModalKelasMassal()">Tutup</button>
+          <button class="btn-primary-custom" id="simpanKelasBtn" onclick="simpanKelasMassal()" style="padding:6px 16px;font-size:12px;">Simpan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Kenaikan Kelas -->
+<div class="modal fade" id="modalKenaikanKelas" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:520px;">
+    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
+      <div class="modal-header" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
+        <h5 class="modal-title text-white fw-bold">Kenaikan Kelas</h5>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <input type="text" id="kkTahunAjaran" class="form-control-modern" placeholder="Tahun Ajaran" style="width:120px;padding:3px 8px;font-size:11px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:6px;" onfocus="this.style.background='rgba(255,255,255,0.3)'" onblur="this.style.background='rgba(255,255,255,0.2)'">
+          <input type="text" id="kkTahunLulusFooter" class="form-control-modern" placeholder="Tahun Lulus" style="width:110px;padding:3px 8px;font-size:11px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:6px;display:none;" onfocus="this.style.background='rgba(255,255,255,0.3)'" onblur="this.style.background='rgba(255,255,255,0.2)'">
+          <button type="button" class="btn-close btn-close-white" onclick="closeModalKenaikanKelas()"></button>
+        </div>
+      </div>
+      <div class="modal-body p-3" style="max-height:520px;overflow-y:auto;" id="kkBody">
+        <div id="kkLevelContainer"></div>
+      </div>
+      <div class="modal-footer d-flex justify-content-between">
+        <div class="kk-summary" id="kkSummary"></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-close-custom" onclick="closeModalKenaikanKelas()">Tutup</button>
+          <button class="btn-primary-custom" id="btnProsesKK" onclick="prosesKenaikanKelas()" style="padding:6px 16px;font-size:12px;">Proses Kenaikan Kelas</button>
         </div>
       </div>
     </div>
@@ -579,17 +660,6 @@ function hapusMassalSiswa(){
   });
 }
 
-function lulusMassalSiswa(){
-  const checked=[...document.querySelectorAll('.siswa-check:checked')].map(cb=>parseInt(cb.value));
-  if(!checked.length) return;
-  const tahun=document.getElementById('tahunLulus').value.trim();
-  if(!tahun){showToast('Masukkan tahun lulus!','warning');return;}
-  konfirmasiHapus('Update untuk masuk ke Data Lulusan?',`${checked.length} siswa akan dipindahkan ke Data Lulusan tahun ${tahun}. Data tidak akan aktif lagi di Data Siswa.`,async()=>{
-    const res=await fetchAPI('/api/siswa/lulus-massal','POST',{ids:checked,tahun_lulus:tahun});
-    if(res?.success){showToast(res.message,'success');loadSiswa();document.getElementById('tahunLulus').value='';}
-    else showToast(res?.message||'Gagal','error');
-  });
-}
 
 function pindahMassalSiswa(){
   const checked=[...document.querySelectorAll('.siswa-check:checked')].map(cb=>parseInt(cb.value));
@@ -892,6 +962,330 @@ async function simpanUidMassalSiswa(){
   else showToast(`${sukses} UID diperbarui`,'success');
   closeModal('modalUidMassalSiswa');
   loadSiswa();
+}
+
+let _kelasOptionsHtml='';
+
+async function bukaModalKelasMassal(){
+  document.getElementById('kelasSearchMassal').value='';
+  document.getElementById('clearKelasSearch').style.display='none';
+  if(!_kelasOptionsHtml){
+    try{
+      const res=await fetch('/api/kelas');
+      const json=await res.json();
+      const data=json.data||[];
+      _kelasOptionsHtml=data.map(k=>`<option value="Kelas ${k.nama}">Kelas ${k.nama}</option>`).join('');
+    }catch(e){_kelasOptionsHtml='<option value="">Gagal memuat</option>';}
+  }
+  const body=document.getElementById('kelasMassalBody');
+  body.innerHTML=_siswaData.map((s,i)=>`
+    <div class="kelas-row" style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #F1F5F9;">
+      <div style="flex-shrink:0;width:28px;font-size:11px;color:var(--gray);font-weight:600;text-align:center;">${i+1}</div>
+      <div style="flex-shrink:0;">${
+        s.foto
+          ? `<img src="${s.foto}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:1px solid #E2E8F0;">`
+          : `<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#2563EB;border:1px solid #E2E8F0;">${s.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?'}</div>`
+      }</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:10px;font-weight:600;">${s.nama}</div>
+        <div style="font-size:9.5px;color:#64748B;margin-top:1px;">NISN: ${s.nisn}</div>
+      </div>
+      <select class="kelas-row-kelas" disabled><option value="${s.kelas}">${s.kelas}</option></select>
+      <span style="font-size:11px;color:var(--gray);font-weight:600;flex-shrink:0;">→</span>
+      <select class="kelas-row-kelas" data-id="${s.id}" data-original="${s.kelas}">
+        <option value="">Pilih Kelas</option>${_kelasOptionsHtml}
+      </select>
+    </div>
+  `).join('');
+  document.getElementById('kelasMassalCount').textContent=`${_siswaData.length} siswa`;
+  openModal('modalKelasMassal');
+}
+
+function filterKelasMassal(q){
+  const keyword=q.toLowerCase().trim();
+  const rows=document.querySelectorAll('#kelasMassalBody > .kelas-row');
+  let visible=0;
+  rows.forEach(row=>{
+    const text=row.textContent.toLowerCase();
+    const match=!keyword||text.includes(keyword);
+    row.classList.toggle('kelas-hidden',!match);
+    if(match) visible++;
+  });
+  document.getElementById('kelasMassalCount').textContent=`${visible} siswa`;
+}
+
+function closeModalKelasMassal(){
+  const selects=document.querySelectorAll('#kelasMassalBody .kelas-row-kelas:not([disabled])');
+  let adaPerubahan=false;
+  selects.forEach(sel=>{
+    if(sel.value&&sel.value!==sel.dataset.original){adaPerubahan=true;}
+  });
+  if(!adaPerubahan){closeModal('modalKelasMassal');return;}
+  Swal.fire({text:'Apakah anda yakin ingin membatalkan perubahan?',icon:'question',showCancelButton:true,confirmButtonText:'Discard',cancelButtonText:'Lanjut Edit',confirmButtonColor:'#EF4444',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}}).then(r=>{if(r.isConfirmed)closeModal('modalKelasMassal');});
+}
+
+async function simpanKelasMassal(){
+  const selects=document.querySelectorAll('#kelasMassalBody .kelas-row-kelas:not([disabled])');
+  const updates=[];
+  selects.forEach(sel=>{
+    const kelasBaru=sel.value;
+    if(!kelasBaru||kelasBaru===sel.dataset.original) return;
+    const siswa=_siswaData.find(s=>s.id==sel.dataset.id);
+    if(!siswa) return;
+    updates.push({...siswa,kelas:kelasBaru});
+  });
+  if(!updates.length){showToast('Tidak ada perubahan kelas','info');closeModal('modalKelasMassal');return;}
+  const {isConfirmed:konfirm}=await Swal.fire({title:'Konfirmasi Update Kelas',text:`${updates.length} siswa akan dipindahkan kelas.`,icon:'question',showCancelButton:true,confirmButtonText:'Ya, Update',cancelButtonText:'Batal',confirmButtonColor:'#059669',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!konfirm) return;
+  let sukses=0, gagal=0, errMsg='';
+  for(const u of updates){
+    const fd=new FormData();
+    ['id','nisn','nama','kelas','jenis_kelamin','no_hp_ortu','nik','tempat_lahir','tanggal_lahir','agama','alamat','nipd','uid'].forEach(k=>fd.append(k,u[k]||''));
+    const res=await fetchAPI('/api/siswa/edit','POST',fd);
+    if(res?.success){sukses++;const siswa=_siswaData.find(x=>x.id==u.id);if(siswa) siswa.kelas=u.kelas;}
+    else{gagal++;errMsg=res?.message||'Gagal terhubung ke server';}
+  }
+  if(gagal) showToast(`${sukses} berhasil, ${gagal} gagal: ${errMsg}`,'error');
+  else showToast(`${sukses} kelas diperbarui`,'success');
+  closeModal('modalKelasMassal');
+  loadSiswa();
+}
+
+// ── Kenaikan Kelas ──
+function parseKelasLevel(kelas){
+  const m=(kelas||'').match(/^Kelas\s+(\d+)(\w*)$/i);
+  if(!m) return null;
+  return {level:parseInt(m[1]),parallel:m[2]||''};
+}
+
+function groupByLevel(data){
+  const groups={};
+  data.forEach(s=>{
+    const p=parseKelasLevel(s.kelas);
+    if(!p||p.level<1||p.level>6) return;
+    if(!groups[p.level]) groups[p.level]={};
+    if(!groups[p.level][s.kelas]) groups[p.level][s.kelas]={students:[],count:0};
+    groups[p.level][s.kelas].students.push(s);
+    groups[p.level][s.kelas].count++;
+  });
+  return groups;
+}
+
+function getNextLevelKelas(sourceKelas){
+  const p=parseKelasLevel(sourceKelas);
+  if(!p) return '';
+  if(p.level>=6) return 'Lulus';
+  return `Kelas ${p.level+1}${p.parallel}`;
+}
+
+function kkGetNextLevelOptionsHtml(level,selected){
+  const nextLevel=level+1;
+  if(level>=6) return '';
+  let html='';
+  if(_kelasOptionsHtml){
+    const t=document.createElement('div');
+    t.innerHTML=_kelasOptionsHtml;
+    t.querySelectorAll('option').forEach(opt=>{
+      const p=parseKelasLevel(opt.value);
+      if(p&&p.level===nextLevel){
+        html+=`<option value="${opt.value}"${opt.value===selected?' selected':''}>${opt.value}</option>`;
+      }
+    });
+  }
+  if(selected&&!html.includes(`value="${selected}"`)){
+    html=`<option value="${selected}" selected>${selected}</option>`+html;
+  }
+  return html||`<option value="${selected||''}">${selected||'Pilih'}</option>`;
+}
+
+let _kkLevelGroups=null;
+
+async function bukaModalKenaikanKelas(){
+  if(!_kelasOptionsHtml){
+    try{
+      const res=await fetch('/api/kelas');
+      const json=await res.json();
+      const data=json.data||[];
+      _kelasOptionsHtml=data.map(k=>`<option value="Kelas ${k.nama}">Kelas ${k.nama}</option>`).join('');
+    }catch(e){_kelasOptionsHtml='';}
+  }
+  const now=new Date();
+  const y=now.getFullYear(),m=now.getMonth()+1;
+  const aStart=m>=7?y:y-1;
+  document.getElementById('kkTahunAjaran').value=`${aStart}/${aStart+1}`;
+  document.getElementById('kkTahunLulusFooter').value=String(y+(m>=7?1:0));
+  const groups=groupByLevel(_siswaData);
+  _kkLevelGroups=groups;
+  const container=document.getElementById('kkLevelContainer');
+  const levels=[1,2,3,4,5,6];
+  let hasLevel6=false;
+  container.innerHTML=levels.map(lv=>{
+    const classes=groups[lv];
+    if(!classes) return '';
+    const names=Object.keys(classes).sort();
+    const total=names.reduce((s,cn)=>s+classes[cn].count,0);
+    if(lv===6) hasLevel6=true;
+    const tgtLabel=lv>=6?'LULUSAN':`Kelas ${lv+1}`;
+    return `<div class="kk-level-section" data-level="${lv}">
+<div class="kk-level-header" onclick="kkToggleLevel(this)"><span><i class="bi bi-layers" style="font-size:13px;margin-right:6px;"></i>Kelas ${lv} → ${tgtLabel} (${total} siswa)</span><span style="font-size:11px;color:#94A3B8;"><i class="bi bi-chevron-down"></i></span></div>
+<div class="kk-level-search"><input type="text" class="kk-level-search-input" data-level="${lv}" placeholder="Cari nama atau NISN..." oninput="kkFilterLevel(this)"></div>
+<div class="kk-level-body">${names.map(cn=>{
+  const cls=classes[cn];
+  const target=lv>=6?'Lulus':getNextLevelKelas(cn);
+  return `<div class="kk-class-row" data-class="${cn}">
+<input type="checkbox" class="kk-class-check" checked data-class="${cn}" onchange="kkToggleClass(this)">
+<span class="kk-class-source">${cn} <span class="kk-class-count">(${cls.count})</span></span>
+<span class="kk-arrow">→</span>
+${lv>=6?`<span class="kk-target-lulus">Lulus</span>`:`<select class="kk-target-select" data-class="${cn}" data-level="${lv}" onchange="kkUpdateSummary()">${kkGetNextLevelOptionsHtml(lv,target)}</select>`}
+<button class="kk-btn-detail" onclick="kkToggleDetail('${cn.replace(/'/g,"\\'")}')">Detail</button></div>
+<div class="kk-detail-body" id="kkd_${cn.replace(/\s+/g,'_')}">${cls.students.map(s=>`
+<div class="kk-student-row" data-class="${cn}">
+<input type="checkbox" class="kk-student-naik" checked data-id="${s.id}" onchange="kkUpdateSummary()">
+<span class="kk-student-name">${s.nama}</span>
+<span class="kk-student-nisn">NISN: ${s.nisn}</span>
+</div>`).join('')}</div>`;
+}).join('')}</div></div>`;
+  }).join('');
+  document.getElementById('kkTahunLulusFooter').style.display=hasLevel6?'inline-block':'none';
+  kkUpdateSummary();
+  openModal('modalKenaikanKelas');
+}
+
+function kkToggleLevel(header){
+  const section=header.closest('.kk-level-section');
+  const body=section.querySelector('.kk-level-body');
+  const search=section.querySelector('.kk-level-search');
+  const icon=header.querySelector('.bi-chevron-down,.bi-chevron-up');
+  if(!icon||!body) return;
+  if(body.style.display==='none'){
+    body.style.display='';
+    icon.className='bi bi-chevron-down';
+    if(search){
+      const anyOpen=section.querySelectorAll('.kk-detail-body.open').length>0;
+      search.style.display=anyOpen?'block':'none';
+    }
+  } else {
+    body.style.display='none';
+    icon.className='bi bi-chevron-up';
+    if(search){search.style.display='none';search.querySelector('input').value='';}
+  }
+}
+
+function kkToggleDetail(className){
+  const id='kkd_'+className.replace(/\s+/g,'_');
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.classList.toggle('open');
+  const section=el.closest('.kk-level-section');
+  const sb=section?.querySelector('.kk-level-search');
+  if(sb){
+    const anyOpen=section.querySelectorAll('.kk-detail-body.open').length>0;
+    sb.style.display=anyOpen?'block':'none';
+    if(!anyOpen) sb.querySelector('input').value='';
+  }
+}
+
+function kkToggleClass(cb){
+  const cn=cb.dataset.class;
+  document.querySelectorAll(`.kk-student-row[data-class="${cn}"] .kk-student-naik`).forEach(st=>{st.checked=cb.checked;});
+  kkUpdateSummary();
+}
+
+function kkFilterLevel(inp){
+  const kw=inp.value.toLowerCase().trim();
+  const section=inp.closest('.kk-level-section');
+  section.querySelectorAll('.kk-student-row').forEach(row=>{
+    const name=row.querySelector('.kk-student-name')?.textContent.toLowerCase()||'';
+    const nisn=row.querySelector('.kk-student-nisn')?.textContent.toLowerCase()||'';
+    row.style.display=(!kw||name.includes(kw)||nisn.includes(kw))?'':'none';
+  });
+}
+
+function kkUpdateSummary(){
+  let naik=0,lulus=0,tetap=0;
+  document.querySelectorAll('.kk-class-row').forEach(row=>{
+    const cn=row.dataset.class;
+    const classCb=row.querySelector('.kk-class-check');
+    if(!classCb||!cn) return;
+    const p=parseKelasLevel(cn);
+    if(!p) return;
+    document.querySelectorAll(`.kk-student-row[data-class="${cn}"] .kk-student-naik`).forEach(cb=>{
+      if(!classCb.checked||!cb.checked){tetap++;return;}
+      if(p.level>=6) lulus++;
+      else naik++;
+    });
+  });
+  document.getElementById('kkSummary').innerHTML=`${naik} naik kelas, ${lulus} lulus, ${tetap} tetap`;
+}
+
+async function prosesKenaikanKelas(){
+  const ta=document.getElementById('kkTahunAjaran').value.trim();
+  if(!ta){showToast('Masukkan tahun ajaran baru!','warning');return;}
+  const promos=[],grads=[];
+  document.querySelectorAll('.kk-class-row').forEach(row=>{
+    const cn=row.dataset.class;
+    const classCb=row.querySelector('.kk-class-check');
+    if(!classCb||!classCb.checked||!cn) return;
+    const p=parseKelasLevel(cn);
+    if(!p) return;
+    const target=p.level>=6?'':(row.querySelector('.kk-target-select')?.value||getNextLevelKelas(cn));
+    document.querySelectorAll(`.kk-student-row[data-class="${cn}"] .kk-student-naik`).forEach(cb=>{
+      if(!cb.checked) return;
+      const id=parseInt(cb.dataset.id);
+      if(isNaN(id)) return;
+      if(p.level>=6) grads.push(id);
+      else promos.push({id,kelas_baru:target});
+    });
+  });
+  const tl=document.getElementById('kkTahunLulusFooter').value.trim();
+  if(grads.length&&!tl){showToast('Masukkan tahun lulus!','warning');return;}
+  if(!promos.length&&!grads.length){showToast('Tidak ada siswa yang diproses','info');return;}
+  const {isConfirmed:konf}=await Swal.fire({
+    title:'Konfirmasi Kenaikan Kelas',
+    html:`${promos.length} naik kelas<br>${grads.length} lulus<br>Tahun Ajaran: ${ta}${grads.length?'<br>Tahun Lulus: '+tl:''}`,
+    icon:'question',showCancelButton:true,confirmButtonText:'Ya, Proses',cancelButtonText:'Batal',
+    confirmButtonColor:'#7C3AED',cancelButtonColor:'#1E293B',reverseButtons:true,
+    width:'350px',padding:'16px',
+    customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}
+  });
+  if(!konf) return;
+  const res=await fetchAPI('/api/siswa/kenaikan-kelas','POST',{promotions:promos,graduations:grads,tahun_lulus:tl||null});
+  if(res?.success){
+    showToast(res.message,'success');
+    closeModal('modalKenaikanKelas');
+    loadSiswa();
+    setTimeout(()=>{
+      Swal.fire({
+        icon:'info',title:'Kenaikan Kelas Selesai',
+        text:'Jangan lupa input data siswa baru untuk Kelas 1!',
+        confirmButtonColor:'#7C3AED',confirmButtonText:'OK',
+        width:'400px',padding:'16px',
+        customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil'}
+      });
+    },500);
+  }
+  else showToast(res?.message||'Gagal','error');
+}
+
+function closeModalKenaikanKelas(){
+  let ada=false;
+  document.querySelectorAll('.kk-class-check').forEach(cb=>{if(!cb.checked)ada=true;});
+  if(!ada){
+    document.querySelectorAll('.kk-target-select').forEach(sel=>{
+      if(sel.value!==getNextLevelKelas(sel.dataset.class))ada=true;
+    });
+  }
+  if(!ada){
+    document.querySelectorAll('.kk-student-naik').forEach(cb=>{if(!cb.checked)ada=true;});
+  }
+  if(!ada){closeModal('modalKenaikanKelas');return;}
+  Swal.fire({
+    text:'Batalkan perubahan kenaikan kelas?',icon:'question',showCancelButton:true,
+    confirmButtonText:'Ya, Tutup',cancelButtonText:'Lanjut',
+    confirmButtonColor:'#EF4444',cancelButtonColor:'#1E293B',reverseButtons:true,
+    width:'300px',padding:'16px',
+    customClass:{popup:'swal-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}
+  }).then(r=>{if(r.isConfirmed)closeModal('modalKenaikanKelas');});
 }
 
 function bukaImportCsv(){

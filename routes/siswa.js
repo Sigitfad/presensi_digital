@@ -241,6 +241,34 @@ router.post('/pindah-massal', (req,res) => {
   res.json({success:true,message:`${count} siswa berhasil dipindahkan ke Data Pindahan`});
 });
 
+router.post('/kenaikan-kelas', (req,res) => {
+  const { promotions, graduations, tahun_lulus } = req.body;
+  let sukses = 0, gagal = 0;
+  if (promotions && Array.isArray(promotions)) {
+    promotions.forEach(p => {
+      try {
+        run('UPDATE siswa SET kelas=?, updated_at=datetime("now","localtime") WHERE id=?', [p.kelas_baru, p.id]);
+        sukses++;
+      } catch(e) { gagal++; }
+    });
+  }
+  if (graduations && Array.isArray(graduations) && tahun_lulus) {
+    graduations.forEach(id => {
+      try {
+        const s = queryOne('SELECT * FROM siswa WHERE id=?', [id]);
+        if (s) {
+          run('INSERT INTO alumni (nama,nisn,kelas_lulus,tahun_lulus,foto,jenis_kelamin,nik,tempat_lahir,tanggal_lahir,agama,alamat,no_hp_ortu,nipd) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',
+            [s.nama,s.nisn,s.kelas,tahun_lulus,s.foto||'',s.jenis_kelamin||'',s.nik||'',s.tempat_lahir||'',s.tanggal_lahir||'',s.agama||'',s.alamat||'',s.no_hp_ortu||'',s.nipd||'']);
+          run('DELETE FROM siswa WHERE id=?', [id]);
+          sukses++;
+        }
+      } catch(e) { gagal++; }
+    });
+  }
+  logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,'Kenaikan Kelas',`${sukses} siswa diproses`);
+  res.json({success:true,sukses,gagal,message:`${sukses} siswa berhasil diproses${gagal?`, ${gagal} gagal`:''}`});
+});
+
 // Multer untuk CSV import (memory storage)
 const csvUpload = multer({ storage: multer.memoryStorage(), limits:{fileSize:5*1024*1024},
   fileFilter:(req,file,cb)=> {
