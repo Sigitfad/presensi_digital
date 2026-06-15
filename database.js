@@ -322,10 +322,14 @@ function getSetting(key, defaultVal='') {
 }
 
 function hitungStatus(jamMasuk) {
+  const jamSekolah = getSetting('jam_masuk','07:00');
   const batas = getSetting('batas_terlambat','07:00');
+  const [sH,sM] = jamSekolah.split(':').map(Number);
   const [bH,bM] = batas.split(':').map(Number);
   const [jH,jM] = jamMasuk.split(':').map(Number);
-  return (jH*60+jM) <= (bH*60+bM) ? 'Hadir' : 'Terlambat';
+  const total = jH*60+jM;
+  if (total < sH*60+sM) return 'Terlambat';
+  return total <= bH*60+bM ? 'Hadir' : 'Terlambat';
 }
 
 function reloadDB() {

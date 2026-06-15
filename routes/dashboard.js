@@ -35,11 +35,35 @@ router.get('/', (req,res) => {
     kelasArr = rawFilter.split(',').map(k=>k.trim()).filter(Boolean);
   }
 
+  // === Siswa Belum Absen ===
+  let siswaSQL = 'SELECT id, nisn, nama, kelas, foto FROM siswa WHERE 1=1';
+  let siswaParams = [];
+  if (kelasArr.length) {
+    siswaSQL += ` AND kelas IN (${kelasArr.map(()=>'?').join(',')})`;
+    siswaParams = [...kelasArr];
+  }
+  const allSiswa = queryAll(siswaSQL, siswaParams);
+  const todayPresensi = queryAll('SELECT siswa_id FROM presensi WHERE tanggal=?', [today]);
+  const hadirSet = new Set(todayPresensi.map(p => p.siswa_id));
+  const nowTime = new Date().toTimeString().slice(0, 5);
+  const batasTerlambat = getSetting('batas_terlambat','07:00');
+  const lewatBatas = nowTime > batasTerlambat;
+  const siswaBelumAbsen = allSiswa.filter(s => !hadirSet.has(s.id)).map(s => ({
+    id: s.id, nisn: s.nisn, nama: s.nama, kelas: s.kelas,
+    foto: s.foto, status: lewatBatas ? 'Alpha' : 'Belum'
+  }));
+
   // totalHadir — pakai subquery supaya tidak bergantung JOIN
   const hadirSQL = kelasArr.length
     ? `SELECT COUNT(*) as c FROM presensi WHERE tanggal=? AND siswa_id IN (SELECT id FROM siswa WHERE kelas IN (${kelasArr.map(()=>'?').join(',')}))`
     : 'SELECT COUNT(*) as c FROM presensi WHERE tanggal=?';
   const totalHadir = queryCount(hadirSQL, kelasArr.length ? [today, ...kelasArr] : [today]);
+
+  // Count Terlambat today
+  const terlambatSQL = kelasArr.length
+    ? `SELECT COUNT(*) as c FROM presensi WHERE tanggal=? AND status='Terlambat' AND siswa_id IN (SELECT id FROM siswa WHERE kelas IN (${kelasArr.map(()=>'?').join(',')}))`
+    : `SELECT COUNT(*) as c FROM presensi WHERE tanggal=? AND status='Terlambat'`;
+  const totalTerlambat = queryCount(terlambatSQL, kelasArr.length ? [today, ...kelasArr] : [today]);
 
   // Presensi hari ini — JOIN untuk ambil data siswa + filter kelas
   const presensiSQL = kelasArr.length
@@ -48,8 +72,9 @@ router.get('/', (req,res) => {
 
   res.json({
     success:true,
-    totalSiswa, totalGuru, totalOperator, totalKepsek, totalPenjaga, totalLulusan, totalPindahan, totalHadirHariIni: totalHadir, bidangCounts,
+    totalSiswa, totalGuru, totalOperator, totalKepsek, totalPenjaga, totalLulusan, totalPindahan, totalHadirHariIni: totalHadir, totalTerlambat, bidangCounts,
     presensiHariIni: queryAll(presensiSQL, kelasArr.length ? [today, ...kelasArr] : [today]),
+    siswaBelumAbsen,
     tanggal        : today,
     operator       : req.session.operatorNama,
     role, myBidang,

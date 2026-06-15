@@ -116,7 +116,10 @@
         <div class="card-modern-header" style="padding:18px 20px;">
           <div class="card-modern-title" style="cursor:pointer;user-select:none;" onclick="toggleLog()"><i class="bi bi-list-check" style="color:var(--primary)"></i> Riwayat Absensi Hari Ini <i class="bi bi-chevron-down" id="log-toggle-icon" style="font-size:11px;color:var(--gray);transition:transform .2s;"></i></div>
           <div style="display:flex;align-items:center;gap:6px;">
-            <input id="search-log" type="text" placeholder="Cari..." style="width:100px;font-size:11px;padding:3px 8px;border-radius:8px;border:1.5px solid #E2E8F0;background:white;color:#475569;outline:none;transition:border-color .2s;" oninput="renderLog()">
+            <div style="position:relative;">
+              <input id="search-log" type="text" placeholder="Cari..." style="width:100px;font-size:11px;padding:3px 22px 3px 8px;border-radius:8px;border:1.5px solid #E2E8F0;background:white;color:#475569;outline:none;box-sizing:border-box;transition:border-color .2s;" oninput="document.getElementById('clearSearchLog').style.display=this.value?'block':'none';renderLog()">
+              <span id="clearSearchLog" style="display:none;position:absolute;top:50%;right:4px;transform:translateY(-50%);cursor:pointer;font-size:10px;color:#94A3B8;line-height:1;z-index:2;" onclick="document.getElementById('search-log').value='';document.getElementById('clearSearchLog').style.display='none';renderLog();document.getElementById('search-log').focus()"><i class="bi bi-x-lg"></i></span>
+            </div>
             <select id="filter-kelas" style="font-size:11px;padding:3px 8px;border-radius:8px;border:1.5px solid #E2E8F0;background:white;color:#475569;font-weight:600;outline:none;cursor:pointer;">
               <option value="">Semua Kelas</option>
             </select>

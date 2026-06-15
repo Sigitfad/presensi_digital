@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -11,70 +11,71 @@
   <style>
     .foto-sm-img{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;}
     .foto-sm-ini{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#DBEAFE,#EDE9FE);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#2563EB;border:2px solid #E2E8F0;flex-shrink:0;}
-    .stat-icon{width:auto;height:auto;background:none!important;border-radius:0;font-size:48px;color:rgba(0,0,0,0.7)!important;}
-    .stat-card{gap:10px;}
-    .stat-card > div:last-child{margin-left:auto;}
-    .stat-value{text-align:center;}
-    .stat-label{text-align:right;font-weight:700;}
-    .stat-label.text-center{text-align:center;}
+    .belum-absen-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid #F1F5F9;transition:background 0.15s;}
+    .belum-absen-item:hover{background:#F8FAFC;}
+    .belum-absen-item:last-child{border-bottom:none;}
+    .belum-absen-foto{width:32px;height:32px;border-radius:50%;object-fit:cover;border:1px solid #E2E8F0;flex-shrink:0;}
+    .belum-absen-ini{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#FEF3C7,#FFEDD5);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#D97706;border:1px solid #E2E8F0;flex-shrink:0;}
+    .belum-absen-nama{font-weight:600;font-size:12px;}
+    .belum-absen-info{font-size:10.5px;color:#94A3B8;}
+    .belum-absen-status{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;flex-shrink:0;}
+    .belum-absen-status.alpha{background:#FEF2F2;color:#DC2626;}
+    .belum-absen-status.belum{background:#EFF6FF;color:#2563EB;}
+    .card-counter{box-shadow:2px 2px 10px #DADADA;margin:5px;padding:20px 10px;background-color:#fff;height:100px;border-radius:5px;transition:.3s linear all;position:relative;}
+    .card-counter:hover{box-shadow:4px 4px 20px #DADADA;transition:.3s linear all;}
+    .card-counter.primary{background-color:#007bff;color:#FFF;}
+    .card-counter.danger{background-color:#ef5350;color:#FFF;}
+    .card-counter.success{background-color:#66bb6a;color:#FFF;}
+    .card-counter.info{background-color:#26c6da;color:#FFF;}
+    .card-counter i{font-size:5em;opacity:0.2;}
+    .card-counter .count-numbers{position:absolute;right:35px;top:20px;font-size:32px;display:block;font-weight:700;}
+    .card-counter .count-name{position:absolute;right:35px;top:65px;font-style:italic;text-transform:capitalize;opacity:0.5;display:block;font-size:18px;font-weight:700;}
   </style>
   
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
 <body>
 <div id="page-content" class="page-content">
-  <div class="page-header">
-    <div class="page-title">Dashboard</div>
+  <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
     <div class="page-subtitle" id="greet">Memuat data...</div>
+    <div style="display:flex;flex-direction:column;gap:2px;font-size:12px;color:var(--gray);">
+      <div style="display:flex;gap:12px;justify-content:flex-end;">
+        <span style="white-space:nowrap;"><i class="bi bi-check-circle-fill text-success me-1"></i>Tepat: <strong id="inf-jam" style="color:var(--dark)">07:00</strong></span>
+        <span style="white-space:nowrap;"><i class="bi bi-clock-fill text-warning me-1"></i>Terlambat: <strong id="inf-jam2" style="color:var(--dark)">07:00</strong></span>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;">
+        <span style="white-space:nowrap;"><i class="bi bi-calendar me-1" style="color:var(--primary)"></i><span id="inf-tgl">-</span></span>
+        <span style="white-space:nowrap;"><i class="bi bi-building me-1" style="color:var(--primary)"></i><span id="inf-sekolah">-</span></span>
+      </div>
+    </div>
   </div>
 
-  <!-- 6 stat cards sesuai permintaan -->
-  <div class="row g-3 mb-3">
-    <div class="col-6 col-md-4 col-lg-2 fade-in-up">
-      <div class="stat-card">
-        <div class="stat-icon blue"><i class="bi bi-people-fill"></i></div>
-        <div><div class="stat-value" id="s-siswa">-</div><div class="stat-label">Total Siswa</div></div>
+  <div class="row mb-3">
+    <div class="col-6 col-md-3 fade-in-up">
+      <div class="card-counter primary">
+        <i class="bi bi-people-fill"></i>
+        <span class="count-numbers" id="s-siswa">-</span>
+        <span class="count-name">Total Siswa</span>
       </div>
     </div>
-    <div class="col-6 col-md-4 col-lg-2 fade-in-up">
-      <div class="stat-card">
-        <div class="stat-icon purple"><i class="bi bi-shield-fill-check"></i></div>
-        <div><div class="stat-value" id="s-kepsek">-</div><div class="stat-label">Kepala Sekolah</div></div>
+    <div class="col-6 col-md-3 fade-in-up">
+      <div class="card-counter success">
+        <i class="bi bi-person-check-fill"></i>
+        <span class="count-numbers" id="s-hadir">-</span>
+        <span class="count-name">Absensi Hari Ini</span>
       </div>
     </div>
-    <div class="col-6 col-md-4 col-lg-2 fade-in-up">
-      <div class="stat-card">
-        <div class="stat-icon green"><i class="bi bi-person-lines-fill"></i></div>
-        <div><div class="stat-value" id="s-guru">-</div><div class="stat-label">Guru</div></div>
+    <div class="col-6 col-md-3 fade-in-up">
+      <div class="card-counter danger">
+        <i class="bi bi-clock-fill"></i>
+        <span class="count-numbers" id="s-terlambat">-</span>
+        <span class="count-name">Terlambat</span>
       </div>
     </div>
-    <div class="col-6 col-md-4 col-lg-2 fade-in-up">
-      <div class="stat-card">
-        <div class="stat-icon blue"><i class="bi bi-person-badge-fill"></i></div>
-        <div><div class="stat-value" id="s-operator">-</div><div class="stat-label">Operator</div></div>
-      </div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-2 fade-in-up">
-      <div class="stat-card">
-        <div class="stat-icon orange"><i class="bi bi-shield-shaded"></i></div>
-        <div><div class="stat-value" id="s-penjaga">-</div><div class="stat-label">Penjaga</div></div>
-      </div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-2 fade-in-up">
-      <div class="stat-card">
-        <div class="stat-icon purple"><i class="bi bi-mortarboard-fill"></i></div>
-        <div><div class="stat-value" id="s-lulusan">-</div><div class="stat-label">Total Lulusan</div></div>
-      </div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-2 fade-in-up">
-      <div class="stat-card">
-        <div class="stat-icon orange"><i class="bi bi-box-arrow-right"></i></div>
-        <div><div class="stat-value" id="s-pindahan">-</div><div class="stat-label">Total Pindahan</div></div>
-      </div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-2 fade-in-up">
-      <div class="stat-card">
-        <div class="stat-icon green"><i class="bi bi-person-check-fill"></i></div>
-        <div><div class="stat-value" id="s-hadir">-</div><div class="stat-label">Absensi Hari Ini</div></div>
+    <div class="col-6 col-md-3 fade-in-up">
+      <div class="card-counter info">
+        <i class="bi bi-exclamation-circle-fill"></i>
+        <span class="count-numbers" id="s-belum-absen">-</span>
+        <span class="count-name">Siswa Belum Absen</span>
       </div>
     </div>
   </div>
@@ -83,12 +84,21 @@
     <div class="col-lg-8">
       <div class="card-modern">
         <div class="card-modern-header">
-          <div class="card-modern-title">
+          <div class="card-modern-title" style="flex-shrink:0;">
             <i class="bi bi-calendar-check" style="color:var(--primary)"></i>
             Presensi Hari Ini
             <span id="tgl-badge" style="font-size:12px;font-weight:500;color:var(--gray);"></span>
           </div>
-          <a href="/pages/riwayat" class="btn-primary-custom" style="padding:5px 13px;font-size:12px;">Lihat Semua</a>
+          <div style="display:flex;align-items:center;gap:5px;flex-shrink:0;">
+            <div style="position:relative;width:150px;">
+              <input type="text" id="searchToday" placeholder="Cari..." style="width:100%;font-size:11px;padding:2px 20px 2px 6px;border-radius:6px;border:1.5px solid #E2E8F0;background:white;color:#475569;outline:none;box-sizing:border-box;" oninput="document.getElementById('clearTodaySearch').style.display=this.value?'block':'none';renderTodayPage()">
+              <span id="clearTodaySearch" style="display:none;position:absolute;top:50%;right:3px;transform:translateY(-50%);cursor:pointer;font-size:10px;color:#94A3B8;line-height:1;z-index:2;" onclick="document.getElementById('searchToday').value='';document.getElementById('clearTodaySearch').style.display='none';renderTodayPage();document.getElementById('searchToday').focus()"><i class="bi bi-x-lg"></i></span>
+            </div>
+            <select id="filterTodayKelas" style="font-size:11px;padding:2px 6px;border-radius:6px;border:1.5px solid #E2E8F0;background:white;color:#475569;font-weight:600;outline:none;cursor:pointer;" onchange="renderTodayPage()">
+              <option value="">Semua Kelas</option>
+            </select>
+            <a href="/pages/riwayat" class="btn-primary-custom" style="padding:4px 11px;font-size:11px;">Lihat Semua</a>
+          </div>
         </div>
         <div class="table-responsive">
           <table class="table-modern">
@@ -100,26 +110,21 @@
       <div id="paginationToday" class="pagination-bar d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3" style="display:none;"></div>
     </div>
     <div class="col-lg-4">
-      <div class="card-modern mb-3">
-        <div class="card-modern-header"><div class="card-modern-title"><i class="bi bi-file-post" style="color:var(--primary)"></i> Aksi Cepat</div></div>
-        <div class="card-modern-body">
-          <div class="d-grid gap-2">
-            <a href="/pages/scan"    class="btn-success-custom justify-content-center"><i class="bi bi-credit-card-2-front"></i> Scan Presensi</a>
-            <a href="/pages/rekap"   class="btn-primary-custom justify-content-center"><i class="bi bi-bar-chart-fill"></i> Rekap Presensi</a>
-            <a href="/pages/riwayat" class="btn-primary-custom justify-content-center" style="background:linear-gradient(135deg,#0EA5E9,#0284C7)"><i class="bi bi-download"></i> Export Presensi</a>
+      <div class="card-modern">
+        <div class="card-modern-header" style="flex-direction:column;align-items:stretch;gap:8px;">
+          <div class="card-modern-title"><i class="bi bi-exclamation-circle" style="color:var(--primary)"></i> Siswa Belum Absen <span id="belumAbsenCount" style="display:inline-block;background:#007bff;color:white;border-radius:10px;padding:0 7px;font-size:11px;font-weight:700;line-height:18px;"></span></div>
+          <div style="display:flex;gap:6px;">
+            <div style="position:relative;flex:1;min-width:0;">
+              <input type="text" id="searchBelumAbsen" placeholder="Cari nama / NISN / kelas..." style="width:100%;font-size:11px;padding:3px 22px 3px 8px;border-radius:8px;border:1.5px solid #E2E8F0;background:white;color:#475569;outline:none;box-sizing:border-box;" oninput="document.getElementById('clearBelumAbsenSearch').style.display=this.value?'block':'none';renderBelumAbsen()">
+              <span id="clearBelumAbsenSearch" style="display:none;position:absolute;top:50%;right:4px;transform:translateY(-50%);cursor:pointer;font-size:12px;color:#94A3B8;line-height:1;z-index:2;" onclick="document.getElementById('searchBelumAbsen').value='';document.getElementById('clearBelumAbsenSearch').style.display='none';renderBelumAbsen();document.getElementById('searchBelumAbsen').focus()"><i class="bi bi-x-lg"></i></span>
+            </div>
+            <select id="filterBelumAbsenKelas" style="font-size:11px;padding:3px 8px;border-radius:8px;border:1.5px solid #E2E8F0;background:white;color:#475569;font-weight:600;outline:none;cursor:pointer;" onchange="renderBelumAbsen()">
+              <option value="">Semua Kelas</option>
+            </select>
           </div>
         </div>
-      </div>
-      <div class="card-modern">
-        <div class="card-modern-header"><div class="card-modern-title"><i class="bi bi-info-circle-fill" style="color:var(--primary)"></i> Info Sistem</div></div>
-        <div class="card-modern-body">
-          <div style="font-size:12.5px;color:var(--gray);line-height:2.2;">
-            <div><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Tepat Waktu:</strong> Sebelum <span id="inf-jam" style="font-weight:800;color:var(--dark)">07:00</span></div>
-            <div><i class="bi bi-clock-fill text-warning me-2"></i><strong>Terlambat:</strong> Setelah <span id="inf-jam2" style="font-weight:800;color:var(--dark)">07:00</span></div>
-            <hr style="margin:8px 0;opacity:0.1;">
-            <div><i class="bi bi-calendar me-2" style="color:var(--primary)"></i><span id="inf-tgl">-</span></div>
-            <div><i class="bi bi-building me-2" style="color:var(--primary)"></i><span id="inf-sekolah">-</span></div>
-          </div>
+        <div class="card-modern-body" style="max-height:290px;overflow-y:auto;" id="belumAbsenContainer">
+          <div class="empty-state"><i class="bi bi-check-circle"></i><p>Semua siswa sudah absen hari ini</p></div>
         </div>
       </div>
     </div>
@@ -138,7 +143,7 @@ const STATUS_BADGE={
   'Alpha'    :'<span class="badge-alpha"><i class="bi bi-x-circle-fill"></i> Alpha</span>',
 };
 
-let _todayData=[], _todayPage=1, _todayPerPage=5;
+let _todayData=[], _todayPage=1, _todayPerPage=5, _belumAbsenData=[];
 
 function renderTodayRow(d, i) {
   const ini = d.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
@@ -155,19 +160,41 @@ function renderTodayRow(d, i) {
   </tr>`;
 }
 
+function getFilteredToday(){
+  const q=(document.getElementById('searchToday')?.value||'').toLowerCase().trim();
+  const kelas=document.getElementById('filterTodayKelas')?.value||'';
+  let data=_todayData;
+  if(kelas) data=data.filter(d=>d.kelas===kelas);
+  if(q) data=data.filter(d=>(d.nisn||'').includes(q)||(d.nama||'').toLowerCase().includes(q)||(d.kelas||'').toLowerCase().includes(q)||(d.jam_masuk||'').slice(0,5).includes(q));
+  return data;
+}
+
+function rebuildTodayKelas(){
+  const el=document.getElementById('filterTodayKelas');
+  if(!el) return;
+  const cur=el.value;
+  const kelas=[...new Set(_todayData.map(d=>d.kelas).filter(Boolean))].sort();
+  el.innerHTML='<option value="">Semua Kelas</option>'+kelas.map(k=>'<option value="'+k+'">'+k+'</option>').join('');
+  el.value=kelas.includes(cur)?cur:'';
+}
+
 function renderTodayPage(){
+  const data=getFilteredToday();
   const tbody=document.getElementById('tbl-today');
-  if(!_todayData.length){
-    tbody.innerHTML='<tr><td colspan="6"><div class="empty-state"><i class="bi bi-inbox"></i><p>Belum ada data</p></div></td></tr>';
+  if(!data.length){
+    const msg=_todayData.length
+      ? '<i class="bi bi-search"></i><p>Tidak ada yang cocok</p>'
+      : '<i class="bi bi-inbox"></i><p>Belum ada data</p>';
+    tbody.innerHTML='<tr><td colspan="6"><div class="empty-state">'+msg+'</div></td></tr>';
     document.getElementById('paginationToday').style.display='none';
     return;
   }
   const pp=_todayPerPage;
-  const totalPages=Math.ceil(_todayData.length/pp);
+  const totalPages=Math.ceil(data.length/pp);
   if(_todayPage>totalPages) _todayPage=totalPages;
   const start=(_todayPage-1)*pp;
-  const end=Math.min(start+pp,_todayData.length);
-  tbody.innerHTML=_todayData.slice(start,end).map((r,i)=>renderTodayRow(r,start+i)).join('');
+  const end=Math.min(start+pp,data.length);
+  tbody.innerHTML=data.slice(start,end).map((r,i)=>renderTodayRow(r,start+i)).join('');
   buildPaginationUI('paginationToday',{
     currentPage:_todayPage, totalPages, currentSize:_todayPerPage,
     sizes:[5,10,15,20,25,50],
@@ -176,51 +203,100 @@ function renderTodayPage(){
   });
 }
 
-async function init(){
-  await loadLayout('dashboard','Dashboard');
+function renderBelumAbsen(){
+  const container=document.getElementById('belumAbsenContainer');
+  const countEl=document.getElementById('belumAbsenCount');
+  const searchEl=document.getElementById('searchBelumAbsen');
+  const filterEl=document.getElementById('filterBelumAbsenKelas');
+  const q=(searchEl?.value||'').toLowerCase().trim();
+  const kelasFilter=filterEl?.value||'';
+
+  if(!filterEl) return;
+  const kelas=[...new Set(_belumAbsenData.map(d=>d.kelas).filter(Boolean))].sort();
+  const curKelas=filterEl.value;
+  filterEl.innerHTML='<option value="">Semua Kelas</option>'+kelas.map(k=>'<option value="'+k+'">'+k+'</option>').join('');
+  filterEl.value=kelas.includes(curKelas)?curKelas:'';
+
+  let data=_belumAbsenData;
+  if(kelasFilter) data=data.filter(d=>d.kelas===kelasFilter);
+  if(q) data=data.filter(d=>(d.nama||'').toLowerCase().includes(q)||(d.kelas||'').toLowerCase().includes(q)||(d.nisn||'').includes(q));
+
+  if(!data.length){
+    countEl.textContent=_belumAbsenData.length?`${_belumAbsenData.length}`:'';
+    container.innerHTML='<div class="empty-state"><i class="bi bi-search"></i><p>'+(q||kelasFilter?'Tidak ada yang cocok':'Semua siswa sudah absen hari ini')+'</p></div>';
+    return;
+  }
+  countEl.textContent=`${_belumAbsenData.length}`;
+  container.innerHTML=data.map(s=>{
+    const ini=s.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+    const fotoHtml=s.foto
+      ? `<img src="${s.foto}" class="belum-absen-foto">`
+      : `<div class="belum-absen-ini">${ini}</div>`;
+    const isAlpha=s.status==='Alpha';
+    const statusHtml=isAlpha
+      ? '<span class="belum-absen-status alpha"><i class="bi bi-x-circle-fill" style="font-size:8px;margin-right:2px;"></i>Alpha</span>'
+      : '<span class="belum-absen-status belum"><i class="bi bi-clock" style="font-size:8px;margin-right:2px;"></i>Belum</span>';
+    return `<div class="belum-absen-item">
+      ${fotoHtml}
+      <div style="flex:1;min-width:0;">
+        <div class="belum-absen-nama">${s.nama}</div>
+        <div class="belum-absen-info">${s.kelas} &middot; ${s.nisn}</div>
+      </div>
+      ${statusHtml}
+    </div>`;
+  }).join('');
+}
+
+let _refreshTimer=null;
+
+async function refreshDashboard(){
   const data = await fetchAPI('/api/dashboard');
   if(!data) return;
+  if(typeof data.siswaBelumAbsen === 'undefined') return;
 
-  const ROLE_LABEL={ operator:'Operator', guru:'Guru', kepala_sekolah:'Kepala Sekolah', penjaga_sekolah:'Penjaga Sekolah', guru_bidang:data.myBidang||'Guru Bidang' };
-  document.getElementById('greet').innerHTML=`Selamat datang, <strong>${data.operator}</strong> <em>${ROLE_LABEL[data.role]||data.role}</em>`;
-  document.getElementById('s-siswa').textContent   = data.totalSiswa;
-  document.getElementById('s-kepsek').textContent  = data.totalKepsek;
-  document.getElementById('s-guru').textContent    = data.totalGuru;
-  document.getElementById('s-operator').textContent= data.totalOperator;
-  document.getElementById('s-penjaga').textContent = data.totalPenjaga;
-  document.getElementById('s-lulusan').textContent = data.totalLulusan;
-  document.getElementById('s-pindahan').textContent = data.totalPindahan;
-  document.getElementById('s-hadir').textContent   = data.totalHadirHariIni;
+  document.getElementById('s-siswa').textContent       = data.totalSiswa;
+  document.getElementById('s-hadir').textContent       = data.totalHadirHariIni;
+  document.getElementById('s-terlambat').textContent   = data.totalTerlambat;
+  document.getElementById('s-belum-absen').textContent = data.siswaBelumAbsen.length;
 
-  // Cards per Bidang Keahlian
-  const guruCard = document.getElementById('s-guru').closest('.col-6');
-  const iconMap={'Guru Bahasa Inggris':'bi-translate','Guru Agama':'bi-book-half','Guru Olahraga':'bi-dribbble','Guru Seni':'bi-palette-fill'};
-  const labelMap={'Guru Bahasa Inggris':'Guru Inggris'};
-  (data.bidangCounts||[]).forEach(b=>{
-    const div=document.createElement('div');
-    div.className='col-6 col-md-4 col-lg-2 fade-in-up';
-    div.innerHTML=`<div class="stat-card">
-      <div class="stat-icon blue"><i class="${iconMap[b.bidang_keahlian]||'bi-book-half'}"></i></div>
-      <div><div class="stat-value">${b.count}</div><div class="stat-label${['Guru Bahasa Inggris'].includes(b.bidang_keahlian)?' text-center':''}">${labelMap[b.bidang_keahlian]||b.bidang_keahlian}</div></div>
-    </div>`;
-    guruCard.parentNode.insertBefore(div, guruCard.nextSibling);
-  });
+  _belumAbsenData=data.siswaBelumAbsen;
+  renderBelumAbsen();
+
+  const hasPresensi=data.presensiHariIni&&data.presensiHariIni.length>0;
+  if(!hasPresensi){
+    document.getElementById('tbl-today').innerHTML=`<tr><td colspan="6"><div class="empty-state"><i class="bi bi-inbox"></i><p>Belum ada presensi hari ini</p><a href="/pages/scan" class="btn-primary-custom mt-2"><i class="bi bi-credit-card-2-front"></i> Mulai Scan</a></div></td></tr>`;
+    document.getElementById('paginationToday').style.display='none';
+    _todayData=[];
+    return;
+  }
+  _todayData=data.presensiHariIni;
+  rebuildTodayKelas();
+  if(_todayPage>Math.ceil(_todayData.length/_todayPerPage)) _todayPage=1;
+  renderTodayPage();
+}
+
+async function init(){
+  await loadLayout('dashboard','Dashboard');
 
   const now=new Date();
   const tgl=`${HARI[now.getDay()]}, ${now.getDate()} ${BULAN[now.getMonth()]} ${now.getFullYear()}`;
   document.getElementById('tgl-badge').textContent=`(${now.getDate()} ${BULAN[now.getMonth()].slice(0,3)} ${now.getFullYear()})`;
   document.getElementById('inf-tgl').textContent=tgl;
+
+  const data = await fetchAPI('/api/dashboard');
+  if(!data) return;
+  if(typeof data.siswaBelumAbsen === 'undefined') return;
+
+  const ROLE_LABEL={ operator:'Operator', guru:'Guru', kepala_sekolah:'Kepala Sekolah', penjaga_sekolah:'Penjaga Sekolah', guru_bidang:data.myBidang||'Guru Bidang' };
+  document.getElementById('greet').innerHTML=`Selamat datang, <strong>${data.operator}</strong> <em>${ROLE_LABEL[data.role]||data.role}</em>`;
   document.getElementById('inf-jam').textContent=data.batasTerlambat||'07:00';
   document.getElementById('inf-jam2').textContent=data.batasTerlambat||'07:00';
   document.getElementById('inf-sekolah').textContent=data.identitas?.nama_sekolah||'-';
 
-  if(!data.presensiHariIni?.length){
-    document.getElementById('tbl-today').innerHTML=`<tr><td colspan="6"><div class="empty-state"><i class="bi bi-inbox"></i><p>Belum ada presensi hari ini</p><a href="/pages/scan" class="btn-primary-custom mt-2"><i class="bi bi-credit-card-2-front"></i> Mulai Scan</a></div></td></tr>`;
-    return;
-  }
-  _todayData=data.presensiHariIni;
-  _todayPage=1;
-  renderTodayPage();
+  await refreshDashboard();
+
+  if(_refreshTimer) clearInterval(_refreshTimer);
+  _refreshTimer=setInterval(refreshDashboard,10000);
 }
 init();
 </script>

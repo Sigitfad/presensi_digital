@@ -89,7 +89,10 @@
         <span id="tbl-title-text">Rekap Per Siswa</span>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-        
+        <div style="position:relative;min-width:160px;">
+          <input type="text" id="searchRekap" placeholder="Cari Nama / Kelas..." style="width:100%;font-size:11px;padding:3px 22px 3px 8px;border-radius:6px;border:1.5px solid #E2E8F0;background:white;color:#475569;outline:none;box-sizing:border-box;" oninput="document.getElementById('clearRekapSearch').style.display=this.value?'block':'none';renderRekapPage()">
+          <span id="clearRekapSearch" style="display:none;position:absolute;top:50%;right:5px;transform:translateY(-50%);cursor:pointer;font-size:10px;color:#94A3B8;line-height:1;z-index:2;" onclick="document.getElementById('searchRekap').value='';document.getElementById('clearRekapSearch').style.display='none';renderRekapPage();document.getElementById('searchRekap').focus()"><i class="bi bi-x-lg"></i></span>
+        </div>
         <div id="export-siswa-btn">
           <button onclick="exportExcelSiswa()" style="background:linear-gradient(135deg,#16A34A,#15803D);color:white;border:none;padding:6px 13px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;">
             <i class="bi bi-file-earmark-excel-fill"></i> Export .xlsx
@@ -176,7 +179,10 @@
           Detail Rekap Kelas
         </h5>
         <div style="display:flex;align-items:center;gap:6px;">
-          <input type="text" id="searchKelasDetail" placeholder="Cari Nama/NISN..." style="width:180px;font-size:12px;padding:5px 10px;border-radius:8px;border:none;background:rgba(255,255,255,0.2);color:white;outline:none;" oninput="filterKelasDetail(this.value)">
+          <div style="position:relative;">
+            <input type="text" id="searchKelasDetail" placeholder="Cari Nama/NISN..." style="width:180px;font-size:12px;padding:5px 24px 5px 10px;border-radius:8px;border:none;background:rgba(255,255,255,0.2);color:white;outline:none;" oninput="document.getElementById('clearKelasDetailSearch').style.display=this.value?'block':'none';filterKelasDetail(this.value)">
+            <span id="clearKelasDetailSearch" style="display:none;position:absolute;top:50%;right:6px;transform:translateY(-50%);cursor:pointer;font-size:11px;color:rgba(255,255,255,0.6);line-height:1;z-index:2;" onclick="document.getElementById('searchKelasDetail').value='';document.getElementById('clearKelasDetailSearch').style.display='none';filterKelasDetail('');document.getElementById('searchKelasDetail').focus()"><i class="bi bi-x-lg"></i></span>
+          </div>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
       </div>
@@ -232,11 +238,11 @@ function renderRekapRow(d, i) {
     <td>
       <div class="d-flex gap-1 flex-nowrap">
         <button class="btn-action-xs" style="background:var(--primary-light);color:var(--primary);"
-                onclick="lihatDetailSiswa(${d.id},_rekapData[${i}].nama)">
+                onclick='lihatDetailSiswa(${d.id},"${d.nama.replace(/'/g,"\\'")}")'>
           <i class="bi bi-calendar3"></i> Detail
         </button>
         <button class="btn-action-xs" style="background:linear-gradient(135deg,#16A34A,#15803D);color:white;"
-                onclick="exportSiswaExcel(${d.id},_rekapData[${i}].nama)">
+                onclick='exportSiswaExcel(${d.id},"${d.nama.replace(/'/g,"\\'")}")'>
           <i class="bi bi-download"></i>
         </button>
       </div>
@@ -244,19 +250,32 @@ function renderRekapRow(d, i) {
   </tr>`;
 }
 
+function getFilteredRekap(){
+  const q=(document.getElementById('searchRekap')?.value||'').toLowerCase().trim();
+  if(!q) return _rekapData;
+  return _rekapData.filter(d=>
+    (d.nama||'').toLowerCase().includes(q) ||
+    (d.kelas||'').toLowerCase().includes(q)
+  );
+}
+
 function renderRekapPage(){
+  const data = getFilteredRekap();
   const tbody=document.getElementById('tblRekap');
-  if(!_rekapData.length){
-    tbody.innerHTML='<tr><td colspan="11"><div class="empty-state"><i class="bi bi-inbox"></i><p>Tidak ada data untuk filter ini</p></div></td></tr>';
+  if(!data.length){
+    const msg=_rekapData.length
+      ? '<i class="bi bi-search"></i><p>Tidak ada yang cocok</p>'
+      : '<i class="bi bi-inbox"></i><p>Tidak ada data untuk filter ini</p>';
+    tbody.innerHTML='<tr><td colspan="11"><div class="empty-state">'+msg+'</div></td></tr>';
     document.getElementById('paginationRekap').style.display='none';
     return;
   }
   const pp=_rekapPerPage;
-  const totalPages=Math.ceil(_rekapData.length/pp);
+  const totalPages=Math.ceil(data.length/pp);
   if(_rekapPage>totalPages) _rekapPage=totalPages;
   const start=(_rekapPage-1)*pp;
-  const end=Math.min(start+pp,_rekapData.length);
-  tbody.innerHTML=_rekapData.slice(start,end).map((r,i)=>renderRekapRow(r,start+i)).join('');
+  const end=Math.min(start+pp,data.length);
+  tbody.innerHTML=data.slice(start,end).map((r,i)=>renderRekapRow(r,start+i)).join('');
   buildPaginationUI('paginationRekap',{
     currentPage:_rekapPage, totalPages, currentSize:_rekapPerPage,
     sizes:[5,10,15,20,25,50],

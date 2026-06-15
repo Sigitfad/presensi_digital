@@ -52,12 +52,16 @@
 
     <!-- Ringkasan -->
     <div id="ringkasan" style="padding:11px 20px;background:#F8FAFF;border-bottom:1px solid rgba(0,0,0,0.05);display:none;">
-      <div class="d-flex gap-4 flex-wrap">
+      <div class="d-flex gap-4 flex-wrap align-items-center">
         <div style="font-size:13px;color:var(--gray)">Total: <strong id="r-total" style="color:var(--dark)">0</strong></div>
         <div style="font-size:13px;color:var(--gray)">Hadir: <strong id="r-tepat" style="color:#059669">0</strong></div>
         <div style="font-size:13px;color:var(--gray)">Terlambat: <strong id="r-terlambat" style="color:#D97706">0</strong></div>
         <div style="font-size:13px;color:var(--gray)">Izin: <strong id="r-izin" style="color:#2563EB">0</strong></div>
         <div style="font-size:13px;color:var(--gray)">Sakit: <strong id="r-sakit" style="color:#7C3AED">0</strong></div>
+        <div style="position:relative;min-width:180px;margin-left:auto;">
+          <input type="text" id="searchRiwayat" placeholder="Cari NISN / nama / kelas / JK / jam..." style="width:100%;font-size:12px;padding:4px 24px 4px 8px;border-radius:6px;border:1.5px solid #E2E8F0;background:white;color:#475569;outline:none;box-sizing:border-box;" oninput="document.getElementById('clearRiwayatSearch').style.display=this.value?'block':'none';renderRiwayatPage()">
+          <span id="clearRiwayatSearch" style="display:none;position:absolute;top:50%;right:6px;transform:translateY(-50%);cursor:pointer;font-size:11px;color:#94A3B8;line-height:1;z-index:2;" onclick="document.getElementById('searchRiwayat').value='';document.getElementById('clearRiwayatSearch').style.display='none';renderRiwayatPage();document.getElementById('searchRiwayat').focus()"><i class="bi bi-x-lg"></i></span>
+        </div>
       </div>
     </div>
 
@@ -101,19 +105,46 @@ function renderRiwayatRow(d, i) {
   </tr>`;
 }
 
+function getFilteredRiwayat(){
+  const q=(document.getElementById('searchRiwayat')?.value||'').toLowerCase().trim();
+  if(!q) return allData;
+  return allData.filter(d=>
+    (d.nisn||'').includes(q) ||
+    (d.nama||'').toLowerCase().includes(q) ||
+    (d.kelas||'').toLowerCase().includes(q) ||
+    (d.jenis_kelamin||'').toLowerCase().includes(q) ||
+    (d.jam_masuk||'').slice(0,5).includes(q)
+  );
+}
+
 function renderRiwayatPage(){
+  const data = getFilteredRiwayat();
   const tbody = document.getElementById('tblRiwayat');
-  if(!allData.length){
-    tbody.innerHTML='<tr><td colspan="8"><div class="empty-state"><i class="bi bi-inbox"></i><p>Tidak ada data untuk filter ini</p></div></td></tr>';
+
+  const hadir     = data.filter(d=>d.status==='Hadir').length;
+  const terlambat = data.filter(d=>d.status==='Terlambat').length;
+  const izin      = data.filter(d=>d.status==='Izin').length;
+  const sakit     = data.filter(d=>d.status==='Sakit').length;
+  document.getElementById('r-total').textContent     = data.length;
+  document.getElementById('r-tepat').textContent     = hadir;
+  document.getElementById('r-terlambat').textContent = terlambat;
+  document.getElementById('r-izin').textContent      = izin;
+  document.getElementById('r-sakit').textContent     = sakit;
+
+  if(!data.length){
+    const msg = allData.length
+      ? '<i class="bi bi-search"></i><p>Tidak ada yang cocok</p>'
+      : '<i class="bi bi-inbox"></i><p>Tidak ada data untuk filter ini</p>';
+    tbody.innerHTML='<tr><td colspan="8"><div class="empty-state">'+msg+'</div></td></tr>';
     document.getElementById('paginationRiwayat').style.display='none';
     return;
   }
   const pp=_riwayatPerPage;
-  const totalPages=Math.ceil(allData.length/pp);
+  const totalPages=Math.ceil(data.length/pp);
   if(_riwayatPage>totalPages) _riwayatPage=totalPages;
   const start=(_riwayatPage-1)*pp;
-  const end=Math.min(start+pp,allData.length);
-  tbody.innerHTML=allData.slice(start,end).map((r,i)=>renderRiwayatRow(r,start+i)).join('');
+  const end=Math.min(start+pp,data.length);
+  tbody.innerHTML=data.slice(start,end).map((r,i)=>renderRiwayatRow(r,start+i)).join('');
   buildPaginationUI('paginationRiwayat',{
     currentPage:_riwayatPage, totalPages, currentSize:_riwayatPerPage,
     sizes:[5,10,15,20,25,50],
@@ -134,15 +165,24 @@ async function loadRiwayat(){
   if(!res) return;
   allData = res.data || [];
 
-  const hadir    = allData.filter(d=>d.status==='Hadir').length;
-  const terlambat= allData.filter(d=>d.status==='Terlambat').length;
-  const izin     = allData.filter(d=>d.status==='Izin').length;
-  const sakit    = allData.filter(d=>d.status==='Sakit').length;
-  document.getElementById('r-total').textContent    = allData.length;
-  document.getElementById('r-tepat').textContent    = hadir;
-  document.getElementById('r-terlambat').textContent= terlambat;
-  document.getElementById('r-izin').textContent     = izin;
-  document.getElementById('r-sakit').textContent    = sakit;
+  const classesInData = [...new Set(allData.map(d=>d.kelas).filter(Boolean))].sort();
+  const filterEl = document.getElementById('filterKelas');
+  const curKelas = filterEl.value;
+  filterEl.innerHTML = '<option value="">Semua Kelas</option>' + classesInData.map(k=>'<option value="'+k+'">'+k+'</option>').join('');
+  filterEl.value = classesInData.includes(curKelas) ? curKelas : '';
+
+  const session = window._session || {};
+  const pengampu = session.pengampuKelas || 'Semua';
+  const role = session.role || 'operator';
+  if (role !== 'operator' && pengampu !== 'Semua' && !pengampu.includes(',')) {
+    filterEl.value = pengampu;
+    filterEl.disabled = true;
+    filterEl.style.opacity = '0.6';
+  } else {
+    filterEl.disabled = false;
+    filterEl.style.opacity = '';
+  }
+
   document.getElementById('ringkasan').style.display= 'block';
 
   _riwayatPage = 1;
