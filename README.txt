@@ -1,12 +1,11 @@
 ============================================================
-  PRESENSI SISWA-SISWI SDN KARANGPAWITAN 1 v2.0
-  Node.js + SQLite Edition
-  TANPA XAMPP / LARAGON / DATABASE SERVER
+  PRESENSI DIGITAL SDN KARANGPAWITAN 1
+  Node.js + SQLite Edition (Tanpa XAMPP/Laragon)
 ============================================================
 
 PERSYARATAN
 -----------
-- Node.js versi 16 ke atas  →  https://nodejs.org  (pilih LTS)
+- Node.js versi 16+  →  https://nodejs.org (pilih LTS)
 - Browser: Chrome / Edge / Firefox
 - Koneksi internet (hanya saat install pertama kali)
 
@@ -23,10 +22,9 @@ LANGKAH 1 — Install Node.js (jika belum)
 
 LANGKAH 2 — Jalankan Aplikasi
   → Double-click: Jalankan.bat
-  → Tunggu hingga muncul "Server berjalan..."
+  → Tunggu hingga muncul "Server berjalan pada port 3000"
   → Browser terbuka otomatis ke http://localhost:3000
-
-  Login: username = admin / password = password
+  → Login: Tempelkan kartu RFID UID yang sudah terdaftar
 
 CATATAN PENTING:
   ✔ JANGAN TUTUP jendela hitam (terminal) selama aplikasi dipakai
@@ -56,10 +54,22 @@ CARA 3 — Install Manual
 CARA 4 — Manual via CMD
   → Tekan Windows+R, ketik "cmd", Enter
   → Ketik: cd /d "PATH_FOLDER_ANDA"
-     Contoh: cd /d "C:\Users\ACER NITRO\Desktop\presensi-node"
+     Contoh: cd /d "C:\Users\ACER NITRO\Desktop\presensi_digital"
   → Ketik: npm install
   → Ketik: node server.js
   → Buka browser: http://localhost:3000
+
+
+============================================================
+LOGIN — KARTU RFID (UID)
+============================================================
+Aplikasi ini menggunakan kartu RFID untuk login.
+Tidak ada login username/password.
+
+- Operator: Daftarkan UID kartu RFID melalui menu Pengguna
+- Guru & staf: Tempelkan kartu RFID yang sudah didaftarkan
+- Login pertama: Buka menu Pengguna → Tambah → Masukkan UID
+- Setiap kartu RFID memiliki UID 10 digit unik
 
 
 ============================================================
@@ -91,101 +101,123 @@ MASALAH: Browser tidak terbuka otomatis
 → Buka manual: http://localhost:3000
 → Tunggu 5-10 detik setelah server jalan
 
-MASALAH: Kamera tidak bisa scan QR
-→ Gunakan Chrome atau Edge
-→ Akses via localhost (sudah aman, tidak perlu HTTPS)
-→ Klik Allow/Izinkan saat minta akses kamera
-→ Gunakan Input Manual NISN sebagai alternatif
+MASALAH: RFID tidak terbaca
+→ Pastikan kartu ditempelkan langsung ke reader USB
+→ Tunggu bunyi beep reader
+→ Jika sering gagal, daftarkan ulang UID via menu Pengguna
+→ Gunakan UID manual (input teks) sebagai alternatif
 
 MASALAH: Foto tidak muncul setelah upload
-→ Pastikan folder public/uploads/foto-siswa/ ada
-→ Ukuran foto maksimal 2MB
+→ Pastikan folder uploads tersedia
+→ Ukuran foto maksimal 2MB (siswa) / 10MB (ijazah/surat)
+→ Refresh halaman setelah upload
 
 
 ============================================================
 STRUKTUR FOLDER
 ============================================================
 
-presensi-node/
+presensi_digital/
 │
-├── server.js           → Server utama
-├── database.js         → Setup database SQLite otomatis
-├── package.json        → Daftar paket Node.js
+├── server.js           → Server utama (Express)
+├── database.js         → Setup SQLite + fungsi query
+├── package.json        → Daftar dependensi Node.js
+├── Jalankan.bat        → Klik 2x untuk menjalankan
+├── Debug.bat           → Debug jika ada masalah
+├── InstallManual.bat   → Install ulang dependencies
+├── database.py         → Tool Python (opsional, untuk export)
 │
-├── routes/
-│   ├── auth.js         → Login, register, logout
+├── routes/             → API backend
+│   ├── auth.js         → Login/logout via UID
 │   ├── pages.js        → Routing halaman HTML
-│   ├── siswa.js        → API data siswa + foto
-│   ├── presensi.js     → API scan + riwayat + export
-│   ├── rekap.js        → API rekap bulanan
-│   ├── users.js        → API manajemen pengguna
-│   ├── settings.js     → API pengaturan jam masuk
-│   ├── identitas.js    → API identitas sekolah
-│   ├── actlog.js       → API log aktivitas
-│   ├── backup.js       → API backup database
-│   └── dashboard.js    → API statistik
+│   ├── siswa.js        → CRUD siswa + kenaikan kelas
+│   ├── presensi.js     → Scan RFID + riwayat
+│   ├── rekap.js        → Rekap presensi bulanan
+│   ├── users.js        → Manajemen pengguna & role
+│   ├── settings.js     → Pengaturan jam & batas terlambat
+│   ├── identitas.js    → Identitas sekolah
+│   ├── alumni.js       → Data lulusan
+│   ├── pindahan.js     → Data pindahan
+│   ├── actlog.js       → Log aktivitas
+│   ├── backup.js       → Backup & restore
+│   └── dashboard.js    → Statistik dashboard
 │
-├── views/              → Halaman HTML
+├── views/              → Halaman frontend
 │   ├── login.html
-│   ├── register.html
 │   ├── dashboard.html
-│   ├── siswa.html      → CRUD siswa + upload foto
-│   ├── scan.html       → Scan QR + popup berhasil
-│   ├── riwayat.html    → Riwayat + export CSV/Excel
-│   ├── rekap.html      → Rekap bulanan + kalender
-│   ├── qrcode.html     → Cetak QR dengan identitas
+│   ├── siswa.html      → CRUD siswa + hapus massal
+│   ├── view_siswa.html → Detail & export rekap per siswa
+│   ├── scan.html       → Scan RFID + popup absen
+│   ├── riwayat.html    → Riwayat presensi + filter
+│   ├── rekap.html      → Rekap bulanan + export Excel
+│   ├── alumni.html     → Data lulusan + upload ijazah
+│   ├── pindahan.html   → Data pindahan + surat pindah
 │   ├── users.html      → Manajemen pengguna & role
-│   ├── settings.html   → Pengaturan jam + identitas sekolah
+│   ├── settings.html   → Jam masuk, identitas, notif WA
 │   ├── actlog.html     → Log aktivitas
 │   ├── backup.html     → Backup & restore database
 │   └── forbidden.html  → Halaman akses ditolak
 │
 ├── public/
-│   ├── css/style.css   → Stylesheet
-│   ├── js/app.js       → JavaScript utama
+│   ├── css/style.css   → Stylesheet utama
+│   ├── js/app.js       → JavaScript utama (helpers, layout)
 │   └── uploads/
-│       ├── foto-siswa/ → Foto siswa (dibuat otomatis)
-│       └── logo/       → Logo sekolah (dibuat otomatis)
+│       ├── foto-siswa/ → Foto siswa
+│       ├── foto-user/  → Foto pengguna
+│       ├── ijazah/     → Scan ijazah (PDF/gambar)
+│       ├── surat-pindah/ → Surat pindah (PDF/gambar)
+│       └── logo/       → Logo sekolah
 │
 ├── database/
-│   ├── presensi.db     → File database (dibuat otomatis)
-│   ├── sessions/       → Session login (dibuat otomatis)
-│   └── backups/        → File backup (dibuat otomatis)
+│   ├── presensi.db     → File database SQLite
+│   ├── sessions/       → Session login
+│   └── backups/        → File backup (.db / .json)
 │
-├── Jalankan.bat        → Klik 2x untuk menjalankan
-├── Debug.bat           → Gunakan jika ada masalah
-├── InstallManual.bat   → Install ulang dependencies
-└── README.txt          → Panduan ini
 
 
 ============================================================
 BACKUP DATA
 ============================================================
-Seluruh data ada di 1 file: database/presensi.db
-Backup via menu Backup Database di aplikasi, atau
-copy manual file database/presensi.db ke tempat aman.
+Semua data dalam 1 file: database/presensi.db
+
+Backup via menu Backup Database di aplikasi:
+  - Backup .db (format asli, siap restore langsung)
+  - Backup .json (data portabel, bisa diedit)
+
+Restore:
+  - Upload file .db atau .json, lalu klik Restore
+  - Server restart otomatis setelah restore
+  - Refresh browser setelah ±5 detik
 
 
 ============================================================
-FITUR LENGKAP v2.0
+FITUR LENGKAP
 ============================================================
-✓ Login & Registrasi Operator
-✓ Role: Kepala Sekolah / Guru / Operator
-✓ Dashboard statistik 6 kategori (Hadir, Terlambat, Izin, Sakit, Alpha)
-✓ CRUD Siswa + Upload Foto Siswa
-✓ Sidebar collapse (icon saja / icon + teks)
-✓ Generate & Cetak QR Code (download dengan identitas lengkap)
-✓ Scan QR via kamera + Popup "Absen Berhasil" dengan foto siswa
-✓ Input manual NISN (alternatif kamera)
-✓ Rekap Presensi Bulanan (kalender visual per siswa)
-✓ Persentase kehadiran per siswa
-✓ Riwayat Presensi + filter tanggal & kelas
-✓ Export CSV & Excel (.xlsx)
-✓ Pengaturan Jam Masuk & Batas Terlambat
+✓ Login dengan Kartu RFID (UID)
+✓ Role: Operator / Guru / Kepala Sekolah / Penjaga Sekolah / Guru Bidang
+✓ Dashboard statistik 7 kategori (Hadir, Terlambat, Izin, Sakit, Alpha)
+✓ CRUD Siswa + Upload Foto
+✓ CRUD Pengguna (Guru & Staf) + Upload Foto
+✓ Data Lulusan (Alumni) + Upload Ijazah (PDF/gambar)
+✓ Data Pindahan + Upload Surat Pindah (PDF/gambar)
+✓ Kenaikan Kelas & Kelulusan Massal
+✓ Import Data Siswa dari CSV
+✓ Import Data Pengguna dari CSV
+✓ Export CSV (Siswa, Pengguna)
+✓ Export Excel (Rekap per Siswa, per Kelas, per Siswa Detail)
+✓ Loading Progress Indicators untuk Export & Proses Massal
+✓ Rekap Presensi Bulanan (per siswa & per kelas)
+✓ Riwayat Presensi + Filter Tanggal & Kelas
+✓ Scan RFID via USB Reader (Serial)
+✓ Input Manual (alternatif jika RFID gagal)
+✓ Pengaturan Jam Masuk & Batas Waktu Terlambat
 ✓ Identitas Sekolah (nama, alamat, logo, tahun ajaran)
-✓ Log Aktivitas (login, edit, hapus, scan)
-✓ Backup & Restore Database
-✓ Responsive mobile-friendly
+✓ Notifikasi WhatsApp (via API)
+✓ Log Aktivitas (login, edit, hapus, scan, dll)
+✓ Backup & Restore (.db & .json)
+✓ Responsive Mobile-friendly
+✓ Sidebar Collapse (ikon saja / ikon + teks)
+
 
 ============================================================
 INFO
@@ -194,5 +226,5 @@ Versi    : 2.0.0
 Backend  : Node.js + Express
 Database : SQLite (sql.js - pure JavaScript)
 Frontend : Bootstrap 5 + Vanilla JavaScript
-Port     : 3000 (default)
+Port     : 3000 (default, bisa diubah di server.js)
 ============================================================

@@ -38,6 +38,7 @@ initDB().then(() => {
   app.use('/api/rekap',      require('./routes/rekap'));
   app.use('/api/log',        require('./routes/actlog'));
   app.use('/api/backup',     require('./routes/backup'));
+  app.use('/api/whatsapp',   require('./routes/whatsapp').router);
   app.use('/api/identitas',  require('./routes/identitas'));
   app.use('/api/kelas',      require('./routes/kelas'));
   app.use('/api/alumni',     require('./routes/alumni'));

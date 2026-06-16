@@ -193,7 +193,7 @@
     <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
       <div class="modal-header" style="background:linear-gradient(135deg,#F59E0B,#D97706);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
         <h5 class="modal-title text-white fw-bold">Edit Siswa</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close btn-close-white" onclick="tutupEdit()"></button>
       </div>
       <div class="modal-body p-4">
         <div id="alertEdit"></div>
@@ -224,7 +224,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn-batal" data-bs-dismiss="modal">Batal</button>
+        <button class="btn-batal" onclick="tutupEdit()">Batal</button>
         <button class="btn-edit-custom" style="padding:8px 18px;font-size:13px;" onclick="updateSiswa()">Update</button>
       </div>
     </div>
@@ -349,7 +349,7 @@
     <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
       <div class="modal-header" style="background:linear-gradient(135deg,#059669,#047857);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
         <h5 class="modal-title text-white fw-bold">Import Data Siswa (.CSV)</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close btn-close-white" onclick="tutupImportCsv()"></button>
       </div>
       <div class="modal-body p-4">
         <div id="alertImportCsv" style="font-size:12px;"></div>
@@ -370,7 +370,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn-close-custom" data-bs-dismiss="modal">Tutup</button>
+        <button class="btn-close-custom" onclick="tutupImportCsv()">Tutup</button>
         <button class="btn-primary-custom" id="btnImportUpload" onclick="uploadImportCsv()" style="display:none;background:linear-gradient(135deg,#059669,#047857);">Upload & Import</button>
       </div>
     </div>
@@ -382,6 +382,7 @@
 <script>
 let tambahFotoBlob=null, tambahFotoUrl='';
 let editFotoBlob=null,   editFotoUrl='',  editFotoSrcLama='', editSiswaId=null;
+let _editAwal={};
 
 // ── Buka foto di tabel (klik foto kecil) ──
 function bukaTabelFoto(s){
@@ -585,6 +586,21 @@ function bukaEdit(s){
     ? `<img src="${s.foto}" class="foto-circle-lg" onerror="this.outerHTML='<div class=\\'foto-ini-lg\\'>${ini}</div>'">`
     : `<div class="foto-ini-lg">${ini}</div>`;
   openModal('modalEdit');
+  const ids=['edit_nama','edit_nik','edit_nipd','edit_ttlahir','edit_tanggallahir','edit_alamat','edit_nisn','edit_uid','edit_kelas','edit_jk','edit_agama','edit_nohp_ortu'];
+  _editAwal={};ids.forEach(id=>_editAwal[id]=document.getElementById(id).value);
+  _editAwal.fotoSrc=editFotoSrcLama;
+}
+
+function editBerubah(){
+  const ids=Object.keys(_editAwal).filter(k=>k!=='fotoSrc');
+  return ids.some(id=>document.getElementById(id).value!==_editAwal[id])
+    || editFotoBlob!==null
+    || editFotoSrcLama!==_editAwal.fotoSrc;
+}
+
+function tutupEdit(){
+  if(!editBerubah()){closeModal('modalEdit');return;}
+  Swal.fire({title:'Perubahan Belum Disimpan',text:'Ada perubahan pada data siswa yang belum disimpan.',icon:'warning',showCancelButton:true,confirmButtonText:'Lanjut Edit',cancelButtonText:'Discard',confirmButtonColor:'#2563EB',cancelButtonColor:'#DC2626',reverseButtons:true,width:'320px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}}).then(result=>{if(result.dismiss)closeModal('modalEdit');});
 }
 
 async function updateSiswa(){
@@ -650,7 +666,9 @@ function hapusMassalSiswa(){
   const checked=[...document.querySelectorAll('.siswa-check:checked')].map(cb=>parseInt(cb.value));
   if(!checked.length) return;
   konfirmasiHapus('Hapus Massal Siswa?',`${checked.length} siswa dan presensinya akan dihapus permanen.`,async()=>{
+    Swal.fire({title:'Menghapus...',html:`<i class="bi bi-arrow-repeat spin"></i> ${checked.length} siswa`,allowOutsideClick:false,didOpen:()=>{Swal.showLoading();}});
     const res=await fetchAPI('/api/siswa/hapus-massal','POST',{ids:checked});
+    Swal.close();
     if(res?.success){
       document.getElementById('selectAllSiswa').checked=false;
       document.querySelectorAll('.siswa-check').forEach(c=>c.checked=false);
@@ -667,7 +685,9 @@ function pindahMassalSiswa(){
   const alasan=document.getElementById('alasanPindah').value.trim();
   const tanggal_pindah=document.getElementById('tanggalPindah').value;
   konfirmasiHapus('Pindahkan ke Data Pindahan?',`${checked.length} siswa akan dipindahkan ke Data Pindahan. Data tidak akan aktif lagi di Data Siswa.`,async()=>{
+    Swal.fire({title:'Memindahkan...',html:`<i class="bi bi-arrow-repeat spin"></i> ${checked.length} siswa`,allowOutsideClick:false,didOpen:()=>{Swal.showLoading();}});
     const res=await fetchAPI('/api/siswa/pindah-massal','POST',{ids:checked,alasan,tanggal_pindah});
+    Swal.close();
     if(res?.success){showToast(res.message,'success');loadSiswa();document.getElementById('alasanPindah').value='';document.getElementById('tanggalPindah').value='';}
     else showToast(res?.message||'Gagal','error');
   },'Pindahkan','btn-primary');
@@ -1249,7 +1269,9 @@ async function prosesKenaikanKelas(){
     customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}
   });
   if(!konf) return;
+  Swal.fire({title:'Memproses...',html:`<i class="bi bi-arrow-repeat spin"></i> ${promos.length+grads.length} siswa`,allowOutsideClick:false,didOpen:()=>{Swal.showLoading();}});
   const res=await fetchAPI('/api/siswa/kenaikan-kelas','POST',{promotions:promos,graduations:grads,tahun_lulus:tl||null});
+  Swal.close();
   if(res?.success){
     showToast(res.message,'success');
     closeModal('modalKenaikanKelas');
@@ -1307,6 +1329,12 @@ function onCsvFileSelect(inp){
   document.getElementById('btnImportUpload').style.display='inline-flex';
 }
 
+function tutupImportCsv(){
+  const file=document.getElementById('csvFileInput').files[0];
+  if(!file){closeModal('modalImportCsv');return;}
+  Swal.fire({title:'Perubahan Belum Disimpan',text:'File CSV sudah dipilih namun belum diimport.',icon:'warning',showCancelButton:true,confirmButtonText:'Lanjut Edit',cancelButtonText:'Discard',confirmButtonColor:'#2563EB',cancelButtonColor:'#DC2626',reverseButtons:true,width:'320px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}}).then(result=>{if(result.dismiss)closeModal('modalImportCsv');});
+}
+
 async function uploadImportCsv(){
   const file=document.getElementById('csvFileInput').files[0];
   if(!file){showToast('Pilih file CSV terlebih dahulu','error');return;}
@@ -1342,7 +1370,7 @@ async function uploadImportCsv(){
 
 function exportCsv(){
   const params=new URLSearchParams({search:document.getElementById('searchInput').value,kelas:document.getElementById('filterKelas').value.trim()});
-  const a=document.createElement('a');a.href='/api/siswa/export?'+params;a.download='data_siswa.csv';document.body.appendChild(a);a.click();a.remove();
+  downloadWithProgress('/api/siswa/export?'+params,'data_siswa.csv',_siswaData.length,'siswa');
 }
 
 init();

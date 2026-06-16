@@ -2,7 +2,7 @@ const express = require('express');
 const path    = require('path');
 const fs      = require('fs');
 const multer  = require('multer');
-const { queryAll, queryOne, run, logActivity } = require('../database');
+const { queryAll, queryOne, run, runWithoutSave, saveDB, logActivity } = require('../database');
 const router  = express.Router();
 
 const uploadDir = path.join(__dirname,'../public/uploads/surat-pindah');
@@ -102,13 +102,21 @@ router.post('/hapus-massal', (req,res) => {
   if(!ids||!Array.isArray(ids)||!ids.length)
     return res.json({success:false,message:'Tidak ada data yang dipilih'});
   let count = 0;
-  ids.forEach(id => {
-    const d = queryOne('SELECT * FROM pindahan WHERE id=?',[id]);
-    if(d){
-      if(d.surat_pindah){ const p=path.join(__dirname,'../public',d.surat_pindah); if(fs.existsSync(p)) fs.unlinkSync(p); }
-      try{ run('DELETE FROM pindahan WHERE id=?',[id]); count++; } catch(e){}
-    }
-  });
+  try {
+    runWithoutSave('BEGIN TRANSACTION');
+    ids.forEach(id => {
+      const d = queryOne('SELECT * FROM pindahan WHERE id=?',[id]);
+      if(d){
+        if(d.surat_pindah){ const p=path.join(__dirname,'../public',d.surat_pindah); if(fs.existsSync(p)) fs.unlinkSync(p); }
+        try{ runWithoutSave('DELETE FROM pindahan WHERE id=?',[id]); count++; } catch(e){}
+      }
+    });
+    runWithoutSave('COMMIT');
+    saveDB();
+  } catch(e) {
+    try { runWithoutSave('ROLLBACK'); } catch(er) {}
+    return res.json({success:false,message:e.message});
+  }
   logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,'Hapus Pindahan',`Hapus massal: ${count} data`);
   res.json({success:true,message:`${count} data pindahan berhasil dihapus`});
 });

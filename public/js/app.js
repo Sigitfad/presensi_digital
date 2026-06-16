@@ -628,3 +628,48 @@ function exportCSV(data,filename){
   URL.revokeObjectURL(url);
   showToast('CSV berhasil diekspor!','success');
 }
+
+// ── EXPORT DENGAN PROGRESS LOADING ──
+async function downloadWithProgress(url, filename, total, label) {
+  const labelText = label || 'data';
+  const msg = total
+    ? `Mengekspor ${total} ${labelText}...`
+    : 'Menyiapkan file...';
+
+  Swal.fire({
+    title: 'Export Data',
+    html: `<div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px 0;">
+      <div class="spinner-border text-primary" role="status" style="width:2.5rem;height:2.5rem;"></div>
+      <div style="font-size:14px;color:#475569;">${msg}</div>
+      ${total ? '<div style="font-size:12px;color:#94A3B8;">Mohon tunggu, file sedang disiapkan...</div>' : ''}
+    </div>`,
+    allowOutsideClick: false,
+    showConfirmButton: false,
+    width: '340px',
+    padding: '16px',
+    customClass: { popup: 'swal-kecil' }
+  });
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      let errMsg = 'Gagal mengunduh file';
+      try { const j = await res.json(); errMsg = j.message || errMsg; } catch(e) {}
+      throw new Error(errMsg);
+    }
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(blobUrl);
+    Swal.close();
+    showToast(`${total ? total+' data ' : ''}Berhasil diekspor!`, 'success');
+  } catch(e) {
+    Swal.close();
+    showToast('Gagal: ' + e.message, 'error');
+  }
+}

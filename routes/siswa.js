@@ -185,14 +185,22 @@ router.post('/hapus-massal', (req,res) => {
   if(!ids||!Array.isArray(ids)||!ids.length)
     return res.json({success:false,message:'Tidak ada data yang dipilih'});
   let count=0;
-  ids.forEach(id=>{
-    const s=queryOne('SELECT * FROM siswa WHERE id=?',[id]);
-    if(s){
-      if(s.foto){const p=path.join(__dirname,'../public',s.foto);if(fs.existsSync(p))fs.unlinkSync(p);}
-      try{run('DELETE FROM siswa WHERE id=?',[id]);count++;}
-      catch(e){}
-    }
-  });
+  try {
+    runWithoutSave('BEGIN TRANSACTION');
+    ids.forEach(id=>{
+      const s=queryOne('SELECT * FROM siswa WHERE id=?',[id]);
+      if(s){
+        if(s.foto){const p=path.join(__dirname,'../public',s.foto);if(fs.existsSync(p))fs.unlinkSync(p);}
+        try{runWithoutSave('DELETE FROM siswa WHERE id=?',[id]);count++;}
+        catch(e){}
+      }
+    });
+    runWithoutSave('COMMIT');
+    saveDB();
+  } catch(e) {
+    try { runWithoutSave('ROLLBACK'); } catch(er) {}
+    return res.json({success:false,message:e.message});
+  }
   logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,'Hapus Siswa',`Hapus massal: ${count} siswa`);
   res.json({success:true,message:`${count} siswa berhasil dihapus`});
 });
@@ -204,19 +212,25 @@ router.post('/lulus-massal', (req,res) => {
   if(!tahun_lulus)
     return res.json({success:false,message:'Tahun lulus wajib diisi'});
   let count=0;
-  ids.forEach(id=>{
-    try{
-      const s=queryOne('SELECT * FROM siswa WHERE id=?',[id]);
-      if(s){
-        // Insert ke alumni
-        run('INSERT INTO alumni (nama,nisn,kelas_lulus,tahun_lulus,foto,jenis_kelamin,nik,tempat_lahir,tanggal_lahir,agama,alamat,no_hp_ortu,nipd) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',
-          [s.nama,s.nisn,s.kelas,tahun_lulus,s.foto||'',s.jenis_kelamin||'',s.nik||'',s.tempat_lahir||'',s.tanggal_lahir||'',s.agama||'',s.alamat||'',s.no_hp_ortu||'',s.nipd||'']);
-        // Hapus dari siswa
-        run('DELETE FROM siswa WHERE id=?',[id]);
-        count++;
-      }
-    }catch(e){}
-  });
+  try {
+    runWithoutSave('BEGIN TRANSACTION');
+    ids.forEach(id=>{
+      try{
+        const s=queryOne('SELECT * FROM siswa WHERE id=?',[id]);
+        if(s){
+          runWithoutSave('INSERT INTO alumni (nama,nisn,kelas_lulus,tahun_lulus,foto,jenis_kelamin,nik,tempat_lahir,tanggal_lahir,agama,alamat,no_hp_ortu,nipd) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',
+            [s.nama,s.nisn,s.kelas,tahun_lulus,s.foto||'',s.jenis_kelamin||'',s.nik||'',s.tempat_lahir||'',s.tanggal_lahir||'',s.agama||'',s.alamat||'',s.no_hp_ortu||'',s.nipd||'']);
+          runWithoutSave('DELETE FROM siswa WHERE id=?',[id]);
+          count++;
+        }
+      }catch(e){}
+    });
+    runWithoutSave('COMMIT');
+    saveDB();
+  } catch(e) {
+    try { runWithoutSave('ROLLBACK'); } catch(er) {}
+    return res.json({success:false,message:e.message});
+  }
   logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,'Lulus Massal',`${count} siswa dipindahkan ke Data Lulusan tahun ${tahun_lulus}`);
   res.json({success:true,message:`${count} siswa berhasil dipindahkan ke Data Lulusan`});
 });
@@ -226,17 +240,25 @@ router.post('/pindah-massal', (req,res) => {
   if(!ids||!Array.isArray(ids)||!ids.length)
     return res.json({success:false,message:'Tidak ada data yang dipilih'});
   let count=0;
-  ids.forEach(id=>{
-    try{
-      const s=queryOne('SELECT * FROM siswa WHERE id=?',[id]);
-      if(s){
-        run('INSERT INTO pindahan (nama,nisn,kelas,alasan,tanggal_pindah,foto,jenis_kelamin,nik,tempat_lahir,tanggal_lahir,agama,alamat,no_hp_ortu,nipd) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-          [s.nama,s.nisn,s.kelas,alasan,tanggal_pindah,s.foto||'',s.jenis_kelamin||'',s.nik||'',s.tempat_lahir||'',s.tanggal_lahir||'',s.agama||'',s.alamat||'',s.no_hp_ortu||'',s.nipd||'']);
-        run('DELETE FROM siswa WHERE id=?',[id]);
-        count++;
-      }
-    }catch(e){}
-  });
+  try {
+    runWithoutSave('BEGIN TRANSACTION');
+    ids.forEach(id=>{
+      try{
+        const s=queryOne('SELECT * FROM siswa WHERE id=?',[id]);
+        if(s){
+          runWithoutSave('INSERT INTO pindahan (nama,nisn,kelas,alasan,tanggal_pindah,foto,jenis_kelamin,nik,tempat_lahir,tanggal_lahir,agama,alamat,no_hp_ortu,nipd) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+            [s.nama,s.nisn,s.kelas,alasan,tanggal_pindah,s.foto||'',s.jenis_kelamin||'',s.nik||'',s.tempat_lahir||'',s.tanggal_lahir||'',s.agama||'',s.alamat||'',s.no_hp_ortu||'',s.nipd||'']);
+          runWithoutSave('DELETE FROM siswa WHERE id=?',[id]);
+          count++;
+        }
+      }catch(e){}
+    });
+    runWithoutSave('COMMIT');
+    saveDB();
+  } catch(e) {
+    try { runWithoutSave('ROLLBACK'); } catch(er) {}
+    return res.json({success:false,message:e.message});
+  }
   logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,'Pindah Massal',`${count} siswa dipindahkan ke Data Pindahan`);
   res.json({success:true,message:`${count} siswa berhasil dipindahkan ke Data Pindahan`});
 });
@@ -244,26 +266,34 @@ router.post('/pindah-massal', (req,res) => {
 router.post('/kenaikan-kelas', (req,res) => {
   const { promotions, graduations, tahun_lulus } = req.body;
   let sukses = 0, gagal = 0;
-  if (promotions && Array.isArray(promotions)) {
-    promotions.forEach(p => {
-      try {
-        run('UPDATE siswa SET kelas=?, updated_at=datetime("now","localtime") WHERE id=?', [p.kelas_baru, p.id]);
-        sukses++;
-      } catch(e) { gagal++; }
-    });
-  }
-  if (graduations && Array.isArray(graduations) && tahun_lulus) {
-    graduations.forEach(id => {
-      try {
-        const s = queryOne('SELECT * FROM siswa WHERE id=?', [id]);
-        if (s) {
-          run('INSERT INTO alumni (nama,nisn,kelas_lulus,tahun_lulus,foto,jenis_kelamin,nik,tempat_lahir,tanggal_lahir,agama,alamat,no_hp_ortu,nipd) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',
-            [s.nama,s.nisn,s.kelas,tahun_lulus,s.foto||'',s.jenis_kelamin||'',s.nik||'',s.tempat_lahir||'',s.tanggal_lahir||'',s.agama||'',s.alamat||'',s.no_hp_ortu||'',s.nipd||'']);
-          run('DELETE FROM siswa WHERE id=?', [id]);
+  try {
+    runWithoutSave('BEGIN TRANSACTION');
+    if (promotions && Array.isArray(promotions)) {
+      promotions.forEach(p => {
+        try {
+          runWithoutSave('UPDATE siswa SET kelas=?, updated_at=datetime("now","localtime") WHERE id=?', [p.kelas_baru, p.id]);
           sukses++;
-        }
-      } catch(e) { gagal++; }
-    });
+        } catch(e) { gagal++; }
+      });
+    }
+    if (graduations && Array.isArray(graduations) && tahun_lulus) {
+      graduations.forEach(id => {
+        try {
+          const s = queryOne('SELECT * FROM siswa WHERE id=?', [id]);
+          if (s) {
+            runWithoutSave('INSERT INTO alumni (nama,nisn,kelas_lulus,tahun_lulus,foto,jenis_kelamin,nik,tempat_lahir,tanggal_lahir,agama,alamat,no_hp_ortu,nipd) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',
+              [s.nama,s.nisn,s.kelas,tahun_lulus,s.foto||'',s.jenis_kelamin||'',s.nik||'',s.tempat_lahir||'',s.tanggal_lahir||'',s.agama||'',s.alamat||'',s.no_hp_ortu||'',s.nipd||'']);
+            runWithoutSave('DELETE FROM siswa WHERE id=?', [id]);
+            sukses++;
+          }
+        } catch(e) { gagal++; }
+      });
+    }
+    runWithoutSave('COMMIT');
+    saveDB();
+  } catch(e) {
+    try { runWithoutSave('ROLLBACK'); } catch(er) {}
+    return res.json({success:false,message:e.message});
   }
   logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,'Kenaikan Kelas',`${sukses} siswa diproses`);
   res.json({success:true,sukses,gagal,message:`${sukses} siswa berhasil diproses${gagal?`, ${gagal} gagal`:''}`});

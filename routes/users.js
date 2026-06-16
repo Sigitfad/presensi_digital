@@ -119,15 +119,23 @@ router.post('/hapus-massal', requireOperator, (req,res) => {
   if(!ids||!Array.isArray(ids)||!ids.length)
     return res.json({success:false,message:'Tidak ada data yang dipilih'});
   let count=0, skipped=0;
-  ids.forEach(id=>{
-    const user=queryOne('SELECT * FROM operators WHERE id=?',[id]);
-    if(!user) return;
-    if(user.role==='operator'){skipped++;return;}
-    if(parseInt(id)===req.session.operatorId){skipped++;return;}
-    if(user.foto){const p=path.join(__dirname,'../public',user.foto);if(fs.existsSync(p))fs.unlinkSync(p);}
-    try{run('DELETE FROM operators WHERE id=?',[id]);count++;}
-    catch(e){}
-  });
+  try {
+    runWithoutSave('BEGIN TRANSACTION');
+    ids.forEach(id=>{
+      const user=queryOne('SELECT * FROM operators WHERE id=?',[id]);
+      if(!user) return;
+      if(user.role==='operator'){skipped++;return;}
+      if(parseInt(id)===req.session.operatorId){skipped++;return;}
+      if(user.foto){const p=path.join(__dirname,'../public',user.foto);if(fs.existsSync(p))fs.unlinkSync(p);}
+      try{runWithoutSave('DELETE FROM operators WHERE id=?',[id]);count++;}
+      catch(e){}
+    });
+    runWithoutSave('COMMIT');
+    saveDB();
+  } catch(e) {
+    try { runWithoutSave('ROLLBACK'); } catch(er) {}
+    return res.json({success:false,message:e.message});
+  }
   logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,
               'Hapus User',`Hapus massal: ${count} pengguna`);
   const msg=skipped>0?`${count} dihapus, ${skipped} dilewati (Operator)`:`${count} pengguna berhasil dihapus`;

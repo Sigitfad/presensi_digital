@@ -173,7 +173,7 @@
     <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
       <div class="modal-header" style="background:linear-gradient(135deg,#F59E0B,#D97706);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
         <h5 class="modal-title text-white fw-bold">Edit Pengguna</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close btn-close-white" onclick="tutupEditUser()"></button>
       </div>
       <div class="modal-body p-4">
         <div id="alertEdit"></div>
@@ -215,7 +215,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn-batal" data-bs-dismiss="modal">Batal</button>
+        <button class="btn-batal" onclick="tutupEditUser()">Batal</button>
         <button class="btn-edit-custom" style="padding:8px 18px;font-size:13px;" onclick="updateUser()">Update</button>
       </div>
     </div>
@@ -255,7 +255,7 @@
     <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
       <div class="modal-header" style="background:linear-gradient(135deg,#059669,#047857);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
         <h5 class="modal-title text-white fw-bold">Import Data GTK (.CSV)</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close btn-close-white" onclick="tutupImportCsvGtk()"></button>
       </div>
       <div class="modal-body p-4">
         <div id="alertImportCsvGtk" style="font-size:12px;"></div>
@@ -277,7 +277,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn-close-custom" data-bs-dismiss="modal">Tutup</button>
+        <button class="btn-close-custom" onclick="tutupImportCsvGtk()">Tutup</button>
         <button class="btn-primary-custom" id="btnImportUploadGtk" onclick="uploadImportCsvGtk()" style="display:none;background:linear-gradient(135deg,#059669,#047857);">Upload & Import</button>
       </div>
     </div>
@@ -297,6 +297,7 @@ const ROLE_BADGE={
 
 let tambahUserBlob=null;
 let editUserBlob=null, editUserFotoSrc='', editUserId=null;
+let _editUserAwal={};
 
 // Isi dropdown kelas dari database
 async function isiKelasOptions(selectId){
@@ -771,6 +772,35 @@ async function bukaEdit(u){
     ?`<img src="${u.foto}" class="foto-circle-lg" onerror="this.outerHTML='<div class=\\'foto-ini-lg\\'>${ini}</div>'">`
     :`<div class="foto-ini-lg">${ini}</div>`;
   openModal('modalEdit');
+  const ids=['eu_nama','eu_role','eu_nohp','eu_email','eu_nip','eu_alamat','eu_bidang','eu_uid'];
+  _editUserAwal={};ids.forEach(id=>_editUserAwal[id]=document.getElementById(id).value);
+  _editUserAwal.fotoSrc=editUserFotoSrc;
+  const cbC=document.getElementById('eu_pengampu_checkboxes');
+  if(cbC&&cbC.style.display!=='none'){
+    _editUserAwal.pengampuCb=[...cbC.querySelectorAll('input[type="checkbox"]')].map(cb=>({v:cb.value,c:cb.checked}));
+  } else {
+    _editUserAwal.pengampuVal=document.getElementById('eu_pengampu').value||'Semua';
+  }
+}
+
+function editUserBerubah(){
+  const ids=['eu_nama','eu_role','eu_nohp','eu_email','eu_nip','eu_alamat','eu_bidang','eu_uid'];
+  if(ids.some(id=>document.getElementById(id).value!==_editUserAwal[id])) return true;
+  if(editUserBlob!==null||editUserFotoSrc!==_editUserAwal.fotoSrc) return true;
+  const cbC=document.getElementById('eu_pengampu_checkboxes');
+  if(cbC&&cbC.style.display!=='none'){
+    const cur=[...cbC.querySelectorAll('input[type="checkbox"]:checked')].map(cb=>cb.value).sort().join(',');
+    const awal=(_editUserAwal.pengampuCb||[]).filter(c=>c.c).map(c=>c.v).sort().join(',');
+    if(cur!==awal) return true;
+  } else {
+    if((document.getElementById('eu_pengampu').value||'Semua')!==_editUserAwal.pengampuVal) return true;
+  }
+  return false;
+}
+
+function tutupEditUser(){
+  if(!editUserBerubah()){closeModal('modalEdit');return;}
+  Swal.fire({title:'Perubahan Belum Disimpan',text:'Ada perubahan pada data pengguna yang belum disimpan.',icon:'warning',showCancelButton:true,confirmButtonText:'Lanjut Edit',cancelButtonText:'Discard',confirmButtonColor:'#2563EB',cancelButtonColor:'#DC2626',reverseButtons:true,width:'320px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}}).then(result=>{if(result.dismiss)closeModal('modalEdit');});
 }
 
 async function updateUser(){
@@ -854,7 +884,9 @@ function hapusMassalUser(){
   const checked=[...document.querySelectorAll('.user-check:checked')].map(cb=>parseInt(cb.value));
   if(!checked.length) return;
   konfirmasiHapus('Hapus Massal Pengguna?',`${checked.length} pengguna akan dihapus. Akun Operator akan dilewati.`,async()=>{
+    Swal.fire({title:'Menghapus...',html:`<i class="bi bi-arrow-repeat spin"></i> ${checked.length} pengguna`,allowOutsideClick:false,didOpen:()=>{Swal.showLoading();}});
     const res=await fetchAPI('/api/users/hapus-massal','POST',{ids:checked});
+    Swal.close();
     if(res?.success){showToast(res.message,'success');loadUsers();}
     else showToast(res?.message||'Gagal','error');
   });
@@ -1018,6 +1050,12 @@ function onCsvFileSelectGtk(inp){
   document.getElementById('btnImportUploadGtk').style.display='inline-flex';
 }
 
+function tutupImportCsvGtk(){
+  const file=document.getElementById('csvFileInputGtk').files[0];
+  if(!file){closeModal('modalImportCsvGtk');return;}
+  Swal.fire({title:'Perubahan Belum Disimpan',text:'File CSV sudah dipilih namun belum diimport.',icon:'warning',showCancelButton:true,confirmButtonText:'Lanjut Edit',cancelButtonText:'Discard',confirmButtonColor:'#2563EB',cancelButtonColor:'#DC2626',reverseButtons:true,width:'320px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}}).then(result=>{if(result.dismiss)closeModal('modalImportCsvGtk');});
+}
+
 async function uploadImportCsvGtk(){
   const file=document.getElementById('csvFileInputGtk').files[0];
   if(!file){showToast('Pilih file CSV terlebih dahulu','error');return;}
@@ -1052,7 +1090,7 @@ async function uploadImportCsvGtk(){
 }
 
 function exportCsvGtk(){
-  const a=document.createElement('a');a.href='/api/users/export';a.download='data_gtk.csv';document.body.appendChild(a);a.click();a.remove();
+  downloadWithProgress('/api/users/export','data_gtk.csv',_usersData.length,'pengguna');
 }
 
 async function init(){await loadLayout('users','Data Guru dan Tenaga Kependidikan (GTK)');loadUsers();}

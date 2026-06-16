@@ -127,7 +127,7 @@
     <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
       <div class="modal-header" style="background:linear-gradient(135deg,#F59E0B,#D97706);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
         <h5 class="modal-title text-white fw-bold">Edit Ijazah</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close btn-close-white" onclick="tutupEditIjazah()"></button>
       </div>
       <div class="modal-body p-4">
         <div id="alertEdit"></div>
@@ -145,7 +145,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn-batal" data-bs-dismiss="modal" style="background:#1E293B;color:white;border:none;font-weight:600;padding:8px 18px;font-size:13px;border-radius:8px;transition:all 0.2s linear;cursor:pointer;" onmouseover="this.style.background='#334155';this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 10px rgba(30,41,59,0.3)';" onmouseout="this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';">Batal</button>
+        <button class="btn-batal" onclick="tutupEditIjazah()" style="background:#1E293B;color:white;border:none;font-weight:600;padding:8px 18px;font-size:13px;border-radius:8px;transition:all 0.2s linear;cursor:pointer;" onmouseover="this.style.background='#334155';this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 10px rgba(30,41,59,0.3)';" onmouseout="this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';">Batal</button>
         <button class="btn-primary-custom" onclick="updateAlumni()">Simpan</button>
       </div>
     </div>
@@ -320,6 +320,12 @@ function bukaEditAlumni(a){
     `<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray);line-height:1.8;"><span style="display:inline-block;min-width:90px;font-weight:600;color:var(--gray);">Kelas</span><span style="color:#94A3B8;">:</span> ${a.kelas_lulus}</div>`+
     `<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray);line-height:1.8;"><span style="display:inline-block;min-width:90px;font-weight:600;color:var(--gray);">Tahun Lulus</span><span style="color:#94A3B8;">:</span> ${a.tahun_lulus}</div>`;
   openModal('modalEdit');
+}
+
+function tutupEditIjazah(){
+  const file=document.getElementById('ea_ijazah').files[0];
+  if(!file){closeModal('modalEdit');return;}
+  Swal.fire({title:'Perubahan Belum Disimpan',text:'File ijazah baru sudah dipilih namun belum disimpan.',icon:'warning',showCancelButton:true,confirmButtonText:'Lanjut Edit',cancelButtonText:'Discard',confirmButtonColor:'#2563EB',cancelButtonColor:'#DC2626',reverseButtons:true,width:'320px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}}).then(result=>{if(result.dismiss)closeModal('modalEdit');});
 }
 
 async function updateAlumni(){
@@ -523,7 +529,9 @@ function hapusMassalAlumni(){
   const checked=[...document.querySelectorAll('.alumni-check:checked')].map(cb=>parseInt(cb.value));
   if(!checked.length) return;
   konfirmasiHapus('Hapus Alumni?',`${checked.length} data alumni akan dihapus permanen.`,async()=>{
+    Swal.fire({title:'Menghapus...',html:`<i class="bi bi-arrow-repeat spin"></i> ${checked.length} alumni`,allowOutsideClick:false,didOpen:()=>{Swal.showLoading();}});
     const res=await fetchAPI('/api/alumni/hapus-massal','POST',{ids:checked});
+    Swal.close();
     if(res?.success){showToast(res.message,'success');loadAlumni();loadTahunFilter();}
     else showToast(res?.message||'Gagal','error');
   });

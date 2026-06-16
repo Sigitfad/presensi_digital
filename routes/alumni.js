@@ -2,7 +2,7 @@ const express = require('express');
 const multer  = require('multer');
 const path    = require('path');
 const fs      = require('fs');
-const { queryAll, queryOne, run, logActivity } = require('../database');
+const { queryAll, queryOne, run, runWithoutSave, saveDB, logActivity } = require('../database');
 const router  = express.Router();
 
 const uploadDir = path.join(__dirname,'../public/uploads/ijazah');
@@ -138,13 +138,21 @@ router.post('/hapus-massal', (req,res) => {
   if(!ids||!Array.isArray(ids)||!ids.length)
     return res.json({success:false,message:'Tidak ada data yang dipilih'});
   let count = 0;
-  ids.forEach(id => {
-    const a = queryOne('SELECT * FROM alumni WHERE id=?',[id]);
-    if(a){
-      if(a.ijazah){ const p=path.join(__dirname,'../public',a.ijazah); if(fs.existsSync(p)) fs.unlinkSync(p); }
-      try{ run('DELETE FROM alumni WHERE id=?',[id]); count++; } catch(e){}
-    }
-  });
+  try {
+    runWithoutSave('BEGIN TRANSACTION');
+    ids.forEach(id => {
+      const a = queryOne('SELECT * FROM alumni WHERE id=?',[id]);
+      if(a){
+        if(a.ijazah){ const p=path.join(__dirname,'../public',a.ijazah); if(fs.existsSync(p)) fs.unlinkSync(p); }
+        try{ runWithoutSave('DELETE FROM alumni WHERE id=?',[id]); count++; } catch(e){}
+      }
+    });
+    runWithoutSave('COMMIT');
+    saveDB();
+  } catch(e) {
+    try { runWithoutSave('ROLLBACK'); } catch(er) {}
+    return res.json({success:false,message:e.message});
+  }
   logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,
               'Hapus Alumni',`Hapus massal: ${count} alumni`);
   res.json({success:true,message:`${count} alumni berhasil dihapus`});

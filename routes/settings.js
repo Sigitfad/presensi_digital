@@ -16,8 +16,8 @@ router.get('/', (req,res) => {
 });
 
 router.post('/simpan', (req,res) => {
-  const { jam_masuk, batas_terlambat, batas_alpha, backup_otomatis } = req.body;
-  const updates = { jam_masuk, batas_terlambat, batas_alpha, backup_otomatis };
+  const { jam_masuk, batas_terlambat, batas_alpha, backup_otomatis, wa_api_key, wa_endpoint, wa_template, wa_enabled } = req.body;
+  const updates = { jam_masuk, batas_terlambat, batas_alpha, backup_otomatis, wa_api_key, wa_endpoint, wa_template, wa_enabled };
   Object.entries(updates).forEach(([k,v]) => {
     if (v !== undefined) {
       if (queryOne('SELECT key FROM settings WHERE key=?',[k])) {

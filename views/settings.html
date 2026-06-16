@@ -9,14 +9,29 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="/css/style.css">
   <style>.swal-kecil{font-size:12px!important;border-radius:12px!important;}.swal-title-kecil{font-size:14px!important;padding:0!important;margin:0 0 4px!important;}.swal-text-kecil{font-size:12px!important;margin:0!important;}.swal-btn-kecil{font-size:11px!important;padding:5px 14px!important;border-radius:8px!important;}
-.btn-upload-logo,.btn-upload-foto,.btn-hapus{transition:all .25s ease!important;}.btn-upload-logo:hover{background:#BFDBFE!important;transform:scale(1.08);}.btn-upload-foto:hover{background:#CBD5E1!important;transform:scale(1.08);}.btn-hapus:hover{background:#FECACA!important;transform:scale(1.12);}</style>
+.btn-upload-logo,.btn-upload-foto,.btn-hapus{transition:all .25s ease!important;}.btn-upload-logo:hover{background:#BFDBFE!important;transform:scale(1.08);}.btn-upload-foto:hover{background:#CBD5E1!important;transform:scale(1.08);}.btn-hapus:hover{background:#FECACA!important;transform:scale(1.12);}
+.settings-tabs{border-bottom:1.5px solid #E2E8F0;gap:0;display:flex;}.settings-tabs .nav-link{font-size:13px;font-weight:700;padding:10px 20px;color:#64748B;border:none;border-bottom:2.5px solid transparent;margin-bottom:-1px;background:none;border-radius:0;transition:all .2s;white-space:nowrap;}.settings-tabs .nav-link:hover{color:#1E293B;background:#F8FAFC;}.settings-tabs .nav-link.active{color:#2563EB;border-bottom-color:#2563EB;background:none;}
+#panduanTabs .nav-link{font-size:10px;padding:4px 7px;border-radius:5px;font-weight:600;background:#F1F5F9;color:#475569;border:1.5px solid transparent;transition:all .2s;white-space:nowrap;}
+#panduanTabs .nav-link:hover{background:#E2E8F0;color:#1E293B;}
+#panduanTabs .nav-link.active{background:#2563EB;color:#fff;border-color:#2563EB;}
+#panduanTabs{gap:3px;flex-wrap:wrap;}</style>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
 <body>
 <div id="page-content" class="page-content">
   <div class="page-header"><div class="page-title">Pengaturan</div><div class="page-subtitle">Konfigurasi jam masuk, identitas sekolah, dan sistem</div></div>
 
-  <div class="row g-3">
-    <!-- JAM MASUK -->
+  <ul class="nav nav-tabs settings-tabs" id="settingsTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="sekolah-tab" data-bs-toggle="tab" data-bs-target="#sekolah" type="button" role="tab" aria-controls="sekolah" aria-selected="true"><i class="bi bi-building me-1"></i>Pengaturan Sekolah</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="whatsapp-tab" data-bs-toggle="tab" data-bs-target="#whatsapp" type="button" role="tab" aria-controls="whatsapp" aria-selected="false"><i class="bi bi-whatsapp me-1"></i>Pengaturan WhatsApp</button>
+    </li>
+  </ul>
+  <div class="tab-content" id="settingsTabsContent" style="margin-top:20px;">
+    <div class="tab-pane fade show active" id="sekolah" role="tabpanel" aria-labelledby="sekolah-tab">
+      <div class="row g-3">
+        <!-- JAM MASUK -->
     <div class="col-lg-6">
       <div class="card-modern">
         <div class="card-modern-header">
@@ -94,13 +109,237 @@
       </div>
     </div>
   </div>
+    </div>
+    <div class="tab-pane fade" id="whatsapp" role="tabpanel" aria-labelledby="whatsapp-tab">
+      <div class="row g-3">
+    <div class="col-lg-7">
+      <div class="card-modern">
+        <div class="card-modern-header">
+          <div class="card-modern-title"><i class="bi bi-whatsapp" style="color:#25D366;"></i> WhatsApp Gateway</div>
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--gray);cursor:pointer;">
+            <span id="wa-toggle-label">Nonaktif</span>
+            <input type="checkbox" id="wa_enabled" onchange="toggleWA()" style="width:40px;height:22px;accent-color:#25D366;cursor:pointer;">
+          </label>
+        </div>
+        <div class="card-modern-body" id="wa-body">
+          <div class="mb-2">
+            <label class="form-label-modern">Token API</label>
+            <div style="position:relative;">
+              <input type="password" id="wa_api_key" class="form-control-modern" placeholder="Isi Token API dari fonnte.com" style="padding-right:38px;">
+              <button type="button" id="wa-key-toggle" onclick="toggleWAKey()" style="position:absolute;top:50%;right:8px;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:4px;color:#94A3B8;line-height:1;" tabindex="-1"><i class="bi bi-eye-slash" id="wa-key-icon"></i></button>
+            </div>
+            <div style="font-size:11.5px;color:var(--gray);margin-top:5px;">Kosongkan jika tidak ingin mengirim notifikasi. Daftar di <a href="https://fonnte.com" target="_blank" style="color:#2563EB;">fonnte.com</a> → Device → Token. <a href="#" onclick="event.preventDefault();openModal('modalPanduanToken');return false;" style="color:#2563EB;text-decoration:underline;cursor:pointer;">Klik disini cara untuk mendapatkan Token</a></div>
+          </div>
+          <div class="mb-2">
+            <label class="form-label-modern">Endpoint URL</label>
+            <input type="url" id="wa_endpoint" class="form-control-modern" placeholder="https://api.fonnte.com/send">
+            <div style="font-size:11.5px;color:var(--gray);margin-top:5px;">Default: <code>https://api.fonnte.com/send</code>. Ganti jika pakai gateway lain.</div>
+          </div>
+          <div class="mb-2">
+            <label class="form-label-modern">Template Pesan</label>
+            <textarea id="wa_template" class="form-control-modern" rows="6" style="font-family:monospace;font-size:12px;resize:vertical;padding:10px;border-radius:10px;border:1.5px solid #E2E8F0;width:100%;outline:none;">*Presensi Digital*
+
+Assalamu'alaikum Wr. Wb.
+
+Ananda {nama} (Kelas: {kelas}) telah melakukan presensi *{status}* ✅
+🕐 Pukul: {jam} WIB
+📅 Tanggal: {tanggal}
+
+Terima kasih.</textarea>
+            <div style="font-size:11.5px;color:var(--gray);margin-top:5px;">
+              Kode: <code>{nama}</code> <code>{nisn}</code> <code>{kelas}</code> <code>{status}</code> <code>{jam}</code> <code>{tanggal}</code> <code>{hari}</code>
+            </div>
+          </div>
+          <div style="font-size:11.5px;background:#F0FDF4;border-radius:8px;padding:10px;border:1px solid #BBF7D0;">
+            <i class="bi bi-info-circle me-1" style="color:#16A34A;"></i>
+            Notifikasi dikirim otomatis ke <strong>no_hp_ortu</strong> saat Tap Kartu dengan status <strong>Hadir</strong> / <strong>Terlambat</strong>.
+          </div>
+          <button class="btn-primary-custom mt-3" id="btnSimpanWA" onclick="simpanWA()" disabled style="opacity:0.5;cursor:not-allowed;background:#25D366;border-color:#25D366;"><i class="bi bi-whatsapp"></i> Simpan Pengaturan WA</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="card-modern" id="test-wa-card">
+        <div class="card-modern-header">
+          <div class="card-modern-title"><i class="bi bi-send" style="color:#25D366;"></i> Uji Coba Kirim WA</div>
+        </div>
+        <div class="card-modern-body">
+          <div class="mb-2">
+            <label class="form-label-modern">Nomor Tujuan</label>
+            <input type="text" id="wa_test_target" class="form-control-modern" placeholder="Cth: 08123456789">
+            <div style="font-size:11.5px;color:var(--gray);margin-top:5px;">Nomor HP untuk menerima WA uji coba.</div>
+          </div>
+          <div style="font-size:11.5px;background:#FFF7ED;border-radius:8px;padding:10px;border:1px solid #FED7AA;">
+            <i class="bi bi-lightbulb me-1" style="color:#D97706;"></i>
+            Mengirim WA menggunakan API Key & template yang sudah disimpan.
+          </div>
+          <button class="btn-primary-custom mt-3 w-100" id="btnTestWA" onclick="testWA()" style="background:#25D366;border-color:#25D366;"><i class="bi bi-send"></i> Kirim WA Uji Coba</button>
+          <div id="wa_test_result" style="display:none;margin-top:10px;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:600;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalPanduanToken" tabindex="-1" aria-labelledby="modalPanduanTokenLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <div class="modal-content" style="border-radius:16px;border:none;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+      <div class="modal-header" style="border:none;padding:20px 24px 0;">
+        <h5 id="modalPanduanTokenLabel" style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;color:#1E293B;margin:0;font-size:18px;"><i class="bi bi-whatsapp me-2" style="color:#25D366;"></i>Panduan Registrasi dan Mendapatkan Token Fonnte WhatsApp Gateway</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" style="font-size:14px;"></button>
+      </div>
+      <div class="modal-body" style="padding:16px 20px 24px;">
+        <ul class="nav nav-pills mb-3" id="panduanTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="step1-tab" data-bs-toggle="tab" data-bs-target="#step1" type="button" role="tab" aria-controls="step1" aria-selected="true">Langkah 1</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="step2-tab" data-bs-toggle="tab" data-bs-target="#step2" type="button" role="tab" aria-controls="step2" aria-selected="false">Langkah 2</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="step3-tab" data-bs-toggle="tab" data-bs-target="#step3" type="button" role="tab" aria-controls="step3" aria-selected="false">Langkah 3</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="step4-tab" data-bs-toggle="tab" data-bs-target="#step4" type="button" role="tab" aria-controls="step4" aria-selected="false">Langkah 4</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="step5-tab" data-bs-toggle="tab" data-bs-target="#step5" type="button" role="tab" aria-controls="step5" aria-selected="false">Langkah 5</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="berhasil-tab" data-bs-toggle="tab" data-bs-target="#berhasil" type="button" role="tab" aria-controls="berhasil" aria-selected="false">Cara Memastikan Konfigurasi Berhasil</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="penting-tab" data-bs-toggle="tab" data-bs-target="#penting" type="button" role="tab" aria-controls="penting" aria-selected="false">Catatan Penting</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tips-tab" data-bs-toggle="tab" data-bs-target="#tips" type="button" role="tab" aria-controls="tips" aria-selected="false">Tips</button>
+          </li>
+        </ul>
+        <div class="tab-content" id="panduanTabsContent" style="font-size:13px;color:#374151;line-height:1.7;">
+          <div class="tab-pane fade show active" id="step1" role="tabpanel" aria-labelledby="step1-tab">
+            <div style="background:#F9FAFB;border-radius:10px;padding:16px;">
+              <div style="font-weight:700;color:#2563EB;margin-bottom:6px;">Langkah 1 — Registrasi Akun Fonnte</div>
+              <ol style="margin:0;padding-left:20px;">
+                <li>Buka website <a href="https://fonnte.com" target="_blank" style="color:#2563EB;">fonnte.com</a>.</li>
+                <li>Klik tombol <strong>Register</strong>.</li>
+                <li>Lengkapi formulir pendaftaran dengan data berikut:
+                  <ul style="margin:2px 0 0 16px;padding-left:16px;">
+                    <li><strong>Nama Lengkap:</strong> Masukkan nama lengkap Anda.</li>
+                    <li><strong>Email:</strong> Gunakan alamat email yang aktif.</li>
+                    <li><strong>Password:</strong> Buat password yang aman dan mudah diingat.</li>
+                    <li><strong>Nomor WhatsApp:</strong> Masukkan nomor WhatsApp yang aktif.</li>
+                  </ul>
+                </li>
+                <li>Klik tombol <strong>Register</strong> untuk membuat akun.</li>
+                <li>Lakukan verifikasi email apabila diminta.</li>
+                <li>Setelah akun berhasil dibuat, login ke dashboard Fonnte menggunakan email dan password yang telah didaftarkan.</li>
+              </ol>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="step2" role="tabpanel" aria-labelledby="step2-tab">
+            <div style="background:#F9FAFB;border-radius:10px;padding:16px;">
+              <div style="font-weight:700;color:#2563EB;margin-bottom:6px;">Langkah 2 — Menambahkan Device WhatsApp</div>
+              <ol style="margin:0;padding-left:20px;">
+                <li>Setelah berhasil login, buka menu <strong>Device</strong> pada dashboard Fonnte.</li>
+                <li>Klik tombol <strong>Add Device</strong>.</li>
+                <li>Lengkapi data perangkat:
+                  <ul style="margin:2px 0 0 16px;padding-left:16px;">
+                    <li><strong>Device Name:</strong> Nama perangkat yang akan digunakan, misalnya: <em>WhatsApp Sekolah</em>, <em>WA Absensi</em>, <em>WA Notifikasi</em>.</li>
+                    <li><strong>Device Number:</strong> Nomor identitas perangkat sebagai penanda (bebas diisi sesuai kebutuhan).</li>
+                  </ul>
+                </li>
+                <li>Klik <strong>Add Device</strong> untuk menyimpan perangkat.</li>
+              </ol>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="step3" role="tabpanel" aria-labelledby="step3-tab">
+            <div style="background:#F9FAFB;border-radius:10px;padding:16px;">
+              <div style="font-weight:700;color:#2563EB;margin-bottom:6px;">Langkah 3 — Menghubungkan WhatsApp</div>
+              <ol style="margin:0;padding-left:20px;">
+                <li>Pada daftar perangkat yang telah dibuat, klik tombol <strong>Connect</strong>.</li>
+                <li>Sistem akan menampilkan <strong>QR Code</strong>.</li>
+                <li>Buka aplikasi WhatsApp pada ponsel yang akan digunakan.</li>
+                <li>Pilih menu:
+                  <ul style="margin:2px 0 0 16px;padding-left:16px;">
+                    <li><strong>Android:</strong> Menu (⋮) → Perangkat Tertaut → Tautkan Perangkat.</li>
+                    <li><strong>iPhone:</strong> Pengaturan → Perangkat Tertaut → Tautkan Perangkat.</li>
+                  </ul>
+                </li>
+                <li><strong>Scan QR Code</strong> yang muncul pada dashboard Fonnte menggunakan WhatsApp.</li>
+                <li>Tunggu hingga status perangkat berubah menjadi <strong>Connected</strong>.</li>
+              </ol>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="step4" role="tabpanel" aria-labelledby="step4-tab">
+            <div style="background:#F9FAFB;border-radius:10px;padding:16px;">
+              <div style="font-weight:700;color:#2563EB;margin-bottom:6px;">Langkah 4 — Mendapatkan Token API</div>
+              <ol style="margin:0;padding-left:20px;">
+                <li>Pastikan status perangkat sudah <strong>Connected</strong>.</li>
+                <li>Pada perangkat yang telah terhubung, klik tombol <strong>Token</strong>.</li>
+                <li>Fonnte akan menampilkan <strong>Token API</strong> yang digunakan untuk menghubungkan aplikasi dengan layanan Fonnte.</li>
+                <li>Salin token tersebut dan simpan dengan baik.</li>
+              </ol>
+              <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:10px;margin-top:8px;font-size:12px;font-family:monospace;color:#16A34A;text-align:center;">Contoh token: <code style="background:#F0FDF4;font-weight:700;">M@N!4Yr-Vs#CPtaopCkE</code></div>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="step5" role="tabpanel" aria-labelledby="step5-tab">
+            <div style="background:#F9FAFB;border-radius:10px;padding:16px;">
+              <div style="font-weight:700;color:#2563EB;margin-bottom:6px;">Langkah 5 — Mengisi Token pada Aplikasi</div>
+              <ol style="margin:0;padding-left:20px;">
+                <li>Kembali ke halaman pengaturan WhatsApp Gateway pada aplikasi ini.</li>
+                <li>Tempelkan Token API yang telah disalin ke kolom <strong>Token API</strong>.</li>
+                <li>Klik tombol <strong>Simpan</strong> untuk menyimpan konfigurasi.</li>
+                <li>Setelah tersimpan, aplikasi siap digunakan untuk mengirim notifikasi WhatsApp secara otomatis.</li>
+              </ol>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="berhasil" role="tabpanel" aria-labelledby="berhasil-tab">
+            <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:14px;">
+              <div style="font-weight:700;color:#16A34A;margin-bottom:6px;">Cara Memastikan Konfigurasi Berhasil</div>
+              <ul style="margin:0;padding-left:20px;">
+                <li>Token berhasil tersimpan tanpa muncul pesan error.</li>
+                <li>Status perangkat pada dashboard Fonnte masih <strong>Connected</strong>.</li>
+                <li>Fitur pengiriman WhatsApp pada aplikasi dapat mengirim pesan dengan sukses.</li>
+                <li>Pesan percobaan berhasil diterima pada nomor tujuan.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="penting" role="tabpanel" aria-labelledby="penting-tab">
+            <div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:10px;padding:14px;">
+              <div style="font-weight:700;color:#D97706;margin-bottom:6px;">Catatan Penting</div>
+              <ul style="margin:0;padding-left:20px;">
+                <li>Nomor WhatsApp yang digunakan harus tetap aktif dan terhubung ke internet.</li>
+                <li>Jangan membagikan <strong>Token API</strong> kepada pihak lain.</li>
+                <li>Jika WhatsApp logout atau perangkat terputus, lakukan scan QR Code kembali.</li>
+                <li>Jika token tidak dapat digunakan, buat token baru melalui dashboard Fonnte.</li>
+                <li>Disarankan menggunakan nomor WhatsApp khusus untuk kebutuhan sistem agar pengiriman notifikasi lebih stabil.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="tips" role="tabpanel" aria-labelledby="tips-tab">
+            <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:14px;">
+              <div style="font-weight:700;color:#1E40AF;margin-bottom:6px;">Tips</div>
+              <div style="font-size:12.5px;color:#374151;">Gunakan nomor WhatsApp yang selalu aktif dan jarang digunakan untuk aktivitas pribadi agar layanan notifikasi sekolah, absensi, dan informasi penting lainnya dapat berjalan tanpa gangguan.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="border:none;padding:0 24px 20px;">
+        <button class="btn" style="background:#1E293B;border:none;color:white;border-radius:8px;font-weight:600;font-size:13px;padding:8px 24px;" data-bs-dismiss="modal">Tutup</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/app.js?v=5"></script>
 <script>
 let _jamAwal='07:00',_batasAwal='07:00',_alphaAwal='07:30';
+let _waKeyAwal='',_waEndpointAwal='',_waTemplateAwal='',_waEnabledAwal='1';
 let _identAwal={};
+let _logoAwal='',_fotoOpsiAwal='';
 
 function cekJamBerubah(){
   const j=document.getElementById('jam_masuk').value;
@@ -119,9 +358,20 @@ async function loadSettings() {
     _jamAwal=rs.data.jam_masuk||'07:00';
     _batasAwal=rs.data.batas_terlambat||'07:00';
     _alphaAwal=rs.data.batas_alpha||'07:30';
+    _waKeyAwal=rs.data.wa_api_key||'';
+    _waEndpointAwal=rs.data.wa_endpoint||'';
+    _waTemplateAwal=rs.data.wa_template||'';
+    if(_waTemplateAwal) document.getElementById('wa_template').value = _waTemplateAwal;
+    else _waTemplateAwal=document.getElementById('wa_template').value;
+    _waEnabledAwal=rs.data.wa_enabled||'1';
     document.getElementById('jam_masuk').value      = _jamAwal;
     document.getElementById('batas_terlambat').value = _batasAwal;
     document.getElementById('batas_alpha').value     = _alphaAwal;
+    document.getElementById('wa_api_key').value      = _waKeyAwal;
+    document.getElementById('wa_endpoint').value     = _waEndpointAwal;
+    document.getElementById('wa_enabled').checked     = _waEnabledAwal==='1';
+    terapkanWAState();
+    cekWA();
     document.getElementById('jam-status-text').textContent='Jam masuk: '+_jamAwal+'  ·  Batas tepat waktu: '+_batasAwal+'  ·  Batas alpha: '+_alphaAwal;
     cekJamBerubah();
   }
@@ -136,6 +386,7 @@ async function loadSettings() {
     document.getElementById('website').value        = _identAwal.website;
     cekIdentitasBerubah();
     ['nama_sekolah','alamat','tahun_ajaran','telp','s_email','website'].forEach(id=>document.getElementById(id).addEventListener('input',cekIdentitasBerubah));
+    _logoAwal=d.logo||'';_fotoOpsiAwal=d.foto_opsi||'';
     if (d.logo) {
       document.getElementById('logo-preview').src          = d.logo;
       document.getElementById('logo-preview').style.display= 'block';
@@ -161,6 +412,11 @@ function cekIdentitasBerubah(){
 document.getElementById('jam_masuk').addEventListener('input',cekJamBerubah);
 document.getElementById('batas_terlambat').addEventListener('input',cekJamBerubah);
 document.getElementById('batas_alpha').addEventListener('input',cekJamBerubah);
+
+document.getElementById('wa_api_key').addEventListener('input',cekWA);
+document.getElementById('wa_endpoint').addEventListener('input',cekWA);
+document.getElementById('wa_template').addEventListener('input',cekWA);
+document.getElementById('wa_enabled').addEventListener('change',cekWA);
 
 function previewLogo(input) {
   const file = input.files[0]; if(!file) return;
@@ -213,6 +469,87 @@ async function simpanJam() {
   } else showToast(res?.message||'Gagal','error');
 }
 
+function toggleWAKey(){
+  const inp=document.getElementById('wa_api_key');
+  const icon=document.getElementById('wa-key-icon');
+  const isPassword=inp.type==='password';
+  inp.type=isPassword?'text':'password';
+  icon.className=isPassword?'bi bi-eye':'bi bi-eye-slash';
+}
+
+function terapkanWAState(){
+  const on=document.getElementById('wa_enabled').checked;
+  document.getElementById('wa-toggle-label').textContent=on?'Aktif':'Nonaktif';
+  const body=document.getElementById('wa-body');
+  const testBody=document.querySelector('#test-wa-card .card-modern-body');
+  body.style.opacity=on?'1':'0.4';
+  body.style.pointerEvents=on?'':'none';
+  if(testBody){testBody.style.opacity=on?'1':'0.4';testBody.style.pointerEvents=on?'':'none';}
+}
+
+let _waChanged=false;
+
+function cekWA(){
+  const key=document.getElementById('wa_api_key').value;
+  const ep=document.getElementById('wa_endpoint').value;
+  const tmpl=document.getElementById('wa_template').value;
+  const enabled=document.getElementById('wa_enabled').checked?'1':'0';
+  const sama=key===_waKeyAwal&&ep===_waEndpointAwal&&tmpl===_waTemplateAwal&&enabled===_waEnabledAwal;
+  const btn=document.getElementById('btnSimpanWA');
+  _waChanged=!sama;
+  btn.disabled=sama;
+  btn.style.opacity=sama?'0.5':'1';
+  btn.style.cursor=sama?'not-allowed':'pointer';
+}
+
+function toggleWA(){
+  terapkanWAState();
+  simpanWA();
+}
+
+async function testWA() {
+  const target=document.getElementById('wa_test_target').value.trim();
+  if(!target||target.length<10){showToast('Masukkan nomor tujuan minimal 10 digit','warning');return;}
+  const btn=document.getElementById('btnTestWA');
+  const result=document.getElementById('wa_test_result');
+  btn.disabled=true;btn.textContent='Mengirim...';
+  result.style.display='none';
+  const res=await fetchAPI('/api/whatsapp/test','POST',{target});
+  btn.disabled=false;btn.innerHTML='<i class="bi bi-send"></i> Kirim WA Uji Coba';
+  if(res?.success){
+    result.style.display='block';
+    result.style.background='#F0FDF4';
+    result.style.color='#16A34A';
+    result.style.border='1px solid #BBF7D0';
+    const now=new Date();const jam=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');
+    result.innerHTML='<i class="bi bi-patch-check"></i> '+res.message+' '+jam;
+  } else {
+    result.style.display='block';
+    result.style.background='#FEF2F2';
+    result.style.color='#DC2626';
+    result.style.border='1px solid #FECACA';
+    result.textContent='❌ '+(res?.message||'Gagal');
+  }
+}
+
+async function simpanWA() {
+  const key=document.getElementById('wa_api_key').value.trim();
+  const ep=document.getElementById('wa_endpoint').value.trim();
+  const tmpl=document.getElementById('wa_template').value;
+  const enabled=document.getElementById('wa_enabled').checked?'1':'0';
+  const body={wa_api_key:key, wa_endpoint:ep, wa_template:tmpl, wa_enabled:enabled};
+  const res=await fetchAPI('/api/settings/simpan','POST',body);
+  if(res?.success){
+    _waKeyAwal=key;
+    _waEndpointAwal=ep;
+    _waTemplateAwal=tmpl;
+    _waEnabledAwal=enabled;
+    _waChanged=false;
+    cekWA();
+    showToast('Pengaturan WhatsApp tersimpan!','success');
+  } else showToast(res?.message||'Gagal','error');
+}
+
 async function simpanIdentitas() {
   const fd=new FormData();
   fd.append('nama_sekolah', document.getElementById('nama_sekolah').value);
@@ -237,7 +574,73 @@ async function simpanIdentitas() {
   } else showToast(res?.message||'Gagal','error');
 }
 
-async function init(){await loadLayout('settings','Pengaturan');loadSettings();}
+async function init(){
+  await loadLayout('settings','Pengaturan');
+  loadSettings();
+  setTimeout(()=>{
+    function unsavedSwal(msg,cb){
+      Swal.fire({title:'Perubahan Belum Disimpan',text:msg,icon:'warning',showCancelButton:true,confirmButtonText:'Lanjut Edit',cancelButtonText:'Discard',confirmButtonColor:'#2563EB',cancelButtonColor:'#DC2626',reverseButtons:true,width:'320px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}}).then(result=>{if(result.dismiss)cb()});
+    }
+    document.querySelectorAll('#sidebar a, .sidebar-brand').forEach(el=>{
+      el.addEventListener('click',function(e){
+        const jamBtn=document.getElementById('btnSimpanJam');
+        const identBtn=document.getElementById('btnSimpanIdentitas');
+        const sekolahChanged=(jamBtn&&!jamBtn.disabled)||(identBtn&&!identBtn.disabled);
+        if(!_waChanged&&!sekolahChanged) return;
+        e.preventDefault();
+        const target=this.href;
+        if(_waChanged) unsavedSwal('Ada perubahan pada pengaturan WhatsApp.',()=>{_waChanged=false;window.location.href=target});
+        else unsavedSwal('Ada perubahan pada pengaturan sekolah.',()=>{window.location.href=target});
+      });
+    });
+    document.getElementById('settingsTabs').addEventListener('show.bs.tab',function(e){
+      const cur=document.querySelector('#settingsTabs .nav-link.active');
+      if(!cur) return;
+      const from=cur.getAttribute('data-bs-target'),to=e.target.getAttribute('data-bs-target');
+      if(from==='#whatsapp'&&to==='#sekolah'&&_waChanged){
+        e.preventDefault();
+        unsavedSwal('Ada perubahan pada pengaturan WhatsApp.',()=>{
+          document.getElementById('wa_api_key').value=_waKeyAwal;
+          document.getElementById('wa_endpoint').value=_waEndpointAwal;
+          document.getElementById('wa_template').value=_waTemplateAwal;
+          document.getElementById('wa_enabled').checked=_waEnabledAwal==='1';
+          _waChanged=false;cekWA();terapkanWAState();
+          new bootstrap.Tab(document.querySelector('#sekolah-tab')).show();
+        });
+      }else if(from==='#sekolah'&&to==='#whatsapp'){
+        const j=document.getElementById('btnSimpanJam'),i=document.getElementById('btnSimpanIdentitas');
+        if((j&&!j.disabled)||(i&&!i.disabled)){
+          e.preventDefault();
+          unsavedSwal('Ada perubahan pada pengaturan sekolah.',()=>{
+            document.getElementById('jam_masuk').value=_jamAwal;
+            document.getElementById('batas_terlambat').value=_batasAwal;
+            document.getElementById('batas_alpha').value=_alphaAwal;
+            cekJamBerubah();
+            ['nama_sekolah','alamat','tahun_ajaran','telp','s_email','website'].forEach(id=>document.getElementById(id).value=_identAwal[id]);
+            if(_logoAwal){
+              document.getElementById('logo-preview').src=_logoAwal;
+              document.getElementById('logo-preview').style.display='block';
+              document.getElementById('logo-placeholder').style.display='none';
+            }else{
+              document.getElementById('logo-preview').style.display='none';
+              document.getElementById('logo-placeholder').style.display='';
+            }
+            if(_fotoOpsiAwal){
+              document.getElementById('foto-opsi-preview').src=_fotoOpsiAwal;
+              document.getElementById('foto-opsi-preview').style.display='block';
+              document.getElementById('foto-opsi-placeholder').style.display='none';
+            }else{
+              document.getElementById('foto-opsi-preview').style.display='none';
+              document.getElementById('foto-opsi-placeholder').style.display='';
+            }
+            cekIdentitasBerubah();
+            new bootstrap.Tab(document.querySelector('#whatsapp-tab')).show();
+          });
+        }
+      }
+    });
+  },100);
+}
 init();
 </script>
 </body>

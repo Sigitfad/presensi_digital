@@ -202,8 +202,9 @@ function exportExcel(){
   if(!allData.length){showToast('Tidak ada data!','warning');return;}
   const t1=document.getElementById('tgl1').value, t2=document.getElementById('tgl2').value;
   const kelas=document.getElementById('filterKelas').value.trim();
-  window.location.href=`/api/presensi/export-excel?tanggal=${t1}&tanggal2=${t2}&kelas=${encodeURIComponent(kelas)}`;
-  showToast('Mengunduh file Excel...','info');
+  const kelasLabel=kelas?kelas.replace(/\s/g,''):'Semua';
+  downloadWithProgress(`/api/presensi/export-excel?tanggal=${t1}&tanggal2=${t2}&kelas=${encodeURIComponent(kelas)}`,
+    `Presensi_${t1}_${kelasLabel}.xlsx`,allData.length,'presensi');
 }
 
 async function init(){

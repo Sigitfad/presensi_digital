@@ -134,7 +134,7 @@
     <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
       <div class="modal-header" style="background:linear-gradient(135deg,#F59E0B,#D97706);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
         <h5 class="modal-title text-white fw-bold">Edit Surat Pindah</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close btn-close-white" onclick="tutupEditPindahan()"></button>
       </div>
       <div class="modal-body p-4">
         <div id="alertEdit"></div>
@@ -170,7 +170,7 @@
               <div id="pe_formatMsg" style="font-size:11px;color:var(--gray);margin-top:4px;min-height:16px;"></div>
             </div>
           <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
-            <button class="btn" data-bs-dismiss="modal" style="background:#1E293B;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;transition:all 0.2s;" onmouseover="this.style.background='#334155';this.style.boxShadow='0 4px 12px rgba(30,41,59,0.3)';this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#1E293B';this.style.boxShadow='none';this.style.transform='';">Tutup</button>
+            <button class="btn" onclick="tutupEditPindahan()" style="background:#1E293B;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;transition:all 0.2s;" onmouseover="this.style.background='#334155';this.style.boxShadow='0 4px 12px rgba(30,41,59,0.3)';this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#1E293B';this.style.boxShadow='none';this.style.transform='';">Tutup</button>
             <button class="btn-edit-custom" style="padding:8px 18px;font-size:13px;" onclick="updatePindahan()">Simpan</button>
           </div>
         </div>
@@ -367,6 +367,7 @@ async function simpanPindahan(){
 }
 
 let _editPindahanData=null;
+let _editAwalPindahan={};
 
 function editPindahan(d){
   _editPindahanData=d;
@@ -392,6 +393,19 @@ function editPindahan(d){
       <div style="display:table-row;"><span style="display:table-cell;font-weight:600;padding-right:12px;white-space:nowrap;">Alasan</span><span style="display:table-cell;">: ${d.alasan||'-'}</span></div>
     </div>`;
   openModal('modalEdit');
+  _editAwalPindahan={sekolah_tujuan:document.getElementById('pe_sekolah_tujuan').value,tanggal_surat:document.getElementById('pe_tanggal_surat').value,nomor_surat:document.getElementById('pe_nomor_surat').value};
+}
+
+function editPindahanBerubah(){
+  return document.getElementById('pe_sekolah_tujuan').value!==_editAwalPindahan.sekolah_tujuan
+    || document.getElementById('pe_tanggal_surat').value!==_editAwalPindahan.tanggal_surat
+    || document.getElementById('pe_nomor_surat').value!==_editAwalPindahan.nomor_surat
+    || document.getElementById('pe_surat_pindah').files[0]!==undefined;
+}
+
+function tutupEditPindahan(){
+  if(!editPindahanBerubah()){closeModal('modalEdit');return;}
+  Swal.fire({title:'Perubahan Belum Disimpan',text:'Ada perubahan pada data surat pindah yang belum disimpan.',icon:'warning',showCancelButton:true,confirmButtonText:'Lanjut Edit',cancelButtonText:'Discard',confirmButtonColor:'#2563EB',cancelButtonColor:'#DC2626',reverseButtons:true,width:'320px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}}).then(result=>{if(result.dismiss)closeModal('modalEdit');});
 }
 
 async function updatePindahan(){
@@ -765,7 +779,9 @@ function hapusMassalPindahan(){
   const ids=checked.map(cb=>parseInt(cb.value)).filter(n=>!isNaN(n));
   if(!ids.length) return;
   konfirmasiHapus('Hapus',`${ids.length} data akan dihapus permanen.`,async()=>{
+    Swal.fire({title:'Menghapus...',html:`<i class="bi bi-arrow-repeat spin"></i> ${ids.length} data`,allowOutsideClick:false,didOpen:()=>{Swal.showLoading();}});
     const res=await fetchAPI('/api/pindahan/hapus-massal','POST',{ids});
+    Swal.close();
     if(res?.success){showToast(`${res.message}`,'success');loadPindahan();}
     else showToast('Gagal','error');
   },'Hapus','btn-danger');

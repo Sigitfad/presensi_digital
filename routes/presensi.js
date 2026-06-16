@@ -1,5 +1,6 @@
 const express  = require('express');
 const { queryAll, queryOne, run, hitungStatus, logActivity } = require('../database');
+const { sendWaNotification } = require('./whatsapp');
 const router   = express.Router();
 
 function auth(req,res,next){
@@ -61,6 +62,7 @@ router.post('/scan', (req,res) => {
     logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,
                 'Scan Presensi',`${siswa.nama} - ${status} pukul ${jam.slice(0,5)}`);
     res.json({success:true,message:'Presensi berhasil!',siswa,status,jam_masuk:jam,tanggal});
+    sendWaNotification(siswa, status, jam.slice(0,5), tanggal);
   } catch(e){res.json({success:false,message:e.message});}
 });
 

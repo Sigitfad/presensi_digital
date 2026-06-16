@@ -474,24 +474,28 @@ function exportExcelSiswa(){
   const bulan=document.getElementById('filterBulan').value;
   const tahun=document.getElementById('filterTahun').value;
   const kelas=document.getElementById('filterKelas').value.trim();
-  window.location.href=`/api/rekap/export-excel?bulan=${bulan}&tahun=${tahun}&kelas=${encodeURIComponent(kelas)}`;
-  showToast('Mengunduh file Excel...','info');
+  const kelasLabel=kelas?kelas.replace(/\s/g,''):'Semua';
+  const namaBulan=['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  downloadWithProgress(`/api/rekap/export-excel?bulan=${bulan}&tahun=${tahun}&kelas=${encodeURIComponent(kelas)}`,
+    `Rekap_${namaBulan[parseInt(bulan)]}_${tahun}${kelas?'_'+kelasLabel:''}.xlsx`,_rekapData.length,'siswa');
 }
 
 // ── Export Excel Per Kelas spesifik ──
 function exportExcelKelas(kelas){
   const bulan=document.getElementById('filterBulan').value;
   const tahun=document.getElementById('filterTahun').value;
-  window.location.href=`/api/rekap/export-excel-kelas?bulan=${bulan}&tahun=${tahun}&kelas=${encodeURIComponent(kelas)}`;
-  showToast(`Mengunduh Excel ${kelas}...`,'info');
+  const kelasInfo=rekapKelasData.find(k=>k.kelas===kelas);
+  downloadWithProgress(`/api/rekap/export-excel-kelas?bulan=${bulan}&tahun=${tahun}&kelas=${encodeURIComponent(kelas)}`,
+    `Rekap_${kelas.replace(/\s/g,'')}_${bulan}_${tahun}.xlsx`,kelasInfo?kelasInfo.totalSiswa:null,'siswa');
 }
 
 // ── Export xlsx satu siswa ──
 function exportSiswaExcel(siswaId, nama){
   const bulan=document.getElementById('filterBulan').value;
   const tahun=document.getElementById('filterTahun').value;
-  window.location.href=`/api/rekap/export-excel-siswa/${siswaId}?bulan=${bulan}&tahun=${tahun}`;
-  showToast(`Mengunduh rekap ${nama}...`,'info');
+  const namaBulan=['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  downloadWithProgress(`/api/rekap/export-excel-siswa/${siswaId}?bulan=${bulan}&tahun=${tahun}`,
+    `Rekap_${nama.replace(/\s+/g,'_')}_${namaBulan[parseInt(bulan)]}_${tahun}.xlsx`,null,'');
 }
 
 // ── Juga hapus setTab update export-siswa-btn karena sudah tidak ada ──

@@ -238,12 +238,30 @@ router.get('/export-excel', (req,res) => {
     siswaSQL+=' ORDER BY kelas ASC,nama ASC';
     const semuaSiswa=queryAll(siswaSQL,siswaP);
 
+    const ids=semuaSiswa.map(s=>s.id);
+    let presensiBatch=[];
+    if(ids.length){
+      const ph=ids.map(()=>'?').join(',');
+      presensiBatch=queryAll(
+        `SELECT siswa_id,status FROM presensi WHERE siswa_id IN (${ph}) AND tanggal>=? AND tanggal<=?`,
+        [...ids,tglAwal,tglAkhir]
+      );
+    }
+    const countMap={};
+    presensiBatch.forEach(p=>{
+      if(!countMap[p.siswa_id]) countMap[p.siswa_id]={hadir:0,terlambat:0,izin:0,sakit:0,alpha:0};
+      const m=countMap[p.siswa_id];
+      if(p.status==='Hadir')m.hadir++;
+      else if(p.status==='Terlambat'){m.hadir++;m.terlambat++;}
+      else if(p.status==='Izin')m.izin++;
+      else if(p.status==='Sakit')m.sakit++;
+      else if(p.status==='Alpha')m.alpha++;
+    });
     const wb=XLSX.utils.book_new();
     const rows=semuaSiswa.map(s=>{
-      const pr=queryAll('SELECT tanggal,status FROM presensi WHERE siswa_id=? AND tanggal>=? AND tanggal<=?',[s.id,tglAwal,tglAkhir]);
-      let h=0,t=0,i=0,sk=0,a=0;
-      pr.forEach(p=>{if(p.status==='Hadir')h++;else if(p.status==='Terlambat'){h++;t++;}else if(p.status==='Izin')i++;else if(p.status==='Sakit')sk++;else if(p.status==='Alpha')a++;});
-      const na=hariEfektif-h-i-sk-a; if(na>0)a+=na;
+      const m=countMap[s.id]||{};
+      const h=m.hadir||0,t=m.terlambat||0,i=m.izin||0,sk=m.sakit||0,a0=m.alpha||0;
+      const na=hariEfektif-h-i-sk-a0; const a=a0+(na>0?na:0);
       const pct=hariEfektif>0?Math.round((h/hariEfektif)*100):0;
       return [s.nisn,s.nama,s.kelas,s.jenis_kelamin,h,t,i,sk,a,hariEfektif,pct+'%'];
     });
@@ -289,12 +307,30 @@ router.get('/export-excel-kelas', (req,res) => {
       [kelasTrim]
     );
 
+    const ids=siswaList.map(s=>s.id);
+    let presensiBatch=[];
+    if(ids.length){
+      const ph=ids.map(()=>'?').join(',');
+      presensiBatch=queryAll(
+        `SELECT siswa_id,status FROM presensi WHERE siswa_id IN (${ph}) AND tanggal>=? AND tanggal<=?`,
+        [...ids,tglAwal,tglAkhir]
+      );
+    }
+    const countMap={};
+    presensiBatch.forEach(p=>{
+      if(!countMap[p.siswa_id]) countMap[p.siswa_id]={hadir:0,terlambat:0,izin:0,sakit:0,alpha:0};
+      const m=countMap[p.siswa_id];
+      if(p.status==='Hadir')m.hadir++;
+      else if(p.status==='Terlambat'){m.hadir++;m.terlambat++;}
+      else if(p.status==='Izin')m.izin++;
+      else if(p.status==='Sakit')m.sakit++;
+      else if(p.status==='Alpha')m.alpha++;
+    });
     const wb=XLSX.utils.book_new();
     const rows=siswaList.map(s=>{
-      const pr=queryAll('SELECT tanggal,status FROM presensi WHERE siswa_id=? AND tanggal>=? AND tanggal<=?',[s.id,tglAwal,tglAkhir]);
-      let h=0,t=0,i=0,sk=0,a=0;
-      pr.forEach(p=>{if(p.status==='Hadir')h++;else if(p.status==='Terlambat'){h++;t++;}else if(p.status==='Izin')i++;else if(p.status==='Sakit')sk++;else if(p.status==='Alpha')a++;});
-      const na=hariEfektif-h-i-sk-a; if(na>0)a+=na;
+      const m=countMap[s.id]||{};
+      const h=m.hadir||0,t=m.terlambat||0,i=m.izin||0,sk=m.sakit||0,a0=m.alpha||0;
+      const na=hariEfektif-h-i-sk-a0; const a=a0+(na>0?na:0);
       const pct=hariEfektif>0?Math.round((h/hariEfektif)*100):0;
       return [s.nisn,s.nama,s.jenis_kelamin,h,t,i,sk,a,hariEfektif,pct+'%'];
     });
