@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="/css/style.css">
   <style>
-    body{background:url('/frame_body/background_body.png') center/100% 100% no-repeat fixed;margin:0;padding:0;display:flex;align-items:center;justify-content:center;min-height:100vh;}
+    body{background:url('/frame_body/background_body.png') center/100% 100% no-repeat fixed;margin:0;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;}
 
     .scan-container{max-width:1100px;width:100%;margin:0 auto;padding:10px 20px;}
     #popup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9000;align-items:center;justify-content:center;animation:_fi 0.25s ease;}
@@ -32,7 +32,8 @@
     .popup-box-label{font-size:10.5px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:5px;}
     .popup-box-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:19px;font-weight:800;}
     .popup-box-value.tepat{color:#16A34A;}
-    .popup-box-value.terlambat{color:#DC2626;}
+    .popup-box-value.terlambat{color:#D97706;}
+    .popup-box-value.alpha{color:#DC2626;}
     .popup-box-value.jam{color:#1E293B;}
     .popup-timer-bar{height:4px;background:#E2E8F0;border-radius:4px;margin-top:18px;overflow:hidden;}
     .popup-timer-fill{height:100%;background:linear-gradient(90deg,#2563EB,#10B981);border-radius:4px;width:100%;transition:width linear;}
@@ -45,6 +46,10 @@
     .sa-out{animation:_saOut .25s ease forwards}@keyframes _saOut{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(-16px) scale(.95)}}
     .scan-log-item{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid rgba(0,0,0,0.05);}
     .card-modern.body-center{display:flex;flex-direction:column;}.card-modern.body-center .card-modern-body{flex:1;display:flex;flex-direction:column;justify-content:center;}
+
+    .clock-wrapper{max-width:1100px;width:100%;margin:0 auto;padding:0 20px;margin-bottom:8px;}
+    #realtime-clock{background:rgba(255,255,255,0.92);backdrop-filter:blur(10px);border:1.5px solid #E2E8F0;border-radius:14px;padding:10px 20px;text-align:center;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;color:#1E293B;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,0.06);}
+    #clock-display,#clock-date{font-size:52px;letter-spacing:4px;line-height:1;}
   </style>
   
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
@@ -73,6 +78,17 @@
       </div>
     </div>
     <div class="popup-timer-bar"><div class="popup-timer-fill" id="popup-timer"></div></div>
+  </div>
+</div>
+
+<!-- JAM REALTIME -->
+<div class="clock-wrapper">
+  <div class="row justify-content-center">
+    <div class="col-lg-12" id="clock-col">
+      <div id="realtime-clock">
+        <span id="clock-display">--:--:--</span><span id="clock-date"></span>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -180,6 +196,20 @@ let logData=[], popupTimer=null;
   }catch(e){}
 })();
 
+// Real-time clock
+function updateClock(){
+  const d=new Date();
+  const h=String(d.getHours()).padStart(2,'0');
+  const m=String(d.getMinutes()).padStart(2,'0');
+  const s=String(d.getSeconds()).padStart(2,'0');
+  document.getElementById('clock-display').textContent=h+':'+m+':'+s;
+  const hari=['MINGGU','SENIN','SELASA','RABU','KAMIS','JUMAT','SABTU'];
+  const bln=['JANUARI','FEBRUARI','MARET','APRIL','MEI','JUNI','JULI','AGUSTUS','SEPTEMBER','OKTOBER','NOVEMBER','DESEMBER'];
+  document.getElementById('clock-date').textContent=' - '+hari[d.getDay()]+', '+String(d.getDate()).padStart(2,'0')+' '+bln[d.getMonth()]+' '+d.getFullYear();
+}
+updateClock();
+setInterval(updateClock,1000);
+
 function toggleLog(){
   const kanan=document.getElementById('col-kanan');
   const kiriCard=document.querySelector('#col-kiri .card-modern');
@@ -192,6 +222,8 @@ function toggleLog(){
   kiriCard.classList.toggle('body-center',closed);
   icon.style.transform=closed?'rotate(0deg)':'rotate(-90deg)';
   btnIcon.className=closed?'bi bi-chevron-right':'bi bi-chevron-left';
+  document.getElementById('clock-col').className=closed?'col-lg-12':'col-lg-6';
+  document.getElementById('clock-date').style.display=closed?'':'none';
 }
 
 document.getElementById('manual-uid').addEventListener('input',function(){
@@ -208,6 +240,10 @@ async function prosesPresensi(uid){
   try {
     const res=await fetchAPI('/api/presensi/scan','POST',{uid});
     if(!res) return;
+    if(res.belumWaktu){
+      showToast('Belum Waktunya Absen!','warning');
+      return;
+    }
     if(res.success){
       const jam=res.jam_masuk?res.jam_masuk.slice(0,5):'--:--';
       tampilkanPopup({tipe:'berhasil',siswa:res.siswa,jam,status:res.status});
@@ -226,6 +262,8 @@ function tampilkanPopup(data){
   const {tipe,siswa,jam,status} = data;
   const isBerhasil = tipe==='berhasil';
   const isTepat    = status==='Hadir';
+  const isAlpha    = status==='Alpha';
+  const isTerlambat= status==='Terlambat';
 
   const titleEl=document.getElementById('popup-title');
   if(isBerhasil){
@@ -238,8 +276,8 @@ function tampilkanPopup(data){
 
   const fotoWrap = document.getElementById('popup-foto-wrap');
   const inisial  = siswa.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
-  const iniColor = isTepat ? '#2563EB' : '#D97706';
-  const iniBg    = isTepat ? 'linear-gradient(135deg,#DBEAFE,#EDE9FE)' : 'linear-gradient(135deg,#FEF3C7,#FFEDD5)';
+  const iniColor = isTepat ? '#2563EB' : isAlpha ? '#DC2626' : '#D97706';
+  const iniBg    = isTepat ? 'linear-gradient(135deg,#DBEAFE,#EDE9FE)' : isAlpha ? 'linear-gradient(135deg,#FEE2E2,#FECACA)' : 'linear-gradient(135deg,#FEF3C7,#FFEDD5)';
 
   if(siswa.foto && siswa.foto !== ''){
     fotoWrap.style.background = 'transparent';
@@ -254,8 +292,8 @@ function tampilkanPopup(data){
   document.getElementById('popup-jam').textContent  = jam;
 
   const statusEl = document.getElementById('popup-status');
-  statusEl.textContent  = status;
-  statusEl.className    = 'popup-box-value '+(isTepat?'tepat':'terlambat');
+  statusEl.textContent  = status==='Alpha'?'Alpha':status==='Terlambat'?'Terlambat':'Tepat Waktu';
+  statusEl.className    = 'popup-box-value '+(isTepat?'tepat':isAlpha?'alpha':'terlambat');
 
   document.getElementById('popup-overlay').classList.add('show');
 
@@ -295,7 +333,7 @@ function renderLog(){
   const q=(document.getElementById('search-log')?.value||'').toLowerCase();
   let data=kelasFilter?logData.filter(d=>d.kelas===kelasFilter):logData;
   if(q) data=data.filter(d=>{
-    const statusLabel=d.status==='Hadir'?'tepat waktu':'terlambat';
+    const statusLabel=d.status==='Hadir'?'tepat waktu':d.status==='Alpha'?'alpha':'terlambat';
     return (d.nama||'').toLowerCase().includes(q)
       || (d.kelas||'').toLowerCase().includes(q)
       || (d.uid||'').toLowerCase().includes(q)
@@ -325,7 +363,7 @@ function renderLog(){
       </div>
       <div style="text-align:right;flex-shrink:0;">
         <div style="font-weight:700;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;">${d.jam} WIB</div>
-        <div style="font-size:10px;font-weight:600;margin-top:1px;${d.status==='Hadir'?'color:#059669;':'color:#DC2626;'}">${d.status==='Hadir'?'Tepat Waktu':'Terlambat'}</div>
+        <div style="font-size:10px;font-weight:600;margin-top:1px;${d.status==='Hadir'?'color:#059669;':d.status==='Alpha'?'color:#DC2626;':'color:#D97706;'}">${d.status==='Hadir'?'Tepat Waktu':d.status==='Alpha'?'Alpha':'Terlambat'}</div>
       </div>
     </div>`;}).join('');
 }

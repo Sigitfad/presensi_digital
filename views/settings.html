@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Pengaturan — SDN Karangpawitan 1</title>
+  <title>Pengaturan</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="/css/style.css">
@@ -31,7 +31,12 @@
           <div class="mb-4">
             <label class="form-label-modern">Batas Tepat Waktu</label>
             <input type="time" id="batas_terlambat" class="form-control-modern" value="07:00">
-            <div style="font-size:11.5px;color:var(--gray);margin-top:5px;">Siswa yang hadir <strong>sebelum atau tepat</strong> jam ini dianggap Tepat Waktu. Setelah jam ini = Terlambat.</div>
+            <div style="font-size:11.5px;color:var(--gray);margin-top:5px;">Siswa yang Absen/Tap Kartu <strong>sebelum atau tepat</strong> jam ini dianggap Tepat Waktu. Setelah jam ini = <strong><i>Terlambat</i></strong></div>
+          </div>
+          <div class="mb-4">
+            <label class="form-label-modern">Batas Alpha / Tidak Masuk</label>
+            <input type="time" id="batas_alpha" class="form-control-modern" value="07:30">
+            <div style="font-size:11.5px;color:var(--gray);margin-top:5px;">Siswa yang Absen/Tap Kartu <strong>setelah</strong> jam ini dianggap <strong><i>Terlambat</i></strong>. Dan jika lebih dari jam ini <strong>belum</strong> Absen/Tap Kartu = <strong><i>Alpha</i></strong>.</div>
           </div>
           <div style="background:#F0F7FF;border-radius:10px;padding:14px;margin-bottom:16px;border:1px solid #BFDBFE;">
             <div style="font-size:12.5px;font-weight:700;color:#1E40AF;margin-bottom:8px;"><i class="bi bi-info-circle me-2"></i>Settingan Jam Masuk Saat Ini</div>
@@ -94,14 +99,15 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/app.js?v=5"></script>
 <script>
-let _jamAwal='07:00',_batasAwal='07:00';
+let _jamAwal='07:00',_batasAwal='07:00',_alphaAwal='07:30';
 let _identAwal={};
 
 function cekJamBerubah(){
   const j=document.getElementById('jam_masuk').value;
   const b=document.getElementById('batas_terlambat').value;
+  const a=document.getElementById('batas_alpha').value;
   const btn=document.getElementById('btnSimpanJam');
-  const sama=j===_jamAwal&&b===_batasAwal;
+  const sama=j===_jamAwal&&b===_batasAwal&&a===_alphaAwal;
   btn.disabled=sama;
   btn.style.opacity=sama?'0.5':'1';
   btn.style.cursor=sama?'not-allowed':'pointer';
@@ -112,9 +118,11 @@ async function loadSettings() {
   if (rs?.success) {
     _jamAwal=rs.data.jam_masuk||'07:00';
     _batasAwal=rs.data.batas_terlambat||'07:00';
+    _alphaAwal=rs.data.batas_alpha||'07:30';
     document.getElementById('jam_masuk').value      = _jamAwal;
     document.getElementById('batas_terlambat').value = _batasAwal;
-    document.getElementById('jam-status-text').textContent='Jam masuk: '+_jamAwal+'  ·  Batas tepat waktu: '+_batasAwal;
+    document.getElementById('batas_alpha').value     = _alphaAwal;
+    document.getElementById('jam-status-text').textContent='Jam masuk: '+_jamAwal+'  ·  Batas tepat waktu: '+_batasAwal+'  ·  Batas alpha: '+_alphaAwal;
     cekJamBerubah();
   }
   if (ri?.success && ri.data) {
@@ -152,6 +160,7 @@ function cekIdentitasBerubah(){
 
 document.getElementById('jam_masuk').addEventListener('input',cekJamBerubah);
 document.getElementById('batas_terlambat').addEventListener('input',cekJamBerubah);
+document.getElementById('batas_alpha').addEventListener('input',cekJamBerubah);
 
 function previewLogo(input) {
   const file = input.files[0]; if(!file) return;
@@ -190,14 +199,15 @@ async function hapusGambar(type){
 }
 
 async function simpanJam() {
-  const body={jam_masuk:document.getElementById('jam_masuk').value, batas_terlambat:document.getElementById('batas_terlambat').value};
+  const body={jam_masuk:document.getElementById('jam_masuk').value, batas_terlambat:document.getElementById('batas_terlambat').value, batas_alpha:document.getElementById('batas_alpha').value};
   const {isConfirmed:konfirm}=await Swal.fire({title:'Konfirmasi Simpan',text:'Apakah pengaturan jam sudah benar?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Simpan',cancelButtonText:'Batal',confirmButtonColor:'#2563EB',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
   if(!konfirm) return;
   const res=await fetchAPI('/api/settings/simpan','POST',body);
   if(res?.success){
     _jamAwal=body.jam_masuk;
     _batasAwal=body.batas_terlambat;
-    document.getElementById('jam-status-text').textContent='Jam masuk: '+_jamAwal+'  ·  Batas tepat waktu: '+_batasAwal;
+    _alphaAwal=body.batas_alpha;
+    document.getElementById('jam-status-text').textContent='Jam masuk: '+_jamAwal+'  ·  Batas tepat waktu: '+_batasAwal+'  ·  Batas alpha: '+_alphaAwal;
     cekJamBerubah();
     showToast('Pengaturan jam berhasil disimpan!','success');
   } else showToast(res?.message||'Gagal','error');

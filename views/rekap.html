@@ -157,7 +157,7 @@
           <i class="bi bi-calendar3 me-2"></i>Detail Presensi
         </h5>
         <div style="display:flex;align-items:center;gap:6px;">
-          <button type="button" onclick="closeModal('modalDetail');openModal('modalViewKelas');" style="background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:white;transition:background .2s;" title="Kembali">
+          <button type="button" id="btnBackDetail" onclick="closeModal('modalDetail');openModal('modalViewKelas');" style="background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:white;transition:background .2s;" title="Kembali">
             <i class="bi bi-arrow-left" style="font-size:14px;"></i>
           </button>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
@@ -353,6 +353,7 @@ async function loadRekapKelas(){
 async function lihatDetailSiswa(siswaId,nama){
   const bulan=document.getElementById('filterBulan').value;
   const tahun=document.getElementById('filterTahun').value;
+  document.getElementById('btnBackDetail').style.display=tabAktif==='kelas'?'':'none';
   document.getElementById('detailTitle').innerHTML=
     `<i class="bi bi-calendar3 me-2"></i>${nama} &mdash; ${BULAN_NAMA[parseInt(bulan)]} ${tahun}`;
   document.getElementById('detailBody').innerHTML='<div class="text-center py-4"><div class="loading-spinner"></div></div>';

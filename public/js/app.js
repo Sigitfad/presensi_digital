@@ -54,7 +54,7 @@ async function loadLayout(activePage, pageTitle) {
       { page:'dashboard', icon:'bi-speedometer2',  label:'Dashboard',       href:'/pages/dashboard' },
     ]},
     { label:'Presensi', items:[
-      { page:'scan',    icon:'bi-credit-card-2-front',  label:'Absensi RFID',          href:'/pages/scan' },
+      { page:'scan',    icon:'bi-credit-card-2-front',  label:'ABSENSI RFID',          href:'/pages/scan' },
       { page:'riwayat', icon:'bi-clock-history', label:'Riwayat Presensi', href:'/pages/riwayat' },
       { page:'rekap',   icon:'bi-bar-chart-fill',label:'Rekap Presensi',   href:'/pages/rekap' },
     ]},

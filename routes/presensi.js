@@ -50,6 +50,7 @@ router.post('/scan', (req,res) => {
   const tanggal=now.toLocaleDateString('sv-SE');
   const jam=now.toTimeString().slice(0,8);
   const status=hitungStatus(jam.slice(0,5));
+  if (status === 'BELUM_WAKTU') return res.json({success:false,message:'Belum Waktunya Absen!',belumWaktu:true});
   const sudah=queryOne('SELECT * FROM presensi WHERE siswa_id=? AND tanggal=?',[siswa.id,tanggal]);
   if(sudah) return res.json({success:false,sudah:true,
     message:`${siswa.nama} sudah presensi pukul ${sudah.jam_masuk.slice(0,5)}`,

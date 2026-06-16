@@ -20,6 +20,7 @@
     .belum-absen-info{font-size:10.5px;color:#94A3B8;}
     .belum-absen-status{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;flex-shrink:0;}
     .belum-absen-status.alpha{background:#FEF2F2;color:#DC2626;}
+    .belum-absen-status.terlambat{background:#FEF3C7;color:#D97706;}
     .belum-absen-status.belum{background:#EFF6FF;color:#2563EB;}
     .card-counter{box-shadow:2px 2px 10px #DADADA;margin:5px;padding:20px 10px;background-color:#fff;height:100px;border-radius:5px;transition:.3s linear all;position:relative;}
     .card-counter:hover{box-shadow:4px 4px 20px #DADADA;transition:.3s linear all;}
@@ -39,8 +40,9 @@
     <div class="page-subtitle" id="greet">Memuat data...</div>
     <div style="display:flex;flex-direction:column;gap:2px;font-size:12px;color:var(--gray);">
       <div style="display:flex;gap:12px;justify-content:flex-end;">
-        <span style="white-space:nowrap;"><i class="bi bi-check-circle-fill text-success me-1"></i>Tepat: <strong id="inf-jam" style="color:var(--dark)">07:00</strong></span>
-        <span style="white-space:nowrap;"><i class="bi bi-clock-fill text-warning me-1"></i>Terlambat: <strong id="inf-jam2" style="color:var(--dark)">07:00</strong></span>
+        <span style="white-space:nowrap;">Jam Masuk: <strong id="inf-jam" style="color:var(--dark)">07:00</strong></span>
+        <span style="color:#CBD5E1;">|</span>
+        <span style="white-space:nowrap;">Terlambat: <strong id="inf-jam2" style="color:var(--dark)">07:00</strong></span>
       </div>
       <div style="display:flex;gap:12px;justify-content:flex-end;">
         <span style="white-space:nowrap;"><i class="bi bi-calendar me-1" style="color:var(--primary)"></i><span id="inf-tgl">-</span></span>
@@ -232,10 +234,11 @@ function renderBelumAbsen(){
     const fotoHtml=s.foto
       ? `<img src="${s.foto}" class="belum-absen-foto">`
       : `<div class="belum-absen-ini">${ini}</div>`;
-    const isAlpha=s.status==='Alpha';
-    const statusHtml=isAlpha
+    const statusHtml=s.status==='Alpha'
       ? '<span class="belum-absen-status alpha"><i class="bi bi-x-circle-fill" style="font-size:8px;margin-right:2px;"></i>Alpha</span>'
-      : '<span class="belum-absen-status belum"><i class="bi bi-clock" style="font-size:8px;margin-right:2px;"></i>Belum</span>';
+      : s.status==='Terlambat'
+        ? '<span class="belum-absen-status terlambat"><i class="bi bi-clock-fill" style="font-size:8px;margin-right:2px;"></i>Terlambat</span>'
+        : '<span class="belum-absen-status belum"><i class="bi bi-clock" style="font-size:8px;margin-right:2px;"></i>Belum</span>';
     return `<div class="belum-absen-item">
       ${fotoHtml}
       <div style="flex:1;min-width:0;">
@@ -289,7 +292,7 @@ async function init(){
 
   const ROLE_LABEL={ operator:'Operator', guru:'Guru', kepala_sekolah:'Kepala Sekolah', penjaga_sekolah:'Penjaga Sekolah', guru_bidang:data.myBidang||'Guru Bidang' };
   document.getElementById('greet').innerHTML=`Selamat datang, <strong>${data.operator}</strong> <em>${ROLE_LABEL[data.role]||data.role}</em>`;
-  document.getElementById('inf-jam').textContent=data.batasTerlambat||'07:00';
+  document.getElementById('inf-jam').textContent=data.jamMasuk||'07:00';
   document.getElementById('inf-jam2').textContent=data.batasTerlambat||'07:00';
   document.getElementById('inf-sekolah').textContent=data.identitas?.nama_sekolah||'-';
 

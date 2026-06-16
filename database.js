@@ -248,7 +248,7 @@ async function initDB() {
     console.log('[DB] 10 siswa awal dibuat');
   }
 
-  const defaults = { 'jam_masuk':'07:00','batas_terlambat':'07:00','backup_otomatis':'false' };
+  const defaults = { 'jam_masuk':'07:00','batas_terlambat':'07:00','batas_alpha':'07:30','backup_otomatis':'false' };
   Object.entries(defaults).forEach(([k,v]) => {
     if (!queryOne('SELECT key FROM settings WHERE key=?',[k]))
       run('INSERT INTO settings (key,value) VALUES (?,?)',[k,v]);
@@ -328,7 +328,7 @@ function hitungStatus(jamMasuk) {
   const [bH,bM] = batas.split(':').map(Number);
   const [jH,jM] = jamMasuk.split(':').map(Number);
   const total = jH*60+jM;
-  if (total < sH*60+sM) return 'Terlambat';
+  if (total < sH*60+sM) return 'BELUM_WAKTU';
   return total <= bH*60+bM ? 'Hadir' : 'Terlambat';
 }
 

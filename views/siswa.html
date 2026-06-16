@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -122,7 +122,7 @@
       <div style="display:flex;gap:6px;align-items:center;">
         <button class="btn-primary-custom" onclick="bukaModalUidMassalSiswa()" style="padding:5px 12px;font-size:11px;white-space:nowrap;">Update UID</button>
         <button class="btn-primary-custom" onclick="bukaModalKelasMassal()" style="padding:5px 12px;font-size:11px;white-space:nowrap;">Update Kelas</button>
-        <button class="btn-primary-custom" onclick="bukaModalKenaikanKelas()" style="padding:5px 12px;font-size:11px;white-space:nowrap;background:linear-gradient(135deg,#7C3AED,#6D28D9);" onmouseover="this.style.boxShadow='0 4px 12px rgba(124,58,237,0.35)'" onmouseout="this.style.boxShadow='none'">Kenaikan Kelas</button>
+        <button class="btn-primary-custom" onclick="bukaModalKenaikanKelas()" style="padding:5px 12px;font-size:11px;white-space:nowrap;background:linear-gradient(135deg,#7C3AED,#6D28D9);" onmouseover="this.style.boxShadow='0 4px 12px rgba(124,58,237,0.35)'" onmouseout="this.style.boxShadow='none'">Kenaikan Kelas & Lulus</button>
         <span id="totalLabel" style="font-size:13px;color:white;background:#2563EB;border-radius:8px;padding:4px 14px;display:inline-block;font-weight:700;"></span>
       </div>
     </div>
@@ -703,7 +703,7 @@ async function viewSiswa(d){
     t('Tanggal Lahir',fmt(d.tanggal_lahir))+
     t('Jenis Kelamin',d.jenis_kelamin==='Laki-laki'?'Laki-laki':'Perempuan')+
     t('No. HP Orang Tua',d.no_hp_ortu)+
-    t('Pengampu Kelas',pengampuList.length?pengampuList.map(n=>`<span style="background:#DBEAFE;color:#1E40AF;border-radius:6px;padding:2px 10px;display:inline-block;font-weight:700;margin:2px 3px 2px 0;">${n}</span>`).join(''):'-');
+    t('Guru Pengajar',pengampuList.length?pengampuList.map(n=>`<span style="background:#DBEAFE;color:#1E40AF;border-radius:6px;padding:2px 10px;display:inline-block;font-weight:700;margin:2px 3px 2px 0;">${n}</span>`).join(''):'-');
   document.getElementById('detailAlamat').innerHTML=
     `<table style="width:100%;font-size:12.5px;border-collapse:collapse;">${t('Alamat',d.alamat)}</table>`;
   // Reset tab

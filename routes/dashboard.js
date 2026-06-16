@@ -47,10 +47,13 @@ router.get('/', (req,res) => {
   const hadirSet = new Set(todayPresensi.map(p => p.siswa_id));
   const nowTime = new Date().toTimeString().slice(0, 5);
   const batasTerlambat = getSetting('batas_terlambat','07:00');
-  const lewatBatas = nowTime > batasTerlambat;
+  const batasAlpha = getSetting('batas_alpha','07:30');
+  let lewatBatas = '';
+  if (nowTime > batasAlpha) lewatBatas = 'Alpha';
+  else if (nowTime > batasTerlambat) lewatBatas = 'Terlambat';
   const siswaBelumAbsen = allSiswa.filter(s => !hadirSet.has(s.id)).map(s => ({
     id: s.id, nisn: s.nisn, nama: s.nama, kelas: s.kelas,
-    foto: s.foto, status: lewatBatas ? 'Alpha' : 'Belum'
+    foto: s.foto, status: lewatBatas || 'Belum'
   }));
 
   // totalHadir — pakai subquery supaya tidak bergantung JOIN
@@ -82,6 +85,7 @@ router.get('/', (req,res) => {
     foto           : req.session.operatorFoto || '',
     jamMasuk       : getSetting('jam_masuk','07:00'),
     batasTerlambat : getSetting('batas_terlambat','07:00'),
+    batasAlpha     : getSetting('batas_alpha','07:30'),
     identitas
   });
 });
