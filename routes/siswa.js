@@ -2,7 +2,8 @@ const express  = require('express');
 const multer   = require('multer');
 const path     = require('path');
 const fs       = require('fs');
-const { queryAll, queryOne, run, runWithoutSave, saveDB, logActivity } = require('../database');
+const { queryAll, queryOne, run, runWithoutSave, saveDB, logActivity, getActiveTahunAjaran } = require('../database');
+const { auth, getKelasFilter, detectDelimiter, parseCSV } = require('./_helpers');
 const router   = express.Router();
 
 const storage = multer.diskStorage({
@@ -13,44 +14,30 @@ const upload = multer({ storage, limits:{fileSize:2*1024*1024},
   fileFilter:(req,file,cb)=>(/image\/(jpeg|jpg|png|webp)/.test(file.mimetype)?cb(null,true):cb(new Error('Hanya gambar')))
 });
 
-function auth(req,res,next){
-  if(!req.session.operatorId) return res.status(401).json({success:false,message:'Silakan login'});
-  next();
-}
 router.use(auth);
-
-// Helper: kelas filter berdasarkan role
-function getKelasFilter(req) {
-  const role  = req.session.operatorRole;
-  const kelas = req.session.pengampuKelas || 'Semua';
-  if (role === 'operator') return null;
-  if (kelas === 'Semua')   return null;
-  // Bisa comma-separated (guru_bidang dengan multi kelas)
-  const arr = kelas.split(',').map(k=>k.trim()).filter(Boolean);
-  return arr.length > 1 ? arr : arr[0] || null;
-}
 
 // GET: daftar siswa
 router.get('/', (req,res) => {
-  const { search='', kelas='' } = req.query;
+  const { search='', kelas='', tahun_ajaran_id='' } = req.query;
   const kelasFilter = getKelasFilter(req);
 
-  let sql='SELECT * FROM siswa WHERE 1=1';
+  let sql='SELECT s.*, ta.nama as tahun_ajaran_nama FROM siswa s LEFT JOIN tahun_ajaran ta ON s.tahun_ajaran_id=ta.id WHERE 1=1';
   const p=[];
-  if(search){ sql+=' AND (nama LIKE ? OR nisn LIKE ? OR nipd LIKE ? OR kelas LIKE ? OR uid LIKE ?)'; p.push(`%${search}%`,`%${search}%`,`%${search}%`,`%${search}%`,`%${search}%`); }
+  if(search){ sql+=' AND (s.nama LIKE ? OR s.nisn LIKE ? OR s.nipd LIKE ? OR s.kelas LIKE ? OR s.uid LIKE ?)'; p.push(`%${search}%`,`%${search}%`,`%${search}%`,`%${search}%`,`%${search}%`); }
 
   // kelasFilter = batasan dari session (pengampu kelas)
   // Jika user memilih kelas tertentu dari dropdown, hormati pilihan tsb
   const allowed = kelasFilter ? (Array.isArray(kelasFilter) ? kelasFilter : [kelasFilter]) : [];
   if(kelas.trim() && allowed.length && allowed.includes(kelas.trim())){
-    sql+=' AND kelas=?'; p.push(kelas.trim());
+    sql+=' AND s.kelas=?'; p.push(kelas.trim());
   } else if(allowed.length){
-    sql+=` AND kelas IN (${allowed.map(()=>'?').join(',')})`;
+    sql+=` AND s.kelas IN (${allowed.map(()=>'?').join(',')})`;
     p.push(...allowed);
   } else if(kelas.trim()){
-    sql+=' AND kelas=?'; p.push(kelas.trim());
+    sql+=' AND s.kelas=?'; p.push(kelas.trim());
   }
-  sql+=' ORDER BY nama ASC LIMIT 5000';
+  if(tahun_ajaran_id) { sql+=' AND s.tahun_ajaran_id=?'; p.push(tahun_ajaran_id); }
+  sql+=' ORDER BY s.nama ASC LIMIT 5000';
   res.json({success:true, data:queryAll(sql,p)});
 });
 
@@ -68,7 +55,7 @@ router.get('/pengampu/:id', (req,res) => {
 
 // GET: export siswa ke CSV (harus sebelum /:id)
 router.get('/export', (req,res) => {
-  const { search='', kelas='' } = req.query;
+  const { search='', kelas='', tahun_ajaran_id='' } = req.query;
   const kelasFilter = getKelasFilter(req);
   let sql='SELECT * FROM siswa WHERE 1=1';
   const p=[];
@@ -82,6 +69,7 @@ router.get('/export', (req,res) => {
   } else if(kelas.trim()){
     sql+=' AND kelas=?'; p.push(kelas.trim());
   }
+  if(tahun_ajaran_id) { sql+=' AND tahun_ajaran_id=?'; p.push(tahun_ajaran_id); }
   sql+=' ORDER BY nama ASC';
   const data = queryAll(sql,p);
   const header = ['nisn','nipd','nama','kelas','jenis_kelamin','uid','nik','tempat_lahir','tanggal_lahir','agama','alamat','no_hp_ortu'];
@@ -128,8 +116,10 @@ router.post('/tambah', upload.single('foto'), (req,res) => {
   if(uid && queryOne('SELECT id FROM siswa WHERE uid=?',[uid]))
     return res.json({success:false,message:'UID sudah terdaftar!'});
   const foto = req.file ? `/uploads/foto-siswa/${req.file.filename}` : '';
+  const ta = getActiveTahunAjaran();
+  const taId = ta ? ta.id : 1;
   try {
-    run('INSERT INTO siswa (nisn,nama,kelas,jenis_kelamin,foto,no_hp_ortu,nik,tempat_lahir,tanggal_lahir,agama,alamat,nipd,uid) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',[nisn,nama,kelas,jenis_kelamin,foto,no_hp_ortu,nik,tempat_lahir,tanggal_lahir,agama,alamat,nipd,uid]);
+    run('INSERT INTO siswa (nisn,nama,kelas,jenis_kelamin,foto,no_hp_ortu,nik,tempat_lahir,tanggal_lahir,agama,alamat,nipd,uid,tahun_ajaran_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)',[nisn,nama,kelas,jenis_kelamin,foto,no_hp_ortu,nik,tempat_lahir,tanggal_lahir,agama,alamat,nipd,uid,taId]);
     logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,'Tambah Siswa',`${nama} (${nisn})`);
     res.json({success:true,message:'Siswa berhasil ditambahkan'});
   } catch(e){res.json({success:false,message:e.message});}
@@ -265,13 +255,15 @@ router.post('/pindah-massal', (req,res) => {
 
 router.post('/kenaikan-kelas', (req,res) => {
   const { promotions, graduations, tahun_lulus } = req.body;
+  const taKenaikan = getActiveTahunAjaran();
+  const taKenaikanId = taKenaikan ? taKenaikan.id : 1;
   let sukses = 0, gagal = 0;
   try {
     runWithoutSave('BEGIN TRANSACTION');
     if (promotions && Array.isArray(promotions)) {
       promotions.forEach(p => {
         try {
-          runWithoutSave('UPDATE siswa SET kelas=?, updated_at=datetime("now","localtime") WHERE id=?', [p.kelas_baru, p.id]);
+          runWithoutSave('UPDATE siswa SET kelas=?, tahun_ajaran_id=?, updated_at=datetime("now","localtime") WHERE id=?', [p.kelas_baru, taKenaikanId, p.id]);
           sukses++;
         } catch(e) { gagal++; }
       });
@@ -309,32 +301,6 @@ const csvUpload = multer({ storage: multer.memoryStorage(), limits:{fileSize:5*1
   }
 });
 
-function detectDelimiter(line){
-  const commaCount = (line.match(/,/g)||[]).length;
-  const semicolonCount = (line.match(/;/g)||[]).length;
-  return semicolonCount > commaCount ? ';' : ',';
-}
-
-function parseCSV(text){
-  const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').filter(Boolean);
-  if(!lines.length) return {header:[],rows:[]};
-  const delim = detectDelimiter(lines[0]);
-  const header = lines[0].split(delim).map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase());
-  const rows = [];
-  for(let i=1; i<lines.length; i++){
-    const vals = lines[i].split(delim).map(v=>{
-      let x=v.trim();
-      if(/^=".+"$/.test(x)) x=x.slice(2,-1);
-      else x=x.replace(/^"|"$/g,'');
-      return x;
-    });
-    const row = {};
-    header.forEach((h,idx)=> row[h]=vals[idx]||'');
-    rows.push(row);
-  }
-  return {header, rows};
-}
-
 function normalizeDate(v){
   if(!v) return '';
   if(/^\d{2}\/\d{2}\/\d{4}$/.test(v)){
@@ -361,10 +327,12 @@ router.post('/import', csvUpload.single('file'), (req,res) => {
       return o;
     });
 
+    const taImport = getActiveTahunAjaran();
+    const taImportId = taImport ? taImport.id : 1;
     let sukses=0, gagal=0, errors=[];
-    const sql = 'INSERT INTO siswa (nisn,nipd,nama,kelas,jenis_kelamin,uid,nik,tempat_lahir,tanggal_lahir,agama,alamat,no_hp_ortu) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)';
+    const sql = 'INSERT INTO siswa (nisn,nipd,nama,kelas,jenis_kelamin,uid,nik,tempat_lahir,tanggal_lahir,agama,alamat,no_hp_ortu,tahun_ajaran_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
-    // Pre‑scan: cari duplikat UID dalam file CSV sendiri
+    // Pre-scan: cari duplikat UID dalam file CSV sendiri
     const uidSeen = {};
     const rowUidErrors = {};
     for(let i=0; i<rows.length; i++){
@@ -390,7 +358,7 @@ router.post('/import', csvUpload.single('file'), (req,res) => {
       if(r.jenis_kelamin&&!['Laki-laki','Perempuan'].includes(r.jenis_kelamin)) errs.push('Jenis kelamin harus Laki-laki/Perempuan');
       if(errs.length){gagal++;errors.push(`Baris ${no}: ${errs.join('; ')}`);continue;}
       try {
-        runWithoutSave(sql, [r.nisn,r.nipd,r.nama,r.kelas,r.jenis_kelamin,r.uid,r.nik||'',r.tempat_lahir||'',normalizeDate(r.tanggal_lahir),r.agama||'',r.alamat||'',r.no_hp_ortu||'']);
+        runWithoutSave(sql, [r.nisn,r.nipd,r.nama,r.kelas,r.jenis_kelamin,r.uid,r.nik||'',r.tempat_lahir||'',normalizeDate(r.tanggal_lahir),r.agama||'',r.alamat||'',r.no_hp_ortu||'',taImportId]);
         sukses++;
       } catch(e){gagal++;errors.push(`Baris ${no}: ${e.message}`);}
     }

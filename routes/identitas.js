@@ -3,6 +3,7 @@ const multer  = require('multer');
 const path    = require('path');
 const fs      = require('fs');
 const { queryOne, run, logActivity } = require('../database');
+const { auth } = require('./_helpers');
 const router  = express.Router();
 
 const storage = multer.diskStorage({
@@ -17,10 +18,6 @@ router.get('/public', (req,res) => {
   res.json({success:true, data: data||{}});
 });
 
-function auth(req,res,next){
-  if(!req.session.operatorId) return res.status(401).json({success:false});
-  next();
-}
 router.use(auth);
 
 router.get('/', (req,res) => {

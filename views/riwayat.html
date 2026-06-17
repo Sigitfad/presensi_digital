@@ -36,6 +36,12 @@
             <option value="">Semua Kelas</option>
           </select>
         </div>
+        <div>
+          <label class="form-label-modern" style="margin-bottom:4px;font-size:12px;">Tahun Ajaran</label>
+          <select id="filterTahunAjaran" class="form-control-modern" style="width:150px;" onchange="loadRiwayat()">
+            <option value="">Semua</option>
+          </select>
+        </div>
         <button class="btn-primary-custom" onclick="loadRiwayat()">
           <i class="bi bi-search"></i> Filter
         </button>
@@ -157,10 +163,11 @@ async function loadRiwayat(){
   const t1    = document.getElementById('tgl1').value;
   const t2    = document.getElementById('tgl2').value;
   const kelas = document.getElementById('filterKelas').value.trim();
+  const tahun_ajaran_id=document.getElementById('filterTahunAjaran').value;
   const tbody = document.getElementById('tblRiwayat');
   tbody.innerHTML='<tr><td colspan="8" class="text-center py-4"><div class="loading-spinner"></div></td></tr>';
 
-  const params = new URLSearchParams({tanggal:t1, tanggal2:t2, kelas});
+  const params = new URLSearchParams({tanggal:t1, tanggal2:t2, kelas, tahun_ajaran_id});
   const res    = await fetchAPI(`/api/presensi?${params}`);
   if(!res) return;
   allData = res.data || [];
@@ -202,14 +209,18 @@ function exportExcel(){
   if(!allData.length){showToast('Tidak ada data!','warning');return;}
   const t1=document.getElementById('tgl1').value, t2=document.getElementById('tgl2').value;
   const kelas=document.getElementById('filterKelas').value.trim();
+  const tahun_ajaran_id=document.getElementById('filterTahunAjaran').value;
   const kelasLabel=kelas?kelas.replace(/\s/g,''):'Semua';
-  downloadWithProgress(`/api/presensi/export-excel?tanggal=${t1}&tanggal2=${t2}&kelas=${encodeURIComponent(kelas)}`,
+  downloadWithProgress(`/api/presensi/export-excel?tanggal=${t1}&tanggal2=${t2}&kelas=${encodeURIComponent(kelas)}&tahun_ajaran_id=${tahun_ajaran_id}`,
     `Presensi_${t1}_${kelasLabel}.xlsx`,allData.length,'presensi');
 }
 
 async function init(){
   await loadLayout('riwayat','Riwayat Presensi');
-  await loadKelasOptions('filterKelas', true);
+  await Promise.all([
+    loadKelasOptions('filterKelas', true),
+    loadTAOptions('filterTahunAjaran')
+  ]);
   const session = window._session || {};
   const pengampu= session.pengampuKelas || 'Semua';
   const role    = session.role || 'operator';

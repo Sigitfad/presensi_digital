@@ -105,6 +105,24 @@ async function initDB() {
       id   INTEGER PRIMARY KEY AUTOINCREMENT,
       nama TEXT NOT NULL UNIQUE
     );
+
+    CREATE TABLE IF NOT EXISTS tahun_ajaran (
+      id            INTEGER PRIMARY KEY AUTOINCREMENT,
+      nama          TEXT NOT NULL UNIQUE,
+      tanggal_mulai TEXT NOT NULL,
+      tanggal_akhir TEXT NOT NULL,
+      aktif         INTEGER NOT NULL DEFAULT 0,
+      created_at    TEXT DEFAULT (datetime('now','localtime'))
+    );
+
+    CREATE TABLE IF NOT EXISTS hari_libur (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      tanggal    TEXT NOT NULL UNIQUE,
+      keterangan TEXT DEFAULT '',
+      tipe       TEXT NOT NULL DEFAULT 'nasional'
+                   CHECK(tipe IN ('nasional','cuti_bersama')),
+      created_at TEXT DEFAULT (datetime('now','localtime'))
+    );
   `);
 
   // Migrasi: rename nis -> nisn jika kolom lama masih ada
@@ -199,6 +217,80 @@ async function initDB() {
     "ALTER TABLE pindahan ADD COLUMN nipd TEXT DEFAULT ''",
   ];
   migrations.forEach(sql => { try { db.run(sql); saveDB(); } catch(e) {} });
+
+  // Migrasi: tambah tahun_ajaran_id ke siswa & presensi
+  const _tCols = {};
+  _tCols.siswa = queryAll('PRAGMA table_info(siswa)').map(c=>c.name);
+  _tCols.presensi = queryAll('PRAGMA table_info(presensi)').map(c=>c.name);
+  if(!_tCols.siswa.includes('tahun_ajaran_id')) {
+    try { db.run("ALTER TABLE siswa ADD COLUMN tahun_ajaran_id INTEGER DEFAULT 1"); saveDB(); console.log('[DB] Migrasi: siswa.tahun_ajaran_id'); } catch(e) { console.log('[DB] Migrasi siswa.tahun_ajaran_id skip:', e.message); }
+  }
+  if(!_tCols.presensi.includes('tahun_ajaran_id')) {
+    try {
+      // Recreate presensi table to add column + updated UNIQUE constraint
+      const _oldPresensi = queryAll('SELECT * FROM presensi');
+      db.run("DROP TABLE IF EXISTS presensi");
+      db.run(`CREATE TABLE IF NOT EXISTS presensi (
+        id         INTEGER PRIMARY KEY AUTOINCREMENT,
+        siswa_id   INTEGER NOT NULL,
+        tanggal    TEXT NOT NULL,
+        jam_masuk  TEXT NOT NULL,
+        status     TEXT NOT NULL DEFAULT 'Hadir'
+                     CHECK(status IN ('Hadir','Terlambat','Izin','Sakit','Alpha')),
+        tahun_ajaran_id INTEGER DEFAULT 1,
+        keterangan TEXT DEFAULT '',
+        created_at TEXT DEFAULT (datetime('now','localtime')),
+        FOREIGN KEY (siswa_id) REFERENCES siswa(id) ON DELETE CASCADE,
+        UNIQUE(siswa_id, tanggal, tahun_ajaran_id)
+      )`);
+      if(_oldPresensi.length) {
+        const _ins = db.prepare('INSERT INTO presensi (id,siswa_id,tanggal,jam_masuk,status,keterangan,created_at) VALUES (?,?,?,?,?,?,?)');
+        _oldPresensi.forEach(r => { try { _ins.bind([r.id, r.siswa_id, r.tanggal, r.jam_masuk, r.status, r.keterangan||'', r.created_at]); _ins.step(); _ins.reset(); } catch(e2) {} });
+        _ins.free();
+      }
+      saveDB();
+      console.log('[DB] Migrasi: presensi.tahun_ajaran_id + UNIQUE diperbarui');
+    } catch(e) { console.log('[DB] Migrasi presensi.tahun_ajaran_id skip:', e.message); }
+  }
+
+  // Seed tahun_ajaran default
+  if(queryCount('SELECT COUNT(*) as c FROM tahun_ajaran') === 0) {
+    const _thn = new Date().getFullYear();
+    const _sekarang = _thn - 1;
+    const _next = _thn;
+    try { runWithoutSave(`INSERT INTO tahun_ajaran (nama,tanggal_mulai,tanggal_akhir,aktif) VALUES ('${_sekarang}/${_thn}','${_sekarang}-07-01','${_thn}-06-30',1)`); } catch(e) {}
+    try { runWithoutSave(`INSERT INTO tahun_ajaran (nama,tanggal_mulai,tanggal_akhir,aktif) VALUES ('${_thn}/${_next+1}','${_thn}-07-01','${_next+1}-06-30',0)`); } catch(e) {}
+    saveDB();
+    console.log('[DB] Tahun ajaran default dibuat');
+  }
+
+  // Migrasi: tambah kolom sumber ke hari_libur
+  try { db.run("ALTER TABLE hari_libur ADD COLUMN sumber TEXT NOT NULL DEFAULT 'sekolah'"); saveDB(); console.log('[DB] Migrasi: hari_libur.sumber'); } catch(e) {}
+
+  // Migrasi: perluas CHECK constraint tipe (nasional,cuti_bersama -> +libur_sekolah,kegiatan_sekolah)
+  try {
+    const tCols = queryAll("PRAGMA table_info('hari_libur')").map(c=>c.name);
+    if (tCols.includes('sumber')) {
+      const sqlCheck = "SELECT sql FROM sqlite_master WHERE type='table' AND name='hari_libur'";
+      const def = queryOne(sqlCheck);
+      if (def && def.sql && def.sql.includes("CHECK(tipe IN ('nasional','cuti_bersama'))")) {
+        db.run("ALTER TABLE hari_libur RENAME TO hari_libur_old");
+        db.run(`CREATE TABLE IF NOT EXISTS hari_libur (
+          id         INTEGER PRIMARY KEY AUTOINCREMENT,
+          tanggal    TEXT NOT NULL UNIQUE,
+          keterangan TEXT DEFAULT '',
+          tipe       TEXT NOT NULL DEFAULT 'nasional'
+                       CHECK(tipe IN ('nasional','cuti_bersama','libur_sekolah','kegiatan_sekolah')),
+          sumber     TEXT NOT NULL DEFAULT 'sekolah',
+          created_at TEXT DEFAULT (datetime('now','localtime'))
+        )`);
+        db.run("INSERT INTO hari_libur (id,tanggal,keterangan,tipe,sumber,created_at) SELECT id,tanggal,keterangan,tipe,sumber,created_at FROM hari_libur_old");
+        db.run("DROP TABLE hari_libur_old");
+        saveDB();
+        console.log('[DB] Migrasi: hari_libur.tipe diperluas');
+      }
+    }
+  } catch(e) { console.log('[DB] Migrasi tipe skip:', e.message); }
 
   // Migrasi: hapus kolom username, password, password_plain jika masih ada
   const cols = queryAll("PRAGMA table_info('operators')").map(c=>c.name);
@@ -332,6 +424,10 @@ function hitungStatus(jamMasuk) {
   return total <= bH*60+bM ? 'Hadir' : 'Terlambat';
 }
 
+function getHariLibur(tglAwal, tglAkhir) {
+  return queryAll('SELECT tanggal, keterangan FROM hari_libur WHERE tanggal>=? AND tanggal<=? ORDER BY tanggal ASC', [tglAwal, tglAkhir]);
+}
+
 function reloadDB() {
   const initSqlJs = require('sql.js');
   return initSqlJs().then(SQL => {
@@ -345,4 +441,6 @@ function reloadDB() {
   });
 }
 
-module.exports = { initDB, run, runWithoutSave, queryAll, queryOne, queryCount, logActivity, getSetting, hitungStatus, saveDB, reloadDB, DB_PATH };
+function getActiveTahunAjaran() { return queryOne('SELECT * FROM tahun_ajaran WHERE aktif=1') || queryOne('SELECT * FROM tahun_ajaran ORDER BY id ASC LIMIT 1'); }
+
+module.exports = { initDB, run, runWithoutSave, queryAll, queryOne, queryCount, logActivity, getSetting, hitungStatus, saveDB, reloadDB, DB_PATH, getHariLibur, getActiveTahunAjaran };

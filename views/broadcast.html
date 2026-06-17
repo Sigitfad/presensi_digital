@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Broadcast WhatsApp</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>.swal-kecil{font-size:12px!important;border-radius:12px!important;}.swal-title-kecil{font-size:14px!important;padding:0!important;margin:0 0 4px!important;}.swal-text-kecil{font-size:12px!important;margin:0!important;}.swal-btn-kecil{font-size:11px!important;padding:5px 14px!important;border-radius:8px!important;}</style></head>
+<body>
+<div id="page-content" class="page-content">
+  <div class="page-header">
+    <div class="page-title">Broadcast WhatsApp</div>
+    <div class="page-subtitle">Kirim pesan WhatsApp massal ke orang tua/wali siswa</div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="card-modern h-100">
+        <div class="card-modern-header">
+          <div class="card-modern-title"><i class="bi bi-whatsapp" style="color:#25D366;"></i> Komposer Pesan</div>
+          <div id="info-count" style="font-size:12px;color:var(--gray);font-weight:600;"></div>
+        </div>
+        <div class="card-modern-body">
+          <label class="form-label-modern">Filter Kelas</label>
+          <select id="filterKelas" class="form-control-modern" onchange="hitungPenerima()">
+            <option value="Semua">Semua Kelas</option>
+          </select>
+          <div style="font-size:11.5px;color:var(--gray);margin-top:5px;">Pilih kelas tertentu atau kirim ke semua.</div>
+          <label class="form-label-modern" style="margin-top:10px;">Tahun Ajaran</label>
+          <select id="filterTahunAjaran" class="form-control-modern" onchange="hitungPenerima()">
+            <option value="">Semua</option>
+          </select>
+
+          <label class="form-label-modern" style="margin-top:14px;">
+            Pesan WhatsApp
+            <span style="font-weight:400;color:var(--gray);font-size:11px;">
+              — Gunakan <code>{nama}</code> <code>{nisn}</code> <code>{kelas}</code> untuk personalisasi
+            </span>
+          </label>
+          <textarea id="inpPesan" class="form-control-modern" rows="8" style="font-size:13px;resize:vertical;padding:10px;border-radius:10px;border:1.5px solid #E2E8F0;width:100%;outline:none;font-family:inherit;" placeholder="Tulis pesan broadcast...">Assalamu'alaikum Wr. Wb.
+
+Yth. Orang tua/wali dari {nama} (Kelas: {kelas})
+
+Diberitahukan bahwa hari ini akan diadakan kegiatan sekolah. Mohon dukungan dan partisipasinya.
+
+Terima kasih.</textarea>
+
+          <div class="d-flex gap-2 mt-3 flex-wrap">
+            <button class="btn-primary-custom" onclick="hitungPenerima()" style="background:var(--gray);border-color:var(--gray);">
+              <i class="bi bi-search"></i> Hitung Penerima
+            </button>
+            <button class="btn-primary-custom" onclick="kirimBroadcast()" style="background:#25D366;border-color:#25D366;" id="btnKirim">
+              <i class="bi bi-send"></i> Kirim Broadcast
+            </button>
+            <button class="btn-primary-custom" onclick="simpanTemplate()" id="btnSimpanTemplate" style="background:#6366F1;border-color:#6366F1;opacity:0.4;pointer-events:none;">
+              <i class="bi bi-floppy"></i> Simpan Template
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card-modern h-100">
+        <div class="card-modern-header">
+          <div class="card-modern-title"><i class="bi bi-eye" style="color:var(--primary)"></i> Pratinjau Pesan</div>
+        </div>
+        <div class="card-modern-body">
+          <div id="previewBox" style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:16px;font-size:13px;line-height:1.7;white-space:pre-wrap;color:#1E293B;min-height:80px;">
+            <span style="color:#94A3B8;">Isi pesan untuk melihat pratinjau...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/app.js?v=5"></script>
+<script>
+// --- Template management ---
+let savedTemplate = '';
+const TEMPLATE_KEY = 'broadcast_template';
+
+function simpanTemplate(){
+  savedTemplate = document.getElementById('inpPesan').value;
+  localStorage.setItem(TEMPLATE_KEY, savedTemplate);
+  updateSaveBtn();
+  showToast('Template tersimpan','success');
+}
+
+function updateSaveBtn(){
+  const btn = document.getElementById('btnSimpanTemplate');
+  const changed = document.getElementById('inpPesan').value !== savedTemplate;
+  if(changed){
+    btn.style.opacity = '1';
+    btn.style.pointerEvents = 'auto';
+  } else {
+    btn.style.opacity = '0.4';
+    btn.style.pointerEvents = 'none';
+  }
+}
+
+function cekUnsaved(){
+  return document.getElementById('inpPesan').value !== savedTemplate;
+}
+
+async function konfirmasiUnsaved(){
+  if(!cekUnsaved()) return true;
+  const {isDismissed} = await Swal.fire({
+    title:'Template Belum Disimpan',
+    html:'<div style="font-size:13px;">Ada perubahan pada template yang belum disimpan.</div>',
+    icon:'warning', showCancelButton:true,
+    confirmButtonText:'Discard', cancelButtonText:'Lanjut Edit',
+    confirmButtonColor:'#EF4444', cancelButtonColor:'#6366F1', reverseButtons:true,
+    width:'300px', padding:'12px',
+    customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}
+  });
+  return isDismissed; // true if Lanjut Edit, false if Discard
+}
+// --- End template management ---
+
+async function hitungPenerima(){
+  if(cekUnsaved()){
+    const lanjut = await konfirmasiUnsaved();
+    if(lanjut) return;
+  }
+  const kelas = document.getElementById('filterKelas').value;
+  const tahun_ajaran_id = document.getElementById('filterTahunAjaran').value;
+  const info = document.getElementById('info-count');
+  info.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" style="width:14px;height:14px;"></span> Menghitung penerima...';
+  const res = await fetchAPI('/api/siswa?limit=99999&kelas='+encodeURIComponent(kelas)+'&tahun_ajaran_id='+tahun_ajaran_id);
+  if(!res || !res.success) {
+    info.innerHTML = '<span style="color:#EF4444;"><i class="bi bi-exclamation-triangle-fill"></i> Gagal memuat data siswa</span>';
+    return;
+  }
+  const total = (res.data||[]).filter(s => s.no_hp_ortu && s.no_hp_ortu.trim().length >= 10).length;
+  info.innerHTML = '<span><i class="bi bi-people-fill" style="color:#3B82F6;"></i> Penerima <span style="background:#3B82F6;color:white;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:700;">' + total + '</span> siswa</span>';
+}
+
+document.getElementById('inpPesan').addEventListener('input', function(){
+  const preview = document.getElementById('previewBox');
+  let msg = this.value || '(pesan kosong)';
+  msg = msg
+    .replace(/\{nama\}/g, '<strong style="color:#2563EB;">NamaSiswa</strong>')
+    .replace(/\{nisn\}/g, '<strong style="color:#2563EB;">1234567890</strong>')
+    .replace(/\{kelas\}/g, '<strong style="color:#2563EB;">Kelas 1A</strong>');
+  preview.innerHTML = msg;
+  updateSaveBtn();
+});
+
+async function kirimBroadcast(){
+  if(cekUnsaved()){
+    const lanjut = await konfirmasiUnsaved();
+    if(lanjut) return; // user clicked Lanjut Edit
+  }
+
+  const kelas = document.getElementById('filterKelas').value;
+  const tahun_ajaran_id = document.getElementById('filterTahunAjaran').value;
+  const pesan = document.getElementById('inpPesan').value.trim();
+  if(!pesan) { showToast('Pesan tidak boleh kosong','warning'); return; }
+
+  const resCount = await fetchAPI('/api/siswa?limit=99999&kelas='+encodeURIComponent(kelas)+'&tahun_ajaran_id='+tahun_ajaran_id);
+  if(!resCount) return;
+  const totalPenerima = (resCount.data||[]).filter(s => s.no_hp_ortu && s.no_hp_ortu.trim().length >= 10).length;
+  if(!totalPenerima) { showToast('Tidak ada penerima untuk filter ini','warning'); return; }
+
+  const {isConfirmed} = await Swal.fire({
+    title:'Kirim Broadcast?',
+    html: `<div style="font-size:13px;text-align:left;">
+      <div style="margin-bottom:6px;"><strong>Kelas:</strong> ${kelas}</div>
+      <div style="margin-bottom:6px;"><strong>Penerima:</strong> ${totalPenerima} siswa (nomor format valid)</div>
+      <div style="background:#F8FAFC;border-radius:8px;padding:10px;font-size:12px;line-height:1.6;max-height:120px;overflow-y:auto;border:1px solid #E2E8F0;white-space:pre-wrap;">${pesan.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+    </div>`,
+    icon:'question', showCancelButton:true, confirmButtonText:'Ya, Kirim', cancelButtonText:'Batal',
+    confirmButtonColor:'#25D366', cancelButtonColor:'#1E293B', reverseButtons:true,
+    width:'300px', padding:'12px',
+    customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}
+  });
+  if(!isConfirmed) return;
+
+  const btn = document.getElementById('btnKirim');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Mengirim...';
+
+  Swal.fire({
+    title:'Mengirim Broadcast',
+    html: `<div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px 0;">
+      <div class="spinner-border text-success" role="status" style="width:2rem;height:2rem;"></div>
+      <div style="font-size:13px;color:#475569;">Mengirim ke ${totalPenerima} nomor...</div>
+      <div style="font-size:11px;color:#94A3B8;">Proses mungkin memakan waktu beberapa saat</div>
+    </div>`,
+    allowOutsideClick: false, showConfirmButton: false, width:'300px', padding:'12px',
+    customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil'}
+  });
+
+  const res = await fetchAPI('/api/whatsapp/broadcast','POST',{kelas,pesan,tahun_ajaran_id});
+  Swal.close();
+  btn.disabled = false;
+  btn.innerHTML = '<i class="bi bi-send"></i> Kirim Broadcast';
+
+  if(res?.success){
+    showToast(res.message,'success');
+    fetchAPI('/api/log/tambah', 'POST', {userId:0, userNama:'Sistem', role:'sistem', aksi:'Broadcast WA', detail:`Kelas: ${kelas} - ${res.sukses||0} terkirim, ${res.gagal||0} gagal`});
+  } else showToast(res?.message||'Gagal','error');
+}
+
+function interceptSidebarNav(){
+  document.querySelectorAll('.nav-link, .sidebar-brand').forEach(el => {
+    el.addEventListener('click', async function(e){
+      if(!cekUnsaved()) return;
+      e.preventDefault();
+      const href = this.getAttribute('href');
+      const {isConfirmed} = await Swal.fire({
+        title:'Template Belum Disimpan',
+        html:'<div style="font-size:13px;">Ada perubahan pada template yang belum disimpan. Yakin ingin meninggalkan halaman ini?</div>',
+        icon:'warning', showCancelButton:true,
+        confirmButtonText:'Discard', cancelButtonText:'Lanjut Edit',
+        confirmButtonColor:'#EF4444', cancelButtonColor:'#1E293B', reverseButtons:true,
+        width:'300px', padding:'12px',
+        customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}
+      });
+      if(isConfirmed) window.location.href = href;
+    });
+  });
+}
+
+async function init(){
+  await loadLayout('broadcast','Broadcast WhatsApp');
+  await Promise.all([
+    loadKelasOptions('filterKelas', true),
+    loadTAOptions('filterTahunAjaran')
+  ]);
+  interceptSidebarNav();
+  savedTemplate = localStorage.getItem(TEMPLATE_KEY);
+  if(savedTemplate){
+    document.getElementById('inpPesan').value = savedTemplate;
+  } else {
+    savedTemplate = document.getElementById('inpPesan').value;
+  }
+  updateSaveBtn();
+  setTimeout(() => {
+    document.getElementById('inpPesan').dispatchEvent(new Event('input'));
+    hitungPenerima();
+  }, 100);
+}
+init();
+</script>
+</body>
+</html>

@@ -1,11 +1,9 @@
 const express = require('express');
-const { queryAll, queryCount, queryOne, getSetting } = require('../database');
+const { queryAll, queryCount, queryOne, getSetting, getActiveTahunAjaran } = require('../database');
+const { auth } = require('./_helpers');
 const router  = express.Router();
 
-router.use((req,res,next) => {
-  if(!req.session.operatorId) return res.status(401).json({success:false});
-  next();
-});
+router.use(auth);
 
 router.get('/', (req,res) => {
   const today         = new Date().toLocaleDateString('sv-SE');
@@ -15,8 +13,10 @@ router.get('/', (req,res) => {
   const role          = req.session.operatorRole;
   const myBidang      = role==='guru_bidang' ? queryOne("SELECT bidang_keahlian FROM operators WHERE id=?",[operatorId])?.bidang_keahlian||'' : '';
   const isOperator    = role === 'operator';
+  const taDash        = getActiveTahunAjaran();
+  const taDashId      = taDash ? taDash.id : 0;
 
-  const totalSiswa     = queryCount('SELECT COUNT(*) as c FROM siswa');
+  const totalSiswa     = taDashId ? queryCount('SELECT COUNT(*) as c FROM siswa WHERE tahun_ajaran_id=?',[taDashId]) : queryCount('SELECT COUNT(*) as c FROM siswa');
   const totalGuru      = queryCount("SELECT COUNT(*) as c FROM operators WHERE role='guru'");
   const totalOperator  = queryCount("SELECT COUNT(*) as c FROM operators WHERE role='operator'");
   const totalKepsek    = queryCount("SELECT COUNT(*) as c FROM operators WHERE role='kepala_sekolah'");
@@ -42,8 +42,11 @@ router.get('/', (req,res) => {
     siswaSQL += ` AND kelas IN (${kelasArr.map(()=>'?').join(',')})`;
     siswaParams = [...kelasArr];
   }
+  if (taDashId) { siswaSQL += ' AND tahun_ajaran_id=?'; siswaParams.push(taDashId); }
   const allSiswa = queryAll(siswaSQL, siswaParams);
-  const todayPresensi = queryAll('SELECT siswa_id FROM presensi WHERE tanggal=?', [today]);
+  const todayPresensi = taDashId
+    ? queryAll('SELECT siswa_id FROM presensi WHERE tanggal=? AND tahun_ajaran_id=?', [today, taDashId])
+    : queryAll('SELECT siswa_id FROM presensi WHERE tanggal=?', [today]);
   const hadirSet = new Set(todayPresensi.map(p => p.siswa_id));
   const nowTime = new Date().toTimeString().slice(0, 5);
   const batasTerlambat = getSetting('batas_terlambat','07:00');
@@ -57,26 +60,39 @@ router.get('/', (req,res) => {
   }));
 
   // totalHadir — pakai subquery supaya tidak bergantung JOIN
-  const hadirSQL = kelasArr.length
-    ? `SELECT COUNT(*) as c FROM presensi WHERE tanggal=? AND siswa_id IN (SELECT id FROM siswa WHERE kelas IN (${kelasArr.map(()=>'?').join(',')}))`
-    : 'SELECT COUNT(*) as c FROM presensi WHERE tanggal=?';
-  const totalHadir = queryCount(hadirSQL, kelasArr.length ? [today, ...kelasArr] : [today]);
+  const hadirParams = [today];
+  let hadirSQL = 'SELECT COUNT(*) as c FROM presensi WHERE tanggal=?';
+  if (taDashId) { hadirSQL += ' AND tahun_ajaran_id=?'; hadirParams.push(taDashId); }
+  if (kelasArr.length) {
+    hadirSQL += ` AND siswa_id IN (SELECT id FROM siswa WHERE kelas IN (${kelasArr.map(()=>'?').join(',')}))`;
+    hadirParams.push(...kelasArr);
+  }
+  const totalHadir = queryCount(hadirSQL, hadirParams);
 
   // Count Terlambat today
-  const terlambatSQL = kelasArr.length
-    ? `SELECT COUNT(*) as c FROM presensi WHERE tanggal=? AND status='Terlambat' AND siswa_id IN (SELECT id FROM siswa WHERE kelas IN (${kelasArr.map(()=>'?').join(',')}))`
-    : `SELECT COUNT(*) as c FROM presensi WHERE tanggal=? AND status='Terlambat'`;
-  const totalTerlambat = queryCount(terlambatSQL, kelasArr.length ? [today, ...kelasArr] : [today]);
+  const terlambatParams = [today];
+  let terlambatSQL = "SELECT COUNT(*) as c FROM presensi WHERE tanggal=? AND status='Terlambat'";
+  if (taDashId) { terlambatSQL += ' AND tahun_ajaran_id=?'; terlambatParams.push(taDashId); }
+  if (kelasArr.length) {
+    terlambatSQL += ` AND siswa_id IN (SELECT id FROM siswa WHERE kelas IN (${kelasArr.map(()=>'?').join(',')}))`;
+    terlambatParams.push(...kelasArr);
+  }
+  const totalTerlambat = queryCount(terlambatSQL, terlambatParams);
 
   // Presensi hari ini — JOIN untuk ambil data siswa + filter kelas
-  const presensiSQL = kelasArr.length
-    ? `SELECT p.*,s.nama,s.kelas,s.nisn,s.foto FROM presensi p JOIN siswa s ON p.siswa_id=s.id WHERE p.tanggal=? AND s.kelas IN (${kelasArr.map(()=>'?').join(',')}) ORDER BY p.jam_masuk DESC LIMIT 10`
-    : `SELECT p.*,s.nama,s.kelas,s.nisn,s.foto FROM presensi p JOIN siswa s ON p.siswa_id=s.id WHERE p.tanggal=? ORDER BY p.jam_masuk DESC LIMIT 10`;
+  const presensiParams = [today];
+  let presensiSQL = `SELECT p.*,s.nama,s.kelas,s.nisn,s.foto FROM presensi p JOIN siswa s ON p.siswa_id=s.id WHERE p.tanggal=?`;
+  if (taDashId) { presensiSQL += ' AND p.tahun_ajaran_id=?'; presensiParams.push(taDashId); }
+  if (kelasArr.length) {
+    presensiSQL += ` AND s.kelas IN (${kelasArr.map(()=>'?').join(',')})`;
+    presensiParams.push(...kelasArr);
+  }
+  presensiSQL += ' ORDER BY p.jam_masuk DESC LIMIT 10';
 
   res.json({
     success:true,
     totalSiswa, totalGuru, totalOperator, totalKepsek, totalPenjaga, totalLulusan, totalPindahan, totalHadirHariIni: totalHadir, totalTerlambat, bidangCounts,
-    presensiHariIni: queryAll(presensiSQL, kelasArr.length ? [today, ...kelasArr] : [today]),
+    presensiHariIni: queryAll(presensiSQL, presensiParams),
     siswaBelumAbsen,
     tanggal        : today,
     operator       : req.session.operatorNama,
@@ -86,7 +102,8 @@ router.get('/', (req,res) => {
     jamMasuk       : getSetting('jam_masuk','07:00'),
     batasTerlambat : getSetting('batas_terlambat','07:00'),
     batasAlpha     : getSetting('batas_alpha','07:30'),
-    identitas
+    identitas,
+    tahun_ajaran   : taDash
   });
 });
 

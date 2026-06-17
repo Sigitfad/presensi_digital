@@ -23,15 +23,7 @@ const upload = multer({
   }
 });
 
-function auth(req,res,next){
-  if(!req.session.operatorId) return res.status(401).json({success:false,message:'Silakan login'});
-  next();
-}
-function requireOperator(req,res,next){
-  if(req.session.operatorRole!=='operator')
-    return res.status(403).json({success:false,message:'Hanya Operator yang dapat mengakses'});
-  next();
-}
+const { auth, requireOperator } = require('./_helpers');
 router.use(auth, requireOperator);
 
 router.get('/', (req,res) => {

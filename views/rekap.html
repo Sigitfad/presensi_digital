@@ -64,6 +64,12 @@
           <option value="">Semua Kelas</option>
         </select>
       </div>
+      <div>
+        <label class="form-label-modern">Tahun Ajaran</label>
+        <select id="filterTahunAjaran" class="form-control-modern" style="width:150px;" onchange="loadAktif()">
+          <option value="">Semua</option>
+        </select>
+      </div>
       <button class="btn-primary-custom" onclick="loadAktif()">
         <i class="bi bi-search"></i> Tampilkan
       </button>
@@ -288,10 +294,11 @@ async function loadRekap(){
   const bulan=document.getElementById('filterBulan').value;
   const tahun=document.getElementById('filterTahun').value;
   const kelas=document.getElementById('filterKelas').value.trim();
+  const tahun_ajaran_id=document.getElementById('filterTahunAjaran').value;
   const tbody=document.getElementById('tblRekap');
   tbody.innerHTML='<tr><td colspan="11" class="text-center py-4"><div class="loading-spinner"></div></td></tr>';
 
-  const res=await fetchAPI(`/api/rekap?${new URLSearchParams({bulan,tahun,kelas})}`);
+  const res=await fetchAPI(`/api/rekap?${new URLSearchParams({bulan,tahun,kelas,tahun_ajaran_id})}`);
   if(!res) return;
   _rekapData=res.data||[];
   document.getElementById('info-hari').textContent=`Hari efektif: ${res.hariEfektif} hari`;
@@ -362,6 +369,7 @@ async function lihatDetailSiswa(siswaId,nama){
   const res=await fetchAPI(`/api/rekap/detail/${siswaId}?bulan=${bulan}&tahun=${tahun}`);
   if(!res?.success) return;
   const map={}; res.data.forEach(p=>{map[p.tanggal]=p;});
+  const liburSet=new Set((res.hariLibur||[]).map(r=>r.tanggal));
   const thn=parseInt(tahun),bln=parseInt(bulan)-1;
   const dim=new Date(thn,bln+1,0).getDate();
   const off=new Date(thn,bln,1).getDay();
@@ -385,7 +393,7 @@ async function lihatDetailSiswa(siswaId,nama){
     const tgl=`${tahun}-${bStr}-${String(d).padStart(2,'0')}`;
     const hw=new Date(thn,bln,d).getDay();
     const p=map[tgl];
-    if(hw===0){html+=`<div class="kal-day libur">${d}<br><small>Libur</small></div>`;}
+    if(hw===0 || liburSet.has(tgl)){html+=`<div class="kal-day libur">${d}<br><small>Libur</small></div>`;}
     else if(p){
       const cls=p.status==='Hadir'?'hadir':p.status==='Terlambat'?'terlambat':p.status==='Izin'?'izin':p.status==='Sakit'?'sakit':'alpha';
       const lbl=p.status==='Terlambat'?'T':p.status[0];
@@ -474,9 +482,10 @@ function exportExcelSiswa(){
   const bulan=document.getElementById('filterBulan').value;
   const tahun=document.getElementById('filterTahun').value;
   const kelas=document.getElementById('filterKelas').value.trim();
+  const tahun_ajaran_id=document.getElementById('filterTahunAjaran').value;
   const kelasLabel=kelas?kelas.replace(/\s/g,''):'Semua';
   const namaBulan=['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-  downloadWithProgress(`/api/rekap/export-excel?bulan=${bulan}&tahun=${tahun}&kelas=${encodeURIComponent(kelas)}`,
+  downloadWithProgress(`/api/rekap/export-excel?bulan=${bulan}&tahun=${tahun}&kelas=${encodeURIComponent(kelas)}&tahun_ajaran_id=${tahun_ajaran_id}`,
     `Rekap_${namaBulan[parseInt(bulan)]}_${tahun}${kelas?'_'+kelasLabel:''}.xlsx`,_rekapData.length,'siswa');
 }
 
@@ -484,8 +493,9 @@ function exportExcelSiswa(){
 function exportExcelKelas(kelas){
   const bulan=document.getElementById('filterBulan').value;
   const tahun=document.getElementById('filterTahun').value;
+  const tahun_ajaran_id=document.getElementById('filterTahunAjaran').value;
   const kelasInfo=rekapKelasData.find(k=>k.kelas===kelas);
-  downloadWithProgress(`/api/rekap/export-excel-kelas?bulan=${bulan}&tahun=${tahun}&kelas=${encodeURIComponent(kelas)}`,
+  downloadWithProgress(`/api/rekap/export-excel-kelas?bulan=${bulan}&tahun=${tahun}&kelas=${encodeURIComponent(kelas)}&tahun_ajaran_id=${tahun_ajaran_id}`,
     `Rekap_${kelas.replace(/\s/g,'')}_${bulan}_${tahun}.xlsx`,kelasInfo?kelasInfo.totalSiswa:null,'siswa');
 }
 
@@ -493,15 +503,18 @@ function exportExcelKelas(kelas){
 function exportSiswaExcel(siswaId, nama){
   const bulan=document.getElementById('filterBulan').value;
   const tahun=document.getElementById('filterTahun').value;
+  const tahun_ajaran_id=document.getElementById('filterTahunAjaran').value;
   const namaBulan=['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-  downloadWithProgress(`/api/rekap/export-excel-siswa/${siswaId}?bulan=${bulan}&tahun=${tahun}`,
+  downloadWithProgress(`/api/rekap/export-excel-siswa/${siswaId}?bulan=${bulan}&tahun=${tahun}&tahun_ajaran_id=${tahun_ajaran_id}`,
     `Rekap_${nama.replace(/\s+/g,'_')}_${namaBulan[parseInt(bulan)]}_${tahun}.xlsx`,null,'');
 }
 
-// ── Juga hapus setTab update export-siswa-btn karena sudah tidak ada ──
 async function init(){
   await loadLayout('rekap','Rekap Presensi');
-  await loadKelasOptions('filterKelas', true);
+  await Promise.all([
+    loadKelasOptions('filterKelas', true),
+    loadTAOptions('filterTahunAjaran')
+  ]);
   const session=window._session||{};
   const pengampu=session.pengampuKelas||'Semua';
   const role=session.role||'operator';

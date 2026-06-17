@@ -1,21 +1,9 @@
 const express = require('express');
-const { queryAll, queryOne, queryCount } = require('../database');
+const { queryAll, queryOne, getHariLibur, getActiveTahunAjaran } = require('../database');
+const { auth, getKelasFilter } = require('./_helpers');
 const router  = express.Router();
 
-function auth(req,res,next){
-  if(!req.session.operatorId) return res.status(401).json({success:false});
-  next();
-}
 router.use(auth);
-
-function getKelasFilter(req) {
-  const role  = req.session.operatorRole;
-  const kelas = req.session.pengampuKelas || 'Semua';
-  if (role === 'operator') return null;
-  if (kelas === 'Semua')   return null;
-  const arr = kelas.split(',').map(k=>k.trim()).filter(Boolean);
-  return arr.length > 1 ? arr : arr[0] || null;
-}
 
 function applyKelasFilter(sql, params, kelasFilter, kelasQuery) {
   const allowed = kelasFilter ? (Array.isArray(kelasFilter) ? kelasFilter : [kelasFilter]) : [];
@@ -32,20 +20,27 @@ function applyKelasFilter(sql, params, kelasFilter, kelasQuery) {
 function hitungHariEfektif(tahun, bulan) {
   const thn=parseInt(tahun), bln=parseInt(bulan)-1;
   const dim=new Date(thn,bln+1,0).getDate();
+  const blnStr=String(bulan).padStart(2,'0');
+  const tglAwal=`${tahun}-${blnStr}-01`, tglAkhir=`${tahun}-${blnStr}-31`;
+  const liburSet=new Set(getHariLibur(tglAwal,tglAkhir).map(r=>r.tanggal));
   let count=0;
-  for(let d=1;d<=dim;d++) if(new Date(thn,bln,d).getDay()!==0) count++;
+  for(let d=1;d<=dim;d++){
+    const tgl=`${tahun}-${blnStr}-${String(d).padStart(2,'0')}`;
+    if(new Date(thn,bln,d).getDay()!==0 && !liburSet.has(tgl)) count++;
+  }
   return count;
 }
 
 // GET: rekap per siswa — filter kelas WAJIB diproses di server
 router.get('/', (req,res) => {
-  const {bulan='',tahun='',kelas=''} = req.query;
+  const {bulan='',tahun='',kelas='',tahun_ajaran_id=''} = req.query;
   const now=new Date();
   const thn=tahun||now.getFullYear();
   const bln=(bulan||String(now.getMonth()+1)).padStart(2,'0');
   const tglAwal =`${thn}-${bln}-01`;
   const tglAkhir=`${thn}-${bln}-31`;
   const hariEfektif=hitungHariEfektif(thn,bln);
+  const taR = tahun_ajaran_id || (getActiveTahunAjaran()||{}).id || 0;
 
   let siswaSQL='SELECT id,nisn,nama,kelas,jenis_kelamin FROM siswa WHERE 1=1';
   const siswaP=[];
@@ -53,6 +48,7 @@ router.get('/', (req,res) => {
   const kelasFilter=getKelasFilter(req);
   const {sql:ws}=applyKelasFilter(where, siswaP, kelasFilter, kelas);
   if(ws.length) siswaSQL+=' AND '+ws.join(' AND ');
+  if(taR) { siswaSQL+=' AND tahun_ajaran_id=?'; siswaP.push(taR); }
   siswaSQL+=' ORDER BY kelas ASC,nama ASC';
 
   const semuaSiswa=queryAll(siswaSQL,siswaP);
@@ -61,8 +57,8 @@ router.get('/', (req,res) => {
   if(ids.length){
     const ph=ids.map(()=>'?').join(',');
     presensiBatch=queryAll(
-      `SELECT siswa_id,status FROM presensi WHERE siswa_id IN (${ph}) AND tanggal>=? AND tanggal<=?`,
-      [...ids,tglAwal,tglAkhir]
+      `SELECT siswa_id,status FROM presensi WHERE siswa_id IN (${ph}) AND tanggal>=? AND tanggal<=? AND tahun_ajaran_id=?`,
+      [...ids,tglAwal,tglAkhir,taR]
     );
   }
   const countMap={};
@@ -89,24 +85,26 @@ router.get('/', (req,res) => {
 
 // GET: rekap per kelas
 router.get('/perkelas', (req,res) => {
-  const {bulan='',tahun='',kelas=''} = req.query;
+  const {bulan='',tahun='',kelas='',tahun_ajaran_id=''} = req.query;
   const now=new Date();
   const thn=tahun||now.getFullYear();
   const bln=(bulan||String(now.getMonth()+1)).padStart(2,'0');
   const tglAwal =`${thn}-${bln}-01`;
   const tglAkhir=`${thn}-${bln}-31`;
   const hariEfektif=hitungHariEfektif(thn,bln);
+  const taPK = tahun_ajaran_id || (getActiveTahunAjaran()||{}).id || 0;
 
   const kelasFilter=getKelasFilter(req);
   let kelasSQL='SELECT DISTINCT kelas FROM siswa WHERE 1=1';
   const where2=[]; const wp2=[];
   const {sql:ws2,params:wp2r}=applyKelasFilter(where2, wp2, kelasFilter, kelas);
   if(ws2.length) kelasSQL+=' AND '+ws2.join(' AND ');
+  if(taPK) { kelasSQL+=' AND tahun_ajaran_id=?'; wp2r.push(taPK); }
   kelasSQL+=' ORDER BY kelas ASC';
   const kelasList=queryAll(kelasSQL, wp2r).map(k=>k.kelas);
 
   let semuaSiswaKelas=queryAll(
-    `SELECT id,kelas FROM siswa WHERE 1=1 AND (${ws2.length?ws2.join(' AND '):'1=1'}) ORDER BY kelas ASC`,
+    `SELECT id,kelas FROM siswa WHERE 1=1${taPK?' AND tahun_ajaran_id=?':''} AND (${ws2.length?ws2.join(' AND '):'1=1'}) ORDER BY kelas ASC`,
     wp2r
   );
   const kelasMap={};
@@ -120,8 +118,8 @@ router.get('/perkelas', (req,res) => {
   if(allIds.length){
     const ph=allIds.map(()=>'?').join(',');
     presensiBatch=queryAll(
-      `SELECT siswa_id,status FROM presensi WHERE siswa_id IN (${ph}) AND tanggal>=? AND tanggal<=?`,
-      [...allIds,tglAwal,tglAkhir]
+      `SELECT siswa_id,status FROM presensi WHERE siswa_id IN (${ph}) AND tanggal>=? AND tanggal<=? AND tahun_ajaran_id=?`,
+      [...allIds,tglAwal,tglAkhir,taPK]
     );
   }
   const countMap={};
@@ -157,30 +155,33 @@ router.get('/perkelas', (req,res) => {
 // GET: detail per siswa (kalender)
 router.get('/detail/:siswa_id', (req,res) => {
   const {siswa_id}=req.params;
-  const {bulan='',tahun=''}=req.query;
+  const {bulan='',tahun='',tahun_ajaran_id=''}=req.query;
   const now=new Date();
   const thn=tahun||now.getFullYear();
   const bln=(bulan||String(now.getMonth()+1)).padStart(2,'0');
   const tglAwal =`${thn}-${bln}-01`;
   const tglAkhir=`${thn}-${bln}-31`;
+  const taDet = tahun_ajaran_id || (getActiveTahunAjaran()||{}).id || 0;
   const siswa=queryOne('SELECT * FROM siswa WHERE id=?',[siswa_id]);
   if(!siswa) return res.json({success:false,message:'Siswa tidak ditemukan'});
   const presensi=queryAll(
-    'SELECT * FROM presensi WHERE siswa_id=? AND tanggal>=? AND tanggal<=? ORDER BY tanggal ASC',
-    [siswa_id,tglAwal,tglAkhir]
+    'SELECT * FROM presensi WHERE siswa_id=? AND tanggal>=? AND tanggal<=? AND tahun_ajaran_id=? ORDER BY tanggal ASC',
+    [siswa_id,tglAwal,tglAkhir,taDet]
   );
-  res.json({success:true,siswa,data:presensi,bulan:bln,tahun:thn});
+  const hariLibur=getHariLibur(tglAwal,tglAkhir);
+  res.json({success:true,siswa,data:presensi,bulan:bln,tahun:thn,hariLibur});
 });
 
 // GET: detail siswa per kelas (untuk tombol View di rekap kelas)
 router.get('/kelas-detail', (req,res) => {
-  const {bulan='',tahun='',kelas=''} = req.query;
+  const {bulan='',tahun='',kelas='',tahun_ajaran_id=''} = req.query;
   const now=new Date();
   const thn=tahun||now.getFullYear();
   const bln=(bulan||String(now.getMonth()+1)).padStart(2,'0');
   const tglAwal =`${thn}-${bln}-01`;
   const tglAkhir=`${thn}-${bln}-31`;
   const hariEfektif=hitungHariEfektif(thn,bln);
+  const taKD = tahun_ajaran_id || (getActiveTahunAjaran()||{}).id || 0;
 
   const kelasDetail=kelas.trim();
   const kelasFilterDetail=getKelasFilter(req);
@@ -191,14 +192,14 @@ router.get('/kelas-detail', (req,res) => {
     }
   }
   const siswaList=queryAll(
-    'SELECT id,nisn,nama,kelas,jenis_kelamin FROM siswa WHERE kelas=? ORDER BY nama ASC',
-    [kelasDetail]
+    'SELECT id,nisn,nama,kelas,jenis_kelamin FROM siswa WHERE kelas=? AND tahun_ajaran_id=? ORDER BY nama ASC',
+    [kelasDetail,taKD]
   );
 
   const rekap=siswaList.map(s=>{
     const presensi=queryAll(
-      'SELECT tanggal,status FROM presensi WHERE siswa_id=? AND tanggal>=? AND tanggal<=?',
-      [s.id,tglAwal,tglAkhir]
+      'SELECT tanggal,status FROM presensi WHERE siswa_id=? AND tanggal>=? AND tanggal<=? AND tahun_ajaran_id=?',
+      [s.id,tglAwal,tglAkhir,taKD]
     );
     let hadir=0,terlambat=0,izin=0,sakit=0,alpha=0;
     presensi.forEach(p=>{
@@ -221,7 +222,7 @@ router.get('/kelas-detail', (req,res) => {
 router.get('/export-excel', (req,res) => {
   try {
     const XLSX=require('xlsx');
-    const {bulan='',tahun='',kelas=''}=req.query;
+    const {bulan='',tahun='',kelas='',tahun_ajaran_id=''}=req.query;
     const now=new Date();
     const thn=tahun||now.getFullYear();
     const bln=(bulan||String(now.getMonth()+1)).padStart(2,'0');
@@ -230,11 +231,13 @@ router.get('/export-excel', (req,res) => {
     const kelasFilterExcel=getKelasFilter(req);
     const BULAN_NAMA=['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
     const kelasTrim=(kelas||'').trim();
+    const taEx = tahun_ajaran_id || (getActiveTahunAjaran()||{}).id || 0;
 
     let siswaSQL='SELECT id,nisn,nama,kelas,jenis_kelamin FROM siswa WHERE 1=1';
     const siswaP=[];
     const we=[]; const {sql:we2}=applyKelasFilter(we, siswaP, kelasFilterExcel, kelas);
     if(we2.length) siswaSQL+=' AND '+we2.join(' AND ');
+    if(taEx) { siswaSQL+=' AND tahun_ajaran_id=?'; siswaP.push(taEx); }
     siswaSQL+=' ORDER BY kelas ASC,nama ASC';
     const semuaSiswa=queryAll(siswaSQL,siswaP);
 
@@ -243,8 +246,8 @@ router.get('/export-excel', (req,res) => {
     if(ids.length){
       const ph=ids.map(()=>'?').join(',');
       presensiBatch=queryAll(
-        `SELECT siswa_id,status FROM presensi WHERE siswa_id IN (${ph}) AND tanggal>=? AND tanggal<=?`,
-        [...ids,tglAwal,tglAkhir]
+        `SELECT siswa_id,status FROM presensi WHERE siswa_id IN (${ph}) AND tanggal>=? AND tanggal<=? AND tahun_ajaran_id=?`,
+        [...ids,tglAwal,tglAkhir,taEx]
       );
     }
     const countMap={};
@@ -286,7 +289,7 @@ router.get('/export-excel', (req,res) => {
 router.get('/export-excel-kelas', (req,res) => {
   try {
     const XLSX=require('xlsx');
-    const {bulan='',tahun='',kelas=''}=req.query;
+    const {bulan='',tahun='',kelas='',tahun_ajaran_id=''}=req.query;
     const now=new Date();
     const thn=tahun||now.getFullYear();
     const bln=(bulan||String(now.getMonth()+1)).padStart(2,'0');
@@ -295,6 +298,7 @@ router.get('/export-excel-kelas', (req,res) => {
     const BULAN_NAMA=['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
     const kelasTrim=(kelas||'').trim();
     const kelasFilterKelas=getKelasFilter(req);
+    const taEKK = tahun_ajaran_id || (getActiveTahunAjaran()||{}).id || 0;
     if(kelasFilterKelas){
       const allowedKelas=Array.isArray(kelasFilterKelas)?kelasFilterKelas:[kelasFilterKelas];
       if(!kelasTrim || !allowedKelas.includes(kelasTrim)){
@@ -303,8 +307,8 @@ router.get('/export-excel-kelas', (req,res) => {
     }
 
     const siswaList=queryAll(
-      'SELECT id,nisn,nama,kelas,jenis_kelamin FROM siswa WHERE kelas=? ORDER BY nama ASC',
-      [kelasTrim]
+      'SELECT id,nisn,nama,kelas,jenis_kelamin FROM siswa WHERE kelas=? AND tahun_ajaran_id=? ORDER BY nama ASC',
+      [kelasTrim,taEKK]
     );
 
     const ids=siswaList.map(s=>s.id);
@@ -312,8 +316,8 @@ router.get('/export-excel-kelas', (req,res) => {
     if(ids.length){
       const ph=ids.map(()=>'?').join(',');
       presensiBatch=queryAll(
-        `SELECT siswa_id,status FROM presensi WHERE siswa_id IN (${ph}) AND tanggal>=? AND tanggal<=?`,
-        [...ids,tglAwal,tglAkhir]
+        `SELECT siswa_id,status FROM presensi WHERE siswa_id IN (${ph}) AND tanggal>=? AND tanggal<=? AND tahun_ajaran_id=?`,
+        [...ids,tglAwal,tglAkhir,taEKK]
       );
     }
     const countMap={};
@@ -355,7 +359,7 @@ router.get('/export-excel-kelas', (req,res) => {
 router.get('/export-excel-siswa/:siswa_id', (req,res) => {
   try {
     const XLSX=require('xlsx');
-    const {bulan='',tahun=''}=req.query;
+    const {bulan='',tahun='',tahun_ajaran_id=''}=req.query;
     const {siswa_id}=req.params;
     const now=new Date();
     const thn=tahun||now.getFullYear();
@@ -367,9 +371,10 @@ router.get('/export-excel-siswa/:siswa_id', (req,res) => {
     const siswa=queryOne('SELECT * FROM siswa WHERE id=?',[siswa_id]);
     if(!siswa) return res.status(404).json({success:false,message:'Siswa tidak ditemukan'});
 
+    const taEXSId = tahun_ajaran_id || (getActiveTahunAjaran()||{}).id || (siswa.tahun_ajaran_id || 1);
     const presensi=queryAll(
-      'SELECT * FROM presensi WHERE siswa_id=? AND tanggal>=? AND tanggal<=? ORDER BY tanggal ASC',
-      [siswa_id,tglAwal,tglAkhir]
+      'SELECT * FROM presensi WHERE siswa_id=? AND tanggal>=? AND tanggal<=? AND tahun_ajaran_id=? ORDER BY tanggal ASC',
+      [siswa_id,tglAwal,tglAkhir,taEXSId]
     );
 
     // Hitung ringkasan

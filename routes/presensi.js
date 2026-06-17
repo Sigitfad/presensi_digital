@@ -1,30 +1,18 @@
 const express  = require('express');
-const { queryAll, queryOne, run, hitungStatus, logActivity } = require('../database');
+const { queryAll, queryOne, run, hitungStatus, logActivity, getActiveTahunAjaran } = require('../database');
 const { sendWaNotification } = require('./whatsapp');
+const { auth, getKelasFilter } = require('./_helpers');
 const router   = express.Router();
 
-function auth(req,res,next){
-  if(!req.session.operatorId) return res.status(401).json({success:false});
-  next();
-}
 router.use(auth);
-
-function getKelasFilter(req) {
-  const role  = req.session.operatorRole;
-  const kelas = req.session.pengampuKelas || 'Semua';
-  if (role === 'operator') return null;
-  if (kelas === 'Semua')   return null;
-  const arr = kelas.split(',').map(k=>k.trim()).filter(Boolean);
-  return arr.length > 1 ? arr : arr[0] || null;
-}
 
 // GET: riwayat presensi (dengan filter role)
 router.get('/', (req,res) => {
-  const {tanggal='',tanggal2='',kelas=''} = req.query;
+  const {tanggal='',tanggal2='',kelas='',tahun_ajaran_id=''} = req.query;
   const kelasFilter = getKelasFilter(req);
   const allowed = kelasFilter ? (Array.isArray(kelasFilter) ? kelasFilter : [kelasFilter]) : [];
 
-  let sql=`SELECT p.id,p.tanggal,p.jam_masuk,p.status,p.keterangan,
+  let sql=`SELECT p.id,p.tanggal,p.jam_masuk,p.status,p.keterangan,p.tahun_ajaran_id,
            s.nisn,s.nama,s.kelas,s.jenis_kelamin,s.foto,s.uid
            FROM presensi p JOIN siswa s ON p.siswa_id=s.id WHERE 1=1`;
   const params=[];
@@ -37,6 +25,7 @@ router.get('/', (req,res) => {
   } else if(kelas.trim()){
     sql+=' AND s.kelas=?'; params.push(kelas.trim());
   }
+  if(tahun_ajaran_id) { sql+=' AND p.tahun_ajaran_id=?'; params.push(tahun_ajaran_id); }
   sql+=' ORDER BY p.tanggal DESC,p.jam_masuk DESC LIMIT 10000';
   res.json({success:true,data:queryAll(sql,params)});
 });
@@ -52,13 +41,15 @@ router.post('/scan', (req,res) => {
   const jam=now.toTimeString().slice(0,8);
   const status=hitungStatus(jam.slice(0,5));
   if (status === 'BELUM_WAKTU') return res.json({success:false,message:'Belum Waktunya Absen!',belumWaktu:true});
-  const sudah=queryOne('SELECT * FROM presensi WHERE siswa_id=? AND tanggal=?',[siswa.id,tanggal]);
+  const taScan = getActiveTahunAjaran();
+  const taScanId = taScan ? taScan.id : 1;
+  const sudah=queryOne('SELECT * FROM presensi WHERE siswa_id=? AND tanggal=? AND tahun_ajaran_id=?',[siswa.id,tanggal,taScanId]);
   if(sudah) return res.json({success:false,sudah:true,
     message:`${siswa.nama} sudah presensi pukul ${sudah.jam_masuk.slice(0,5)}`,
     siswa,presensi:sudah});
   try {
-    run('INSERT INTO presensi (siswa_id,tanggal,jam_masuk,status) VALUES (?,?,?,?)',
-        [siswa.id,tanggal,jam,status]);
+    run('INSERT INTO presensi (siswa_id,tanggal,jam_masuk,status,tahun_ajaran_id) VALUES (?,?,?,?,?)',
+        [siswa.id,tanggal,jam,status,taScanId]);
     logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,
                 'Scan Presensi',`${siswa.nama} - ${status} pukul ${jam.slice(0,5)}`);
     res.json({success:true,message:'Presensi berhasil!',siswa,status,jam_masuk:jam,tanggal});
@@ -71,12 +62,14 @@ router.post('/manual', (req,res) => {
   const {siswa_id,tanggal,status,keterangan=''} = req.body;
   if(!siswa_id||!tanggal||!status) return res.json({success:false,message:'Data tidak lengkap'});
   const jam=status==='Izin'||status==='Sakit'||status==='Alpha'?'00:00:00':new Date().toTimeString().slice(0,8);
-  const sudah=queryOne('SELECT id FROM presensi WHERE siswa_id=? AND tanggal=?',[siswa_id,tanggal]);
+  const taManual = getActiveTahunAjaran();
+  const taManualId = taManual ? taManual.id : 1;
+  const sudah=queryOne('SELECT id FROM presensi WHERE siswa_id=? AND tanggal=? AND tahun_ajaran_id=?',[siswa_id,tanggal,taManualId]);
   if(sudah){
     run('UPDATE presensi SET status=?,keterangan=?,jam_masuk=? WHERE id=?',[status,keterangan,jam,sudah.id]);
   } else {
-    run('INSERT INTO presensi (siswa_id,tanggal,jam_masuk,status,keterangan) VALUES (?,?,?,?,?)',
-        [siswa_id,tanggal,jam,status,keterangan]);
+    run('INSERT INTO presensi (siswa_id,tanggal,jam_masuk,status,keterangan,tahun_ajaran_id) VALUES (?,?,?,?,?,?)',
+        [siswa_id,tanggal,jam,status,keterangan,taManualId]);
   }
   logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,
               'Presensi Manual',`Siswa ID ${siswa_id}: ${status} tgl ${tanggal}`);
@@ -87,7 +80,7 @@ router.post('/manual', (req,res) => {
 router.get('/export-excel', (req,res) => {
   try {
     const XLSX=require('xlsx');
-    const {tanggal='',tanggal2='',kelas=''}=req.query;
+    const {tanggal='',tanggal2='',kelas='',tahun_ajaran_id=''}=req.query;
     const kelasFilter=getKelasFilter(req);
     const allowed = kelasFilter ? (Array.isArray(kelasFilter) ? kelasFilter : [kelasFilter]) : [];
 
@@ -103,6 +96,7 @@ router.get('/export-excel', (req,res) => {
     } else if(kelas.trim()){
       sql+=' AND s.kelas=?'; params.push(kelas.trim());
     }
+    if(tahun_ajaran_id) { sql+=' AND p.tahun_ajaran_id=?'; params.push(tahun_ajaran_id); }
     sql+=' ORDER BY p.tanggal DESC,p.jam_masuk DESC';
 
     const data=queryAll(sql,params);

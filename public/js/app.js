@@ -16,13 +16,15 @@ async function loadLayout(activePage, pageTitle) {
     return {cached:false, data:{ nama_sekolah:'SDN Karangpawitan 1', logo:'' }};
   })();
 
-  const [sessionRes, ident] = await Promise.all([
+  const [sessionRes, ident, taRes] = await Promise.all([
     fetch('/api/session').then(r=>r.json()).catch(()=>{window.location.href='/login';return null;}),
-    identitasPromise
+    identitasPromise,
+    fetch('/api/tahun-ajaran/aktif').then(r=>r.json()).catch(()=>({success:false}))
   ]);
   if(!sessionRes||!sessionRes.loggedIn){ window.location.href='/login'; return; }
   const session=sessionRes;
   const identitas = ident.data;
+  const tahunAjaranAktif = taRes?.success ? taRes.data : null;
 
   const role        = session.role || 'operator';
   const isOperator  = role === 'operator';
@@ -57,6 +59,9 @@ async function loadLayout(activePage, pageTitle) {
       { page:'scan',    icon:'bi-credit-card-2-front',  label:'ABSENSI RFID',          href:'/pages/scan' },
       { page:'riwayat', icon:'bi-clock-history', label:'Riwayat Presensi', href:'/pages/riwayat' },
       { page:'rekap',   icon:'bi-bar-chart-fill',label:'Rekap Presensi',   href:'/pages/rekap' },
+      ...(isOperator ? [
+        { page:'broadcast', icon:'bi-whatsapp', label:'Broadcast WhatsApp', href:'/pages/broadcast' },
+      ] : []),
     ]},
     { label:'Manajemen', items:[
       ...(isOperator || ['guru','kepala_sekolah','guru_bidang'].includes(role) ? [
@@ -70,9 +75,10 @@ async function loadLayout(activePage, pageTitle) {
     ]},
     { label:'Pengaturan', items:[
       ...(isOperator ? [
-        { page:'settings', icon:'bi-gear-fill', label:'Pengaturan', href:'/pages/settings' },
-        { page:'actlog', icon:'bi-journal-text', label:'Log Aktivitas', href:'/pages/actlog' },
-        { page:'backup', icon:'bi-cloud-arrow-up', label:'Backup DB', href:'/pages/backup' },
+        { page:'settings',   icon:'bi-gear-fill',      label:'Pengaturan',    href:'/pages/settings' },
+        { page:'hari-libur', icon:'bi-calendar2-week', label:'Kalender',      href:'/pages/hari-libur' },
+        { page:'actlog',     icon:'bi-journal-text',   label:'Log Aktivitas', href:'/pages/actlog' },
+        { page:'backup',     icon:'bi-cloud-arrow-up', label:'Backup DB',     href:'/pages/backup' },
       ] : []),
     ]},
   ];
@@ -107,7 +113,7 @@ async function loadLayout(activePage, pageTitle) {
         <div class="brand-icon">${logoHTML}</div>
         <div class="brand-text">
           <div class="brand-name">${identitas.nama_sekolah || 'SDN Karangpawitan 1'}</div>
-          <div class="brand-sub">Presensi Digital</div>
+          <div class="brand-sub">Presensi Digital ${tahunAjaranAktif ? `<span style="font-size:9px;background:rgba(255,255,255,0.2);padding:1px 6px;border-radius:8px;margin-left:4px;">${tahunAjaranAktif.nama}</span>` : ''}</div>
         </div>
       </a>
       <div class="sidebar-nav">${navHTML}</div>
@@ -221,7 +227,16 @@ function showToast(msg, type='success'){
 
 // ── MODAL ──
 function openModal(id){ const el=document.getElementById(id); if(el&&!el.classList.contains('show')) new bootstrap.Modal(el).show(); }
-function closeModal(id){ const el=document.getElementById(id); if(el){ const m=bootstrap.Modal.getInstance(el); if(m) m.hide(); } }
+function closeModal(id){ const el=document.getElementById(id); if(el){ const m=bootstrap.Modal.getInstance(el); if(m) m.hide();   }
+}
+
+// ── TAHUN AJARAN OPTIONS ──
+async function loadTAOptions(selId){
+  const r=await fetchAPI('/api/tahun-ajaran/');
+  if(!r?.data) return;
+  const sel=document.getElementById(selId);if(!sel) return;
+  sel.innerHTML='<option value="">Semua</option>'+r.data.map(ta=>`<option value="${ta.id}">${ta.nama}</option>`).join('');
+}
 
 // ── LOGOUT MODAL ──
 function konfirmasiLogout(e){

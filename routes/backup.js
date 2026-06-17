@@ -2,17 +2,9 @@ const express = require('express');
 const path    = require('path');
 const fs      = require('fs');
 const { saveDB, DB_PATH, queryAll, run, reloadDB, logActivity } = require('../database');
+const { auth, requireOperator } = require('./_helpers');
 const router  = express.Router();
 
-function auth(req,res,next){
-  if(!req.session.operatorId) return res.status(401).json({success:false,message:'Silakan login'});
-  next();
-}
-function requireOperator(req,res,next){
-  if(req.session.operatorRole!=='operator')
-    return res.status(403).json({success:false,message:'Hanya Operator yang dapat mengakses fitur backup'});
-  next();
-}
 router.use(auth, requireOperator);
 
 const BACKUP_DIR = path.join(__dirname,'../database/backups');
@@ -97,13 +89,15 @@ router.post('/buat-json', (req,res) => {
       activity_log: queryAll('SELECT * FROM activity_log'),
       kelas: queryAll('SELECT * FROM kelas'),
       alumni: queryAll('SELECT * FROM alumni'),
+      tahun_ajaran: queryAll('SELECT * FROM tahun_ajaran'),
+      hari_libur: queryAll('SELECT * FROM hari_libur'),
     };
     fs.writeFileSync(path.join(BACKUP_DIR,filename), JSON.stringify(backup,null,2), 'utf-8');
     logActivity(req.session.operatorId,req.session.operatorNama,
                 req.session.operatorRole,'Backup Database (JSON)',`File: ${filename}`);
     res.json({
       success:true, message:'Backup .json berhasil dibuat', nama:filename,
-      jumlah:{ operator:backup.operators.length, siswa:backup.siswa.length, presensi:backup.presensi.length, kelas:backup.kelas?.length||0, alumni:backup.alumni?.length||0 }
+      jumlah:{ operator:backup.operators.length, siswa:backup.siswa.length, presensi:backup.presensi.length, kelas:backup.kelas?.length||0, alumni:backup.alumni?.length||0, tahun_ajaran:backup.tahun_ajaran.length, hari_libur:backup.hari_libur.length }
     });
   } catch(e){ res.json({success:false,message:e.message}); }
 });
@@ -199,6 +193,8 @@ router.post('/restore-json', async (req,res) => {
     run('DELETE FROM presensi');
     run('DELETE FROM siswa');
     run('DELETE FROM activity_log');
+    run('DELETE FROM tahun_ajaran');
+    run('DELETE FROM hari_libur');
 
     // Restore operators
     if(backup.operators && backup.operators.length){
@@ -217,8 +213,8 @@ router.post('/restore-json', async (req,res) => {
     // Restore siswa
     if(backup.siswa && backup.siswa.length){
       backup.siswa.forEach(s => {
-        run('INSERT INTO siswa (nisn,nama,kelas,jenis_kelamin,foto,no_hp_ortu,nik,tempat_lahir,tanggal_lahir,agama,alamat,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',
-          [s.nisn,s.nama,s.kelas,s.jenis_kelamin,s.foto||'',s.no_hp_ortu||'',s.nik||'',s.tempat_lahir||'',s.tanggal_lahir||'',s.agama||'',s.alamat||'',s.created_at||'',s.updated_at||'']);
+        run('INSERT INTO siswa (nisn,nama,kelas,jenis_kelamin,foto,no_hp_ortu,nik,tempat_lahir,tanggal_lahir,agama,alamat,created_at,updated_at,tahun_ajaran_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+          [s.nisn,s.nama,s.kelas,s.jenis_kelamin,s.foto||'',s.no_hp_ortu||'',s.nik||'',s.tempat_lahir||'',s.tanggal_lahir||'',s.agama||'',s.alamat||'',s.created_at||'',s.updated_at||'',s.tahun_ajaran_id||1]);
       });
     }
 
@@ -229,8 +225,8 @@ router.post('/restore-json', async (req,res) => {
           const siswa = queryAll('SELECT id FROM siswa WHERE nisn=?',
             [queryAll('SELECT nisn FROM siswa WHERE id=?',[p.siswa_id]).length ? queryAll('SELECT nisn FROM siswa WHERE id=?',[p.siswa_id])[0].nisn : '']);
           if(siswa.length){
-            run('INSERT OR IGNORE INTO presensi (siswa_id,tanggal,jam_masuk,status,keterangan,created_at) VALUES (?,?,?,?,?,?)',
-              [siswa[0].id,p.tanggal,p.jam_masuk,p.status,p.keterangan||'',p.created_at||'']);
+            run('INSERT OR IGNORE INTO presensi (siswa_id,tanggal,jam_masuk,status,keterangan,created_at,tahun_ajaran_id) VALUES (?,?,?,?,?,?,?)',
+              [siswa[0].id,p.tanggal,p.jam_masuk,p.status,p.keterangan||'',p.created_at||'',p.tahun_ajaran_id||1]);
           }
         } catch(e){}
       });
@@ -276,6 +272,26 @@ router.post('/restore-json', async (req,res) => {
         try {
           run('INSERT INTO alumni (nama,nisn,kelas_lulus,tahun_lulus,foto,ijazah,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?)',
             [a.nama,a.nisn,a.kelas_lulus,a.tahun_lulus,a.foto||'',a.ijazah||'',a.created_at||'',a.updated_at||'']);
+        } catch(e){}
+      });
+    }
+
+    // Restore tahun_ajaran
+    if(backup.tahun_ajaran && backup.tahun_ajaran.length){
+      backup.tahun_ajaran.forEach(ta => {
+        try {
+          run('INSERT INTO tahun_ajaran (id,nama,tanggal_mulai,tanggal_akhir,aktif,created_at) VALUES (?,?,?,?,?,?)',
+            [ta.id,ta.nama,ta.tanggal_mulai,ta.tanggal_akhir,ta.aktif||0,ta.created_at||'']);
+        } catch(e){}
+      });
+    }
+
+    // Restore hari_libur
+    if(backup.hari_libur && backup.hari_libur.length){
+      backup.hari_libur.forEach(hl => {
+        try {
+          run('INSERT OR IGNORE INTO hari_libur (id,tanggal,keterangan,tipe,sumber,created_at) VALUES (?,?,?,?,?,?)',
+            [hl.id,hl.tanggal,hl.keterangan||'',hl.tipe||'nasional',hl.sumber||'sekolah',hl.created_at||'']);
         } catch(e){}
       });
     }

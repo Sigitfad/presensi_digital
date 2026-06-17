@@ -118,6 +118,9 @@
         <select id="filterKelas" class="form-control-modern" style="width:145px;" onchange="loadSiswa()">
           <option value="">Semua Kelas</option>
         </select>
+        <select id="filterTahunAjaran" class="form-control-modern" style="width:160px;" onchange="loadSiswa()">
+          <option value="">Semua Tahun Ajaran</option>
+        </select>
       </div>
       <div style="display:flex;gap:6px;align-items:center;">
         <button class="btn-primary-custom" onclick="bukaModalUidMassalSiswa()" style="padding:5px 12px;font-size:11px;white-space:nowrap;">Update UID</button>
@@ -503,9 +506,10 @@ function renderSiswaPage(){
 async function loadSiswa(){
   const search=document.getElementById('searchInput').value;
   const kelas =document.getElementById('filterKelas').value.trim();
+  const tahun_ajaran_id=document.getElementById('filterTahunAjaran').value;
   const tbody =document.getElementById('tableSiswa');
   tbody.innerHTML='<tr><td colspan="10" class="text-center py-4"><div class="loading-spinner"></div></td></tr>';
-  const res=await fetchAPI(`/api/siswa?${new URLSearchParams({search,kelas})}`);
+  const res=await fetchAPI(`/api/siswa?${new URLSearchParams({search,kelas,tahun_ajaran_id})}`);
   if(!res) return;
   _siswaData=res.data||[];
   document.getElementById('totalLabel').textContent=`Total: ${_siswaData.length} siswa`;
@@ -811,7 +815,8 @@ async function init(){
   await Promise.all([
     loadKelasOptions('filterKelas', true),
     loadKelasOptions('kelas_baru', false),
-    loadKelasOptions('edit_kelas', false)
+    loadKelasOptions('edit_kelas', false),
+    loadTAOptions('filterTahunAjaran')
   ]);
   const session = window._session || {};
   const pengampu= session.pengampuKelas || 'Semua';
@@ -1369,8 +1374,15 @@ async function uploadImportCsv(){
 }
 
 function exportCsv(){
-  const params=new URLSearchParams({search:document.getElementById('searchInput').value,kelas:document.getElementById('filterKelas').value.trim()});
+  const params=new URLSearchParams({search:document.getElementById('searchInput').value,kelas:document.getElementById('filterKelas').value.trim(),tahun_ajaran_id:document.getElementById('filterTahunAjaran').value});
   downloadWithProgress('/api/siswa/export?'+params,'data_siswa.csv',_siswaData.length,'siswa');
+}
+
+async function loadTAOptions(selId){
+  const r=await fetchAPI('/api/tahun-ajaran/');
+  if(!r?.data) return;
+  const sel=document.getElementById(selId);if(!sel) return;
+  sel.innerHTML='<option value="">Semua Tahun Ajaran</option>'+r.data.map(ta=>`<option value="${ta.id}">${ta.nama}</option>`).join('');
 }
 
 init();

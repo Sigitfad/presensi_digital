@@ -43,6 +43,8 @@ initDB().then(() => {
   app.use('/api/kelas',      require('./routes/kelas'));
   app.use('/api/alumni',     require('./routes/alumni'));
   app.use('/api/pindahan',   require('./routes/pindahan'));
+  app.use('/api/hari-libur', require('./routes/hari_libur'));
+  app.use('/api/tahun-ajaran', require('./routes/tahun_ajaran'));
   app.use('/pages',          require('./routes/pages'));
 
   app.get('/', (req,res) => {

@@ -25,7 +25,10 @@
       <button class="nav-link active" id="sekolah-tab" data-bs-toggle="tab" data-bs-target="#sekolah" type="button" role="tab" aria-controls="sekolah" aria-selected="true"><i class="bi bi-building me-1"></i>Pengaturan Sekolah</button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="whatsapp-tab" data-bs-toggle="tab" data-bs-target="#whatsapp" type="button" role="tab" aria-controls="whatsapp" aria-selected="false"><i class="bi bi-whatsapp me-1"></i>Pengaturan WhatsApp</button>
+      <button class="nav-link" id="whatsapp-tab" data-bs-toggle="tab" data-bs-target="#whatsapp" type="button" role="tab" aria-selected="false"><i class="bi bi-whatsapp me-1"></i>Pengaturan WhatsApp</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="ta-tab" data-bs-toggle="tab" data-bs-target="#ta" type="button" role="tab" aria-selected="false"><i class="bi bi-calendar-range me-1"></i>Tahun Ajaran</button>
     </li>
   </ul>
   <div class="tab-content" id="settingsTabsContent" style="margin-top:20px;">
@@ -179,6 +182,37 @@ Terima kasih.</textarea>
       </div>
     </div>
   </div>
+    </div>
+    <!-- TAB TAHUN AJARAN -->
+    <div class="tab-pane fade" id="ta" role="tabpanel" aria-labelledby="ta-tab">
+      <div class="row g-3">
+        <div class="col-lg-8">
+          <div class="card-modern">
+            <div class="card-modern-header">
+              <div class="card-modern-title"><i class="bi bi-calendar-range" style="color:var(--primary)"></i> Daftar Tahun Ajaran</div>
+              <button class="btn btn-sm" onclick="tambahTA()" style="background:var(--primary);color:#fff;border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:600;"><i class="bi bi-plus-lg"></i> Tambah</button>
+            </div>
+            <div class="card-modern-body" id="ta-list" style="max-height:420px;overflow-y:auto;">
+              <div style="text-align:center;padding:30px;color:var(--gray);font-size:13px;">Memuat...</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card-modern">
+            <div class="card-modern-header">
+              <div class="card-modern-title"><i class="bi bi-info-circle" style="color:var(--primary)"></i> Informasi</div>
+            </div>
+            <div class="card-modern-body" style="font-size:12px;color:var(--gray);">
+              <p><i class="bi bi-check-circle-fill me-1" style="color:#16A34A;"></i> Tahun ajaran yang aktif digunakan untuk menyaring data siswa dan presensi di semua halaman.</p>
+              <p><i class="bi bi-arrow-up-circle-fill me-1" style="color:#2563EB;"></i> Gunakan tombol <strong>Aktifkan</strong> untuk mengubah tahun ajaran aktif.</p>
+              <p><i class="bi bi-exclamation-triangle-fill me-1" style="color:#D97706;"></i> Tahun ajaran yang memiliki siswa tidak dapat dihapus. Pindahkan siswa dulu ke tahun ajaran lain.</p>
+              <hr style="margin:12px 0;">
+              <div style="font-weight:600;margin-bottom:6px;">Tips:</div>
+              <p>Di akhir tahun ajaran: <br>1. Buat tahun ajaran baru<br>2. Aktifkan tahun ajaran baru<br>3. Lakukan Kenaikan Kelas</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -574,9 +608,108 @@ async function simpanIdentitas() {
   } else showToast(res?.message||'Gagal','error');
 }
 
+// === TAHUN AJARAN ===
+async function loadTA(){
+  const r=await fetchAPI('/api/tahun-ajaran/','GET');
+  if(!r?.success) return document.getElementById('ta-list').innerHTML='<div style="text-align:center;padding:20px;color:#DC2626;font-size:12px;">Gagal memuat data</div>';
+  if(!r.data.length) return document.getElementById('ta-list').innerHTML='<div style="text-align:center;padding:30px;color:var(--gray);font-size:13px;">Belum ada tahun ajaran</div>';
+  let html='<div style="display:flex;flex-direction:column;gap:8px;">';
+  r.data.forEach((t,i)=>{
+    const isAktif=t.aktif===1;
+    const warna=isAktif?'#16A34A':'#64748B';
+    const label=isAktif?'Aktif':'Nonaktif';
+    html+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:${isAktif?'#F0FDF4':'#F8FAFC'};border:1.5px solid ${isAktif?'#BBF7D0':'#E2E8F0'};border-radius:10px;transition:all .2s;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="width:8px;height:8px;border-radius:50%;background:${warna};flex-shrink:0;"></span>
+        <div>
+          <div style="font-weight:700;font-size:13px;color:#1E293B;">${t.nama}</div>
+          <div style="font-size:11px;color:var(--gray);">${t.tanggal_mulai} s/d ${t.tanggal_akhir}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:${isAktif?'#DCFCE7':'#F1F5F9'};color:${warna};">${label}</span>
+        ${!isAktif?`<button onclick="aktifkanTA(${t.id},'${t.nama}')" style="background:#DBEAFE;color:#2563EB;border:none;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:600;cursor:pointer;"><i class="bi bi-check-circle"></i> Aktifkan</button>`:''}
+        <button onclick="editTA(${t.id})" style="background:transparent;border:none;color:#64748B;font-size:13px;cursor:pointer;padding:2px;"><i class="bi bi-pencil"></i></button>
+        <button onclick="hapusTA(${t.id},'${t.nama}')" style="background:transparent;border:none;color:#DC2626;font-size:13px;cursor:pointer;padding:2px;"><i class="bi bi-trash"></i></button>
+      </div>
+    </div>`;
+  });
+  html+='</div>';
+  document.getElementById('ta-list').innerHTML=html;
+}
+function tambahTA(){
+  Swal.fire({
+    title:'Tambah Tahun Ajaran',width:'300px',padding:'16px',showCancelButton:true,confirmButtonText:'Simpan',cancelButtonText:'Batal',confirmButtonColor:'#2563EB',cancelButtonColor:'#1E293B',reverseButtons:true,
+    customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'},
+    html:`<div style="display:flex;flex-direction:column;gap:8px;">
+      <input id="ta-nama" class="form-control-modern" placeholder="Cth: 2025/2026" style="font-size:12px;padding:8px 10px;">
+      <input id="ta-mulai" type="date" class="form-control-modern" style="font-size:12px;padding:8px 10px;">
+      <input id="ta-akhir" type="date" class="form-control-modern" style="font-size:12px;padding:8px 10px;">
+    </div>`,
+    preConfirm:()=>{
+      const nama=document.getElementById('ta-nama').value.trim();
+      const mulai=document.getElementById('ta-mulai').value;
+      const akhir=document.getElementById('ta-akhir').value;
+      if(!nama||!mulai||!akhir){Swal.showValidationMessage('Semua field wajib diisi');return false;}
+      return {nama,mulai,akhir};
+    }
+  }).then(async r=>{
+    if(!r.isConfirmed) return;
+    const res=await fetchAPI('/api/tahun-ajaran/tambah','POST',r.value);
+    if(res?.success){showToast(res.message,'success');loadTA();}
+    else showToast(res?.message||'Gagal','error');
+  });
+}
+function editTA(id){
+  fetchAPI('/api/tahun-ajaran/','GET').then(r=>{
+    if(!r?.success) return;
+    const t=r.data.find(d=>d.id===id);
+    if(!t) return;
+    Swal.fire({
+      title:'Edit Tahun Ajaran',width:'300px',padding:'16px',showCancelButton:true,confirmButtonText:'Simpan',cancelButtonText:'Batal',confirmButtonColor:'#2563EB',cancelButtonColor:'#1E293B',reverseButtons:true,
+      customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'},
+      html:`<div style="display:flex;flex-direction:column;gap:8px;">
+        <input id="ta-nama" class="form-control-modern" value="${t.nama}" style="font-size:12px;padding:8px 10px;">
+        <input id="ta-mulai" type="date" class="form-control-modern" value="${t.tanggal_mulai}" style="font-size:12px;padding:8px 10px;">
+        <input id="ta-akhir" type="date" class="form-control-modern" value="${t.tanggal_akhir}" style="font-size:12px;padding:8px 10px;">
+      </div>`,
+      preConfirm:()=>{
+        const nama=document.getElementById('ta-nama').value.trim();
+        const mulai=document.getElementById('ta-mulai').value;
+        const akhir=document.getElementById('ta-akhir').value;
+        if(!nama||!mulai||!akhir){Swal.showValidationMessage('Semua field wajib diisi');return false;}
+        return {id,nama,mulai,akhir};
+      }
+    }).then(async r=>{
+      if(!r.isConfirmed) return;
+      const res=await fetchAPI('/api/tahun-ajaran/edit','POST',r.value);
+      if(res?.success){showToast(res.message,'success');loadTA();}
+      else showToast(res?.message||'Gagal','error');
+    });
+  });
+}
+async function hapusTA(id,nama){
+  const {isConfirmed}=await Swal.fire({title:'Hapus Tahun Ajaran',text:`Yakin ingin menghapus ${nama}?`,icon:'warning',showCancelButton:true,confirmButtonText:'Ya, Hapus',cancelButtonText:'Batal',confirmButtonColor:'#DC2626',cancelButtonColor:'#1E293B',reverseButtons:true,
+    width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!isConfirmed) return;
+  const res=await fetchAPI('/api/tahun-ajaran/hapus','POST',{id});
+  if(res?.success){showToast(res.message,'success');loadTA();}
+  else showToast(res?.message||'Gagal','error');
+}
+async function aktifkanTA(id,nama){
+  const {isConfirmed}=await Swal.fire({title:'Aktifkan Tahun Ajaran',text:`Aktifkan ${nama} sebagai tahun ajaran saat ini?`,icon:'question',showCancelButton:true,confirmButtonText:'Ya, Aktifkan',cancelButtonText:'Batal',confirmButtonColor:'#16A34A',cancelButtonColor:'#1E293B',reverseButtons:true,
+    width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!isConfirmed) return;
+  const res=await fetchAPI('/api/tahun-ajaran/aktifkan','POST',{id});
+  if(res?.success){showToast(res.message,'success');loadTA();}
+  else showToast(res?.message||'Gagal','error');
+}
+// === END TAHUN AJARAN ===
+
 async function init(){
   await loadLayout('settings','Pengaturan');
   loadSettings();
+  loadTA();
   setTimeout(()=>{
     function unsavedSwal(msg,cb){
       Swal.fire({title:'Perubahan Belum Disimpan',text:msg,icon:'warning',showCancelButton:true,confirmButtonText:'Lanjut Edit',cancelButtonText:'Discard',confirmButtonColor:'#2563EB',cancelButtonColor:'#DC2626',reverseButtons:true,width:'320px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}}).then(result=>{if(result.dismiss)cb()});

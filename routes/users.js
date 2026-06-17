@@ -3,6 +3,7 @@ const multer   = require('multer');
 const path     = require('path');
 const fs       = require('fs');
 const { queryAll, queryOne, run, runWithoutSave, saveDB, logActivity } = require('../database');
+const { auth, requireOperator, detectDelimiter, parseCSV } = require('./_helpers');
 const router   = express.Router();
 
 const uploadDir = path.join(__dirname,'../public/uploads/foto-user');
@@ -16,15 +17,6 @@ const upload = multer({ storage, limits:{fileSize:2*1024*1024},
   fileFilter:(req,file,cb)=>(/image\/(jpeg|jpg|png|webp)/.test(file.mimetype)?cb(null,true):cb(new Error('Hanya gambar')))
 });
 
-function auth(req,res,next){
-  if(!req.session.operatorId) return res.status(401).json({success:false});
-  next();
-}
-function requireOperator(req,res,next){
-  if(req.session.operatorRole!=='operator')
-    return res.status(403).json({success:false,message:'Hanya Operator yang dapat mengakses'});
-  next();
-}
 router.use(auth);
 
 router.get('/', (req,res) => {
@@ -152,33 +144,6 @@ const csvUploadUser = multer({ storage: multer.memoryStorage(), limits:{fileSize
   }
 });
 
-function detectDelimiterUser(line){
-  const commaCount = (line.match(/,/g)||[]).length;
-  const semicolonCount = (line.match(/;/g)||[]).length;
-  return semicolonCount > commaCount ? ';' : ',';
-}
-
-function parseCSVUser(text){
-  const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').filter(Boolean);
-  if(!lines.length) return {header:[],rows:[]};
-  const delim = detectDelimiterUser(lines[0]);
-  const header = lines[0].split(delim).map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase());
-  const rows = [];
-  for(let i=1; i<lines.length; i++){
-    const vals = lines[i].split(delim).map(v=>{
-      let x=v.trim();
-      if(/^="(.*)"$/.test(x)) x=x.slice(2,-1);
-      else if(x.startsWith('="')) x=x.slice(2);
-      else x=x.replace(/^"|"$/g,'');
-      return x;
-    });
-    const row = {};
-    header.forEach((h,idx)=> row[h]=vals[idx]||'');
-    rows.push(row);
-  }
-  return {header, rows};
-}
-
 // GET: export users ke CSV
 router.get('/export', (req,res) => {
   const data = queryAll('SELECT nama,role,no_hp,email,pengampu_kelas,nip,alamat,bidang_keahlian,uid FROM operators ORDER BY role ASC,nama ASC');
@@ -204,7 +169,7 @@ router.post('/import', requireOperator, csvUploadUser.single('file'), (req,res) 
     if(!req.file) return res.json({success:false,message:'File CSV tidak ditemukan'});
     let text = req.file.buffer.toString('utf-8');
     if(text.charCodeAt(0)===0xFEFF) text=text.slice(1);
-    const {header, rows: rawRows} = parseCSVUser(text);
+    const {header, rows: rawRows} = parseCSV(text);
     const required = ['nama','role'];
     const validRoles = ['operator','guru','kepala_sekolah','penjaga_sekolah','guru_bidang'];
     const missing = required.filter(r=>!header.includes(r));

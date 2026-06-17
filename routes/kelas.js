@@ -1,11 +1,8 @@
 const express = require('express');
 const { queryAll, run } = require('../database');
+const { auth } = require('./_helpers');
 const router = express.Router();
 
-function auth(req, res, next) {
-  if (!req.session.operatorId) return res.status(401).json({ success: false });
-  next();
-}
 router.use(auth);
 
 router.get('/', (req, res) => {

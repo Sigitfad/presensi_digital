@@ -1,11 +1,8 @@
 const express = require('express');
-const { queryAll } = require('../database');
+const { queryAll, logActivity } = require('../database');
+const { auth } = require('./_helpers');
 const router  = express.Router();
 
-function auth(req,res,next){
-  if(!req.session.operatorId) return res.status(401).json({success:false});
-  next();
-}
 router.use(auth);
 
 router.get('/', (req,res) => {
@@ -17,6 +14,14 @@ router.get('/', (req,res) => {
   sql += ' ORDER BY created_at DESC LIMIT ?';
   p.push(parseInt(limit));
   res.json({success:true, data:queryAll(sql,p)});
+});
+
+router.post('/tambah', (req,res) => {
+  const { userId, userNama, role, aksi, detail } = req.body;
+  if(!aksi) return res.json({success:false, message:'Parameter aksi wajib'});
+  const ip = req.ip || req.connection.remoteAddress || '';
+  logActivity(userId||0, userNama||'', role||'', aksi, detail||'', ip);
+  res.json({success:true});
 });
 
 module.exports = router;

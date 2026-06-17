@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Kalender</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .cl-wrap{background:linear-gradient(145deg,#fff,#F8FAFC);border-radius:16px;padding:0;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+    .cl-head-bar{background:linear-gradient(135deg,#1E293B,#334155);padding:18px 20px 14px;color:white;}
+    .cl-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .cl-nav .btn-nav{width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;color:rgba(255,255,255,0.8);font-size:13px;}
+    .cl-nav .btn-nav:hover{background:rgba(255,255,255,0.2);color:#fff;}
+    .cl-nav .btn-today{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:4px 14px;color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+    .cl-nav .btn-today:hover{background:rgba(255,255,255,0.2);color:#fff;}
+    .cl-nav select{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:8px;padding:4px 10px;font-size:13px;font-weight:700;outline:none;}
+    .cl-nav select option{color:#1E293B;background:white;}
+
+    .cl-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;padding:12px 14px 6px;}
+    .cl-head{text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;padding:2px 0 6px;}
+    .cl-head.minggu{color:#DC2626;}
+    .cl-head.weekday{color:#94A3B8;}
+    .cl-head.sabtu{color:#2563EB;}
+
+    .cl-day{text-align:center;padding:4px 3px 6px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.18s;position:relative;min-height:62px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;background:#fff;border:1.5px solid #CBD5E1;box-shadow:0 2px 6px rgba(0,0,0,0.05),0 0 0 1px rgba(0,0,0,0.02);overflow:hidden;}
+    .cl-day:hover{background:#F8FAFC;border-color:#94A3B8;transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,0.08);}
+    .cl-day.today{border-color:#3B82F6;box-shadow:0 0 0 2px rgba(59,130,246,0.25),0 4px 12px rgba(59,130,246,0.1);}
+    .cl-day.other-month{color:#E2E8F0;background:transparent;border-color:transparent;}
+    .cl-day.other-month:hover{background:transparent;border-color:transparent;transform:none;box-shadow:none;cursor:default;}
+    .cl-day.minggu{background:#FFF5F5;border-color:#FFE4E6;}
+    .cl-day.minggu:hover{background:#FFE4E6;border-color:#FECACA;}
+
+    .cl-day.fill-red{background:rgba(220,38,38,0.7);border-color:#DC2626;color:#fff;box-shadow:0 0 10px rgba(220,38,38,0.35),0 0 30px rgba(220,38,38,0.15),inset 0 0 8px rgba(255,255,255,0.08);}
+    .cl-day.fill-amber{background:rgba(217,119,6,0.7);border-color:#D97706;color:#fff;box-shadow:0 0 10px rgba(217,119,6,0.35),0 0 30px rgba(217,119,6,0.15),inset 0 0 8px rgba(255,255,255,0.08);}
+    .cl-day.fill-purple{background:rgba(124,58,237,0.7);border-color:#7C3AED;color:#fff;box-shadow:0 0 10px rgba(124,58,237,0.35),0 0 30px rgba(124,58,237,0.15),inset 0 0 8px rgba(255,255,255,0.08);}
+    .cl-day.fill-yellow{background:rgba(234,179,8,0.7);border-color:#EAB308;color:#1E293B;box-shadow:0 0 10px rgba(234,179,8,0.35),0 0 30px rgba(234,179,8,0.15),inset 0 0 8px rgba(255,255,255,0.08);}
+    .cl-day.fill-red:hover{background:rgba(185,28,28,0.8);border-color:#DC2626;transform:translateY(-3px);box-shadow:0 0 16px rgba(220,38,38,0.55),0 0 40px rgba(220,38,38,0.25),inset 0 0 8px rgba(255,255,255,0.12);}
+    .cl-day.fill-amber:hover{background:rgba(180,83,9,0.8);border-color:#D97706;transform:translateY(-3px);box-shadow:0 0 16px rgba(217,119,6,0.55),0 0 40px rgba(217,119,6,0.25),inset 0 0 8px rgba(255,255,255,0.12);}
+    .cl-day.fill-purple:hover{background:rgba(109,40,217,0.8);border-color:#7C3AED;transform:translateY(-3px);box-shadow:0 0 16px rgba(124,58,237,0.55),0 0 40px rgba(124,58,237,0.25),inset 0 0 8px rgba(255,255,255,0.12);}
+    .cl-day.fill-yellow:hover{background:rgba(202,138,4,0.8);border-color:#EAB308;transform:translateY(-3px);box-shadow:0 0 16px rgba(234,179,8,0.55),0 0 40px rgba(234,179,8,0.25),inset 0 0 8px rgba(255,255,255,0.12);}
+    .cl-day.fill-red .tgl-num{color:#fff;}
+    .cl-day.fill-amber .tgl-num{color:#fff;}
+    .cl-day.fill-purple .tgl-num{color:#fff;}
+    .cl-day.fill-yellow .tgl-num{color:#1E293B;}
+    .cl-day .tgl-num{font-size:15px;font-weight:700;margin-top:5px;line-height:1.2;position:relative;z-index:1;}
+    .cl-day.minggu .tgl-num{color:#DC2626;}
+    .cl-day .tgl-name{font-size:7.5px;font-weight:600;line-height:1.2;margin-top:3px;padding:1px 4px;border-radius:4px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;position:relative;z-index:1;}
+
+    .cl-legend{display:flex;gap:14px;font-size:10px;align-items:center;flex-wrap:wrap;padding:4px 14px 14px;}
+    .cl-legend-item{display:flex;align-items:center;gap:5px;}
+    .cl-legend-dot{width:8px;height:8px;border-radius:3px;}
+
+    .tbl-scroll-wrap{max-height:340px;overflow-y:auto;}
+    .tbl-scroll-wrap thead th{position:sticky;top:0;z-index:2;background:#F8FAFC;}
+
+    .swal-kecil{width:300px !important;padding:8px 12px !important;}
+    .swal-title-kecil{font-size:14px !important;}
+    .swal-text-kecil{font-size:12px !important;line-height:1.3 !important;}
+    .swal-btn-kecil{font-size:12px !important;padding:5px 14px !important;}
+
+    #bulkActions{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1E293B;color:white;padding:10px 20px;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,0.3);z-index:1050;display:none;align-items:center;gap:14px;backdrop-filter:blur(8px);}
+    #bulkActions .count{font-size:13px;font-weight:600;}
+    #bulkActions button{width:34px;height:34px;border-radius:10px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all 0.15s;}
+    #bulkActions .btn-del{background:#DC2626;color:white;}
+    #bulkActions .btn-del:hover{background:#B91C1C;}
+    #bulkActions .btn-cancel{background:#475569;color:white;}
+    #bulkActions .btn-cancel:hover{background:#334155;}
+    .cb-sekolah{width:16px;height:16px;cursor:pointer;accent-color:#7C3AED;}
+    .btn-collapse{width:30px;height:30px;border-radius:8px;border:1px solid #E2E8F0;background:white;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;color:#64748B;font-size:14px;}
+    .btn-collapse:hover{background:#F1F5F9;border-color:#94A3B8;color:#1E293B;}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head>
+<body>
+<div id="page-content" class="page-content">
+  <div class="page-header">
+    <div class="page-title">Kalender</div>
+    <div class="page-subtitle">Hari libur nasional, cuti bersama, dan hari libur sekolah</div>
+  </div>
+
+  <!-- Calendar -->
+  <div class="cl-wrap mb-3">
+    <div class="cl-head-bar">
+      <div class="cl-nav">
+        <button class="btn-nav" onclick="navBulan(-1)" title="Sebelumnya"><i class="bi bi-chevron-left"></i></button>
+        <select id="clBulan" onchange="renderCalendar()">
+          <option value="0">Januari</option><option value="1">Februari</option><option value="2">Maret</option>
+          <option value="3">April</option><option value="4">Mei</option><option value="5">Juni</option>
+          <option value="6">Juli</option><option value="7">Agustus</option><option value="8">September</option>
+          <option value="9">Oktober</option><option value="10">November</option><option value="11">Desember</option>
+        </select>
+        <select id="clTahun" onchange="renderCalendar()"></select>
+        <button class="btn-nav" onclick="navBulan(1)" title="Berikutnya"><i class="bi bi-chevron-right"></i></button>
+        <button class="btn-today" onclick="kembaliKeHariIni()"><i class="bi bi-calendar3 me-1"></i> Hari Ini</button>
+      </div>
+    </div>
+    <div class="cl-grid" id="clHeader"></div>
+    <div class="cl-grid" id="clBody" style="padding-top:2px;"></div>
+    <div class="cl-legend" id="clLegend">
+      <span class="cl-legend-item"><span class="cl-legend-dot" style="background:#DC2626;"></span> Libur Nasional</span>
+      <span class="cl-legend-item"><span class="cl-legend-dot" style="background:#D97706;"></span> Cuti Bersama</span>
+      <span class="cl-legend-item"><span class="cl-legend-dot" style="background:#7C3AED;"></span> Libur Sekolah</span>
+      <span class="cl-legend-item"><span class="cl-legend-dot" style="background:#EAB308;"></span> Kegiatan Sekolah</span>
+    </div>
+  </div>
+
+  <!-- Kalender Indonesia & Kalender Sekolah -->
+  <div class="row g-3">
+    <div class="col-lg-6">
+      <div class="card-modern h-100">
+        <div class="card-modern-header">
+          <div class="card-modern-title">
+            <i class="bi bi-flag-fill" style="color:#DC2626;"></i>
+            <span style="color:#DC2626;">Kalender Indonesia</span>
+            <span style="font-size:11px;font-weight:400;color:#94A3B8;margin-left:6px;">libur.deno.dev</span>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <button class="btn-collapse" onclick="toggleTable('Indo')" title="Sembunyikan/Tampilkan data"><i class="bi bi-chevron-up" id="icoIndo"></i></button>
+            <button class="btn-primary-custom" style="padding:4px 12px;font-size:12px;background:#DC2626;" onclick="syncHariLibur()"><i class="bi bi-cloud-download"></i> Sync</button>
+          </div>
+        </div>
+        <div class="card-modern-body p-0" id="bodyIndo">
+          <div class="table-responsive tbl-scroll-wrap">
+            <table class="table-modern">
+              <thead><tr><th>Tanggal</th><th>Hari</th><th>Tipe</th><th>Keterangan</th></tr></thead>
+              <tbody id="tblIndonesia"><tr><td colspan="4" class="text-center py-4"><div class="loading-spinner"></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card-modern h-100">
+        <div class="card-modern-header">
+          <div class="card-modern-title">
+            <i class="bi bi-building-fill" style="color:#7C3AED;"></i>
+            <span style="color:#7C3AED;">Kalender Sekolah</span>
+            <span style="font-size:11px;font-weight:400;color:#94A3B8;margin-left:6px;">Hari libur khusus</span>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <button class="btn-collapse" onclick="toggleTable('Sekolah')" title="Sembunyikan/Tampilkan data"><i class="bi bi-chevron-up" id="icoSekolah"></i></button>
+            <button class="btn-primary-custom" style="padding:4px 12px;font-size:12px;background:#7C3AED;" onclick="bukaTambahSekolah()"><i class="bi bi-plus-lg"></i> Tambah</button>
+            <select id="filterTahun" class="form-control-modern" style="width:110px;font-size:12px;padding:4px 8px;" onchange="loadTables()"></select>
+          </div>
+        </div>
+        <div class="card-modern-body p-0" id="bodySekolah">
+          <div class="table-responsive tbl-scroll-wrap">
+            <table class="table-modern">
+              <thead><tr><th style="width:36px;"><input type="checkbox" id="cbAll" onchange="selectAll()" style="width:16px;height:16px;cursor:pointer;accent-color:#7C3AED;"></th><th>Tanggal</th><th>Hari</th><th>Tipe</th><th>Keterangan</th></tr></thead>
+              <tbody id="tblSekolah"><tr><td colspan="5" class="text-center py-4"><div class="loading-spinner"></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bulk Actions -->
+<div id="bulkActions">
+  <span class="count" id="selectedCount">0 dipilih</span>
+  <button class="btn-del" onclick="hapusTerpilih()" title="Hapus terpilih"><i class="bi bi-trash"></i></button>
+  <button class="btn-cancel" onclick="batalPilih()" title="Batal pilih"><i class="bi bi-x-lg"></i></button>
+</div>
+
+<!-- Modal Add / Edit -->
+<div class="modal fade" id="modalLibur" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content" style="border-radius:16px;border:none;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+      <div class="modal-header" style="border:none;padding:20px 24px 0;">
+        <h5 id="modalLiburTitle" style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:17px;">
+          <i class="bi bi-plus-circle me-2" style="color:#7C3AED"></i>Tambah Rencana Kegiatan
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" style="padding:16px 24px 20px;">
+        <input type="hidden" id="editId" value="">
+        <div class="mb-3">
+          <label class="form-label-modern">Tanggal <span style="color:#DC2626;">*</span></label>
+          <input type="date" id="inpTgl" class="form-control-modern">
+        </div>
+        <div class="mb-3">
+          <label class="form-label-modern">Tipe</label>
+          <select id="inpTipe" class="form-control-modern">
+            <option value="libur_sekolah">Libur Sekolah</option>
+            <option value="kegiatan_sekolah">Kegiatan Sekolah</option>
+            <option value="nasional">Libur Nasional</option>
+            <option value="cuti_bersama">Cuti Bersama</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label-modern">Keterangan</label>
+          <input type="text" id="inpKet" class="form-control-modern" placeholder="Contoh: Class meeting" maxlength="200">
+        </div>
+        <button class="btn-primary-custom w-100" id="btnSimpanModal" onclick="simpanModal()" style="background:#7C3AED;">
+          <i class="bi bi-save"></i> Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal View -->
+<div class="modal fade" id="modalView" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content" style="border-radius:16px;border:none;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+      <div class="modal-header" style="border:none;padding:20px 24px 0;">
+        <h5 style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:17px;">
+          Detail Hari Libur
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" style="padding:16px 24px 24px;">
+        <div id="viewContent"></div>
+        <button class="btn-primary-custom w-100 mt-3" data-bs-dismiss="modal" style="background:#475569;">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/app.js?v=5"></script>
+<script>
+const HARI = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+const HARI_SINGKAT = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+const BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const TIPE_LABEL = { nasional:'Libur Nasional', cuti_bersama:'Cuti Bersama', libur_sekolah:'Libur Sekolah', kegiatan_sekolah:'Kegiatan Sekolah' };
+const TIPE_BAR = { nasional:'red', cuti_bersama:'amber', libur_sekolah:'purple', kegiatan_sekolah:'yellow' };
+const TIPE_COLOR = { nasional:'red', cuti_bersama:'amber', libur_sekolah:'purple', kegiatan_sekolah:'yellow' };
+const TIPE_ICON = { nasional:'🇮🇩', cuti_bersama:'📋', libur_sekolah:'🏫', kegiatan_sekolah:'📌' };
+let _allLibur = [];
+let _today = new Date();
+
+function formatTgl(tgl){
+  const d = new Date(tgl + 'T00:00:00');
+  return HARI[d.getDay()] + ', ' + d.getDate() + ' ' + BULAN[d.getMonth()] + ' ' + d.getFullYear();
+}
+
+function getHari(tgl){ return HARI[new Date(tgl + 'T00:00:00').getDay()]; }
+
+async function loadAllLibur(){
+  const res = await fetchAPI('/api/hari-libur');
+  if(res) _allLibur = res.data || [];
+  else _allLibur = [];
+  renderCalendar();
+  loadTables();
+}
+
+function pad(n){ return String(n).padStart(2,'0'); }
+
+function renderCalendar(){
+  const bln = parseInt(document.getElementById('clBulan').value);
+  const thn = parseInt(document.getElementById('clTahun').value);
+  const dim = new Date(thn, bln + 1, 0).getDate();
+  const off = new Date(thn, bln, 1).getDay();
+  const body = document.getElementById('clBody');
+  const header = document.getElementById('clHeader');
+  const bStr = String(bln + 1).padStart(2,'0');
+
+  const liburMap = {};
+  _allLibur.forEach(l => { liburMap[l.tanggal] = l; });
+
+  header.innerHTML = HARI_SINGKAT.map((h,i) => {
+    const cls = i === 0 ? 'cl-head minggu' : (i === 6 ? 'cl-head sabtu' : 'cl-head weekday');
+    return '<div class="' + cls + '">' + h + '</div>';
+  }).join('');
+
+  let html = '';
+  for(let x = 0; x < off; x++) html += '<div class="cl-day other-month"></div>';
+  for(let d = 1; d <= dim; d++){
+    const tgl = thn + '-' + bStr + '-' + pad(d);
+    const hw = new Date(thn, bln, d).getDay();
+    const isToday = thn === _today.getFullYear() && bln === _today.getMonth() && d === _today.getDate();
+    const libur = liburMap[tgl];
+    let cls = 'cl-day';
+    if(isToday) cls += ' today';
+
+    let nameHtml = '';
+    if(libur){
+      const fill = TIPE_BAR[libur.tipe] || 'red';
+      cls += ' fill-' + fill;
+      nameHtml = '<div class="tgl-name">' + (libur.keterangan || TIPE_LABEL[libur.tipe] || libur.tipe) + '</div>';
+    } else if(hw === 0) {
+      cls += ' minggu';
+    }
+
+    let onclick = '';
+    if(libur) onclick = ' onclick="viewLibur(' + libur.id + ')"';
+    else if(hw !== 0) onclick = ' onclick="bukaTambahSekolah(\'' + tgl + '\')"';
+    const title = libur ? (libur.keterangan || TIPE_LABEL[libur.tipe] || libur.tipe) : (hw === 0 ? 'Libur Minggu' : 'Klik tambah');
+
+    html += '<div class="' + cls + '"' + onclick + ' title="' + title + '"><span class="tgl-num">' + d + '</span>' + nameHtml + '</div>';
+  }
+  body.innerHTML = html;
+}
+
+function navBulan(delta){
+  const selBln = document.getElementById('clBulan');
+  const selThn = document.getElementById('clTahun');
+  let bln = parseInt(selBln.value) + delta;
+  let thn = parseInt(selThn.value);
+  if(bln < 0){ bln = 11; thn--; }
+  if(bln > 11){ bln = 0; thn++; }
+  selBln.value = bln;
+  selThn.value = thn;
+  renderCalendar();
+}
+
+function kembaliKeHariIni(){
+  document.getElementById('clBulan').value = _today.getMonth();
+  document.getElementById('clTahun').value = _today.getFullYear();
+  renderCalendar();
+}
+
+function viewLibur(id){
+  const libur = _allLibur.find(l => l.id === id);
+  if(!libur) return;
+  const tp = libur.tipe, tl = TIPE_LABEL[tp]||tp;
+  const tc = tp==='nasional'?'#DC2626':tp==='cuti_bersama'?'#D97706':tp==='libur_sekolah'?'#7C3AED':'#CA8A04';
+  const src = libur.sumber==='indonesia'?'<span style="color:#DC2626;font-weight:600;">Kalender Indonesia</span>':'<span style="color:#7C3AED;font-weight:600;">Kalender Sekolah</span>';
+  document.getElementById('viewContent').innerHTML =
+    '<div style="background:#FAFAFA;border-radius:12px;padding:16px;">' +
+    '  <div class="mb-2"><span style="font-size:11px;color:#94A3B8;display:block;">Sumber</span>' + src + '</div>' +
+    '  <div class="mb-2"><span style="font-size:11px;color:#94A3B8;display:block;">Tanggal</span><span style="font-weight:700;font-size:15px;">' + formatTgl(libur.tanggal) + '</span></div>' +
+    '  <div class="mb-2"><span style="font-size:11px;color:#94A3B8;display:block;">Tipe</span><span style="font-weight:600;color:' + tc + ';">' + tl + '</span></div>' +
+    '  <div><span style="font-size:11px;color:#94A3B8;display:block;">Keterangan</span><span style="font-weight:600;">' + (libur.keterangan||'-') + '</span></div>' +
+    '</div>';
+  openModal('modalView');
+}
+
+function bukaTambahSekolah(tgl){
+  document.getElementById('modalLiburTitle').innerHTML = 'Tambah Rencana Kegiatan';
+  document.getElementById('editId').value = '';
+  document.getElementById('inpTgl').value = tgl || '';
+  document.getElementById('inpTgl').disabled = false;
+  document.getElementById('inpTipe').value = 'libur_sekolah';
+  document.getElementById('inpKet').value = '';
+  openModal('modalLibur');
+}
+
+function bukaEdit(libur){
+  document.getElementById('modalLiburTitle').innerHTML = '<i class="bi bi-pencil-square me-2" style="color:#7C3AED"></i>Edit Hari Libur Sekolah';
+  document.getElementById('editId').value = libur.id;
+  document.getElementById('inpTgl').value = libur.tanggal;
+  document.getElementById('inpTgl').disabled = false;
+  document.getElementById('inpTipe').value = libur.tipe;
+  document.getElementById('inpKet').value = libur.keterangan || '';
+  openModal('modalLibur');
+}
+
+async function simpanModal(){
+  const id = document.getElementById('editId').value;
+  const tanggal = document.getElementById('inpTgl').value;
+  const keterangan = document.getElementById('inpKet').value.trim();
+  const tipe = document.getElementById('inpTipe').value;
+  if(!tanggal) { showToast('Pilih tanggal terlebih dahulu','warning'); return; }
+  const label = id ? 'Update' : 'Simpan';
+  const {isConfirmed} = await Swal.fire({
+    title: (id ? 'Update' : 'Simpan') + ' Hari Libur?',
+    html: '<div><strong>Tanggal:</strong> ' + formatTgl(tanggal) + '</div><div><strong>Tipe:</strong> ' + (TIPE_LABEL[tipe]||tipe) + '</div><div><strong>Keterangan:</strong> ' + (keterangan||'-') + '</div>',
+    icon:'question', showCancelButton:true, confirmButtonText:'Ya', cancelButtonText:'Batal',
+    confirmButtonColor:'#7C3AED', cancelButtonColor:'#1E293B', reverseButtons:true,
+    width:'300px', padding:'12px',
+    customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}
+  });
+  if(!isConfirmed) return;
+  const endpoint = id ? '/api/hari-libur/edit' : '/api/hari-libur/tambah';
+  const body = id ? {id: parseInt(id), tanggal, keterangan, tipe} : {tanggal, keterangan, tipe};
+  const res = await fetchAPI(endpoint, 'POST', body);
+  if(res?.success){
+    showToast(res.message, 'success');
+    closeModal('modalLibur');
+    loadAllLibur();
+  } else showToast(res?.message||'Gagal','error');
+}
+
+async function syncHariLibur(){
+  const tahun = document.getElementById('filterTahun').value;
+  const {isConfirmed} = await Swal.fire({
+    title:'Sync Kalender Indonesia?',
+    html:'<div>Ambil data tahun <strong>'+tahun+'</strong> dari libur.deno.dev.</div>',
+    icon:'question', showCancelButton:true, confirmButtonText:'Ya', cancelButtonText:'Batal',
+    confirmButtonColor:'#DC2626', cancelButtonColor:'#1E293B', reverseButtons:true,
+    width:'300px', padding:'12px',
+    customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}
+  });
+  if(!isConfirmed) return;
+  Swal.fire({title:'Menyinkronkan...',html:'<div style="text-align:center;padding:12px;"><div class="loading-spinner"></div></div>',allowOutsideClick:false,showConfirmButton:false,width:'200px',padding:'12px',customClass:{popup:'swal-kecil',title:'swal-title-kecil'}});
+  const res = await fetchAPI('/api/hari-libur/sync','POST',{tahun:parseInt(tahun)});
+  Swal.close();
+  if(res?.success){ showToast(res.message,'success'); loadAllLibur(); }
+  else showToast(res?.message||'Gagal sync','error');
+}
+
+function toggleTable(w){
+  const body = document.getElementById('body' + w);
+  const ico = document.getElementById('ico' + w);
+  if(body.style.display === 'none'){
+    body.style.display = '';
+    ico.className = 'bi bi-chevron-up';
+  } else {
+    body.style.display = 'none';
+    ico.className = 'bi bi-chevron-down';
+  }
+}
+
+function selectAll(){
+  const checked = document.getElementById('cbAll').checked;
+  document.querySelectorAll('.cb-sekolah').forEach(cb => cb.checked = checked);
+  updateBulkActions();
+}
+
+function updateBulkActions(){
+  const n = document.querySelectorAll('.cb-sekolah:checked').length;
+  const el = document.getElementById('bulkActions');
+  if(n > 0){ el.style.display = 'flex'; document.getElementById('selectedCount').textContent = n + ' dipilih'; }
+  else el.style.display = 'none';
+}
+
+function batalPilih(){
+  document.querySelectorAll('.cb-sekolah').forEach(cb => cb.checked = false);
+  document.getElementById('cbAll').checked = false;
+  document.getElementById('bulkActions').style.display = 'none';
+}
+
+async function hapusTerpilih(){
+  const ids = Array.from(document.querySelectorAll('.cb-sekolah:checked')).map(cb => parseInt(cb.value));
+  if(!ids.length) return;
+  const {isConfirmed} = await Swal.fire({
+    title:'Hapus ' + ids.length + ' data?',
+    html:'<div style="font-size:12px;">' + ids.length + ' hari libur sekolah akan dihapus.</div>',
+    icon:'warning', showCancelButton:true, confirmButtonText:'Ya', cancelButtonText:'Batal',
+    confirmButtonColor:'#DC2626', cancelButtonColor:'#1E293B', reverseButtons:true,
+    width:'300px', padding:'12px',
+    customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}
+  });
+  if(!isConfirmed) return;
+  const res = await fetchAPI('/api/hari-libur/hapus-bulk','POST',{ids});
+  if(res?.success){ showToast(res.message,'success'); batalPilih(); loadAllLibur(); }
+  else showToast(res?.message||'Gagal','error');
+}
+
+async function hapusLibur(id, tgl){
+  const {isConfirmed} = await Swal.fire({
+    title:'Hapus Hari Libur Sekolah?',
+    html: '<div style="font-size:12px;">' + formatTgl(tgl) + ' akan dihapus.</div>',
+    icon:'warning', showCancelButton:true, confirmButtonText:'Ya', cancelButtonText:'Batal',
+    confirmButtonColor:'#DC2626', cancelButtonColor:'#1E293B', reverseButtons:true,
+    width:'300px', padding:'12px',
+    customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}
+  });
+  if(!isConfirmed) return;
+  const res = await fetchAPI('/api/hari-libur/hapus','POST',{id});
+  if(res?.success){ showToast(res.message,'success'); loadAllLibur(); }
+  else showToast(res?.message||'Gagal','error');
+}
+
+function bukaEditId(id){
+  const libur = _allLibur.find(l => l.id === id);
+  if(libur) bukaEdit(libur);
+}
+
+function tipeLabel(l){
+  const map = { nasional:'Libur Nasional', cuti_bersama:'Cuti Bersama', libur_sekolah:'Libur Sekolah', kegiatan_sekolah:'Kegiatan Sekolah' };
+  const colors = { nasional:'#FEE2E2;#DC2626', cuti_bersama:'#FEF3C7;#92400E', libur_sekolah:'#F5F3FF;#7C3AED', kegiatan_sekolah:'#FEF9C3;#A16207' };
+  const c = (colors[l.tipe]||'#F1F5F9;#475569').split(';');
+  return '<span style="background:' + c[0] + ';color:' + c[1] + ';padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;">' + (map[l.tipe]||l.tipe) + '</span>';
+}
+
+function loadTables(){
+  const tahun = document.getElementById('filterTahun').value;
+  const dataIndonesia = _allLibur.filter(l => l.tanggal.startsWith(tahun) && l.sumber === 'indonesia');
+  const dataSekolah = _allLibur.filter(l => l.tanggal.startsWith(tahun) && l.sumber === 'sekolah');
+
+  document.getElementById('tblIndonesia').innerHTML = !dataIndonesia.length
+    ? '<tr><td colspan="4"><div class="empty-state"><i class="bi bi-flag-fill"></i><p>Belum ada data. Klik Sync.</p></div></td></tr>'
+    : dataIndonesia.map(l => '<tr style="cursor:pointer;" onclick="viewLibur(' + l.id + ')">\
+        <td style="font-weight:700;white-space:nowrap;">' + l.tanggal + '</td>\
+        <td style="color:var(--gray)">' + getHari(l.tanggal) + '</td>\
+        <td>' + tipeLabel(l) + '</td>\
+        <td>' + (l.keterangan||'-') + '</td></tr>').join('');
+
+  const tbodySek = document.getElementById('tblSekolah');
+  if(!dataSekolah.length){
+    tbodySek.innerHTML = '<tr><td colspan="5"><div class="empty-state"><i class="bi bi-building"></i><p>Belum ada hari libur sekolah</p></div></td></tr>';
+  } else {
+    tbodySek.innerHTML = dataSekolah.map(l =>
+      '<tr>\
+        <td style="text-align:center;"><input type="checkbox" class="cb-sekolah" value="' + l.id + '" onchange="updateBulkActions()"></td>\
+        <td style="font-weight:700;white-space:nowrap;">' + l.tanggal + '</td>\
+        <td style="color:var(--gray)">' + getHari(l.tanggal) + '</td>\
+        <td>' + tipeLabel(l) + '</td>\
+        <td>' + (l.keterangan||'-') + '</td>\
+      </tr>').join('');
+  }
+}
+
+async function init(){
+  await loadLayout('hari-libur','Kalender');
+  const thnSel = document.getElementById('clTahun');
+  const thnFilter = document.getElementById('filterTahun');
+  for(let y = _today.getFullYear() - 2; y <= _today.getFullYear() + 5; y++){
+    thnSel.innerHTML += '<option value="' + y + '"' + (y === _today.getFullYear() ? ' selected' : '') + '>' + y + '</option>';
+    thnFilter.innerHTML += '<option value="' + y + '"' + (y === _today.getFullYear() ? ' selected' : '') + '>' + y + '</option>';
+  }
+  document.getElementById('clBulan').value = _today.getMonth();
+  loadAllLibur();
+}
+init();
+</script>
+</body>
+</html>
