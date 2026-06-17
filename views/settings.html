@@ -28,7 +28,7 @@
       <button class="nav-link" id="whatsapp-tab" data-bs-toggle="tab" data-bs-target="#whatsapp" type="button" role="tab" aria-selected="false"><i class="bi bi-whatsapp me-1"></i>Pengaturan WhatsApp</button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="ta-tab" data-bs-toggle="tab" data-bs-target="#ta" type="button" role="tab" aria-selected="false"><i class="bi bi-calendar-range me-1"></i>Tahun Ajaran</button>
+      <button class="nav-link" id="ta-tab" data-bs-toggle="tab" data-bs-target="#ta" type="button" role="tab" aria-selected="false"><i class="bi bi-calendar-range me-1"></i>Pengaturan Tahun Ajaran</button>
     </li>
   </ul>
   <div class="tab-content" id="settingsTabsContent" style="margin-top:20px;">
@@ -116,7 +116,7 @@
     <div class="tab-pane fade" id="whatsapp" role="tabpanel" aria-labelledby="whatsapp-tab">
       <div class="row g-3">
     <div class="col-lg-7">
-      <div class="card-modern">
+      <div class="card-modern" style="height:100%;display:flex;flex-direction:column;">
         <div class="card-modern-header">
           <div class="card-modern-title"><i class="bi bi-whatsapp" style="color:#25D366;"></i> WhatsApp Gateway</div>
           <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--gray);cursor:pointer;">
@@ -124,7 +124,7 @@
             <input type="checkbox" id="wa_enabled" onchange="toggleWA()" style="width:40px;height:22px;accent-color:#25D366;cursor:pointer;">
           </label>
         </div>
-        <div class="card-modern-body" id="wa-body">
+        <div class="card-modern-body" id="wa-body" style="flex:1;">
           <div class="mb-2">
             <label class="form-label-modern">Token API</label>
             <div style="position:relative;">
@@ -140,7 +140,7 @@
           </div>
           <div class="mb-2">
             <label class="form-label-modern">Template Pesan</label>
-            <textarea id="wa_template" class="form-control-modern" rows="6" style="font-family:monospace;font-size:12px;resize:vertical;padding:10px;border-radius:10px;border:1.5px solid #E2E8F0;width:100%;outline:none;">*Presensi Digital*
+            <textarea id="wa_template" class="form-control-modern" rows="18" style="font-family:monospace;font-size:12px;resize:vertical;padding:10px;border-radius:10px;border:1.5px solid #E2E8F0;width:100%;outline:none;">*Presensi Digital*
 
 Assalamu'alaikum Wr. Wb.
 
@@ -178,6 +178,15 @@ Terima kasih.</textarea>
           </div>
           <button class="btn-primary-custom mt-3 w-100" id="btnTestWA" onclick="testWA()" style="background:#25D366;border-color:#25D366;"><i class="bi bi-send"></i> Kirim WA Uji Coba</button>
           <div id="wa_test_result" style="display:none;margin-top:10px;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:600;"></div>
+        </div>
+      </div>
+      <div class="card-modern" id="preview-wa-card" style="margin-top:12px;">
+        <div class="card-modern-header">
+          <div class="card-modern-title"><i class="bi bi-eye" style="color:#6366F1;"></i> Pratinjau Pesan</div>
+        </div>
+        <div class="card-modern-body">
+          <div style="font-size:11.5px;color:var(--gray);margin-bottom:8px;">Pratinjau template dengan data sampel.</div>
+          <div id="wa-preview-box" style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:16px;font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-word;min-height:80px;color:#1E293B;"><span style="color:#94A3B8;">Isi pesan untuk melihat pratinjau...</span></div>
         </div>
       </div>
     </div>
@@ -516,9 +525,11 @@ function terapkanWAState(){
   document.getElementById('wa-toggle-label').textContent=on?'Aktif':'Nonaktif';
   const body=document.getElementById('wa-body');
   const testBody=document.querySelector('#test-wa-card .card-modern-body');
+  const previewBody=document.querySelector('#preview-wa-card .card-modern-body');
   body.style.opacity=on?'1':'0.4';
   body.style.pointerEvents=on?'':'none';
   if(testBody){testBody.style.opacity=on?'1':'0.4';testBody.style.pointerEvents=on?'':'none';}
+  if(previewBody){previewBody.style.opacity=on?'1':'0.4';previewBody.style.pointerEvents=on?'':'none';}
 }
 
 let _waChanged=false;
@@ -534,6 +545,27 @@ function cekWA(){
   btn.disabled=sama;
   btn.style.opacity=sama?'0.5':'1';
   btn.style.cursor=sama?'not-allowed':'pointer';
+  previewWA();
+}
+
+function previewWA(){
+  const tmpl=document.getElementById('wa_template').value;
+  const HARI=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  const BULAN=['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const now=new Date();
+  const tgl=HARI[now.getDay()]+', '+now.getDate()+' '+BULAN[now.getMonth()+1]+' '+now.getFullYear();
+  const jam=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  let msg=tmpl||'(pesan kosong)';
+  msg=msg
+    .replace(/\{nama\}/g,'<strong style="color:#2563EB;">NamaSiswa</strong>')
+    .replace(/\{nisn\}/g,'<strong style="color:#2563EB;">1234567890</strong>')
+    .replace(/\{kelas\}/g,'<strong style="color:#2563EB;">Kelas 1A</strong>')
+    .replace(/\{status\}/g,'<strong style="color:#2563EB;">Hadir</strong>')
+    .replace(/\{jam\}/g,'<strong style="color:#2563EB;">'+jam+'</strong>')
+    .replace(/\{tanggal\}/g,'<strong style="color:#2563EB;">'+tgl+'</strong>')
+    .replace(/\{hari\}/g,'<strong style="color:#2563EB;">'+HARI[now.getDay()]+'</strong>');
+  if(!tmpl.trim()) msg='<span style="color:#94A3B8;">Isi pesan untuk melihat pratinjau...</span>';
+  document.getElementById('wa-preview-box').innerHTML=msg.replace(/\n/g,'<br>');
 }
 
 function toggleWA(){
@@ -730,7 +762,10 @@ async function init(){
       const cur=document.querySelector('#settingsTabs .nav-link.active');
       if(!cur) return;
       const from=cur.getAttribute('data-bs-target'),to=e.target.getAttribute('data-bs-target');
-      if(from==='#whatsapp'&&to==='#sekolah'&&_waChanged){
+      if(from===to) return;
+      const j=document.getElementById('btnSimpanJam'),i=document.getElementById('btnSimpanIdentitas');
+      const sekolahChanged=(j&&!j.disabled)||(i&&!i.disabled);
+      if(from==='#whatsapp'&&_waChanged){
         e.preventDefault();
         unsavedSwal('Ada perubahan pada pengaturan WhatsApp.',()=>{
           document.getElementById('wa_api_key').value=_waKeyAwal;
@@ -738,38 +773,35 @@ async function init(){
           document.getElementById('wa_template').value=_waTemplateAwal;
           document.getElementById('wa_enabled').checked=_waEnabledAwal==='1';
           _waChanged=false;cekWA();terapkanWAState();
-          new bootstrap.Tab(document.querySelector('#sekolah-tab')).show();
+          new bootstrap.Tab(e.target).show();
         });
-      }else if(from==='#sekolah'&&to==='#whatsapp'){
-        const j=document.getElementById('btnSimpanJam'),i=document.getElementById('btnSimpanIdentitas');
-        if((j&&!j.disabled)||(i&&!i.disabled)){
-          e.preventDefault();
-          unsavedSwal('Ada perubahan pada pengaturan sekolah.',()=>{
-            document.getElementById('jam_masuk').value=_jamAwal;
-            document.getElementById('batas_terlambat').value=_batasAwal;
-            document.getElementById('batas_alpha').value=_alphaAwal;
-            cekJamBerubah();
-            ['nama_sekolah','alamat','tahun_ajaran','telp','s_email','website'].forEach(id=>document.getElementById(id).value=_identAwal[id]);
-            if(_logoAwal){
-              document.getElementById('logo-preview').src=_logoAwal;
-              document.getElementById('logo-preview').style.display='block';
-              document.getElementById('logo-placeholder').style.display='none';
-            }else{
-              document.getElementById('logo-preview').style.display='none';
-              document.getElementById('logo-placeholder').style.display='';
-            }
-            if(_fotoOpsiAwal){
-              document.getElementById('foto-opsi-preview').src=_fotoOpsiAwal;
-              document.getElementById('foto-opsi-preview').style.display='block';
-              document.getElementById('foto-opsi-placeholder').style.display='none';
-            }else{
-              document.getElementById('foto-opsi-preview').style.display='none';
-              document.getElementById('foto-opsi-placeholder').style.display='';
-            }
-            cekIdentitasBerubah();
-            new bootstrap.Tab(document.querySelector('#whatsapp-tab')).show();
-          });
-        }
+      }else if(from==='#sekolah'&&sekolahChanged){
+        e.preventDefault();
+        unsavedSwal('Ada perubahan pada pengaturan sekolah.',()=>{
+          document.getElementById('jam_masuk').value=_jamAwal;
+          document.getElementById('batas_terlambat').value=_batasAwal;
+          document.getElementById('batas_alpha').value=_alphaAwal;
+          cekJamBerubah();
+          ['nama_sekolah','alamat','tahun_ajaran','telp','s_email','website'].forEach(id=>document.getElementById(id).value=_identAwal[id]);
+          if(_logoAwal){
+            document.getElementById('logo-preview').src=_logoAwal;
+            document.getElementById('logo-preview').style.display='block';
+            document.getElementById('logo-placeholder').style.display='none';
+          }else{
+            document.getElementById('logo-preview').style.display='none';
+            document.getElementById('logo-placeholder').style.display='';
+          }
+          if(_fotoOpsiAwal){
+            document.getElementById('foto-opsi-preview').src=_fotoOpsiAwal;
+            document.getElementById('foto-opsi-preview').style.display='block';
+            document.getElementById('foto-opsi-placeholder').style.display='none';
+          }else{
+            document.getElementById('foto-opsi-preview').style.display='none';
+            document.getElementById('foto-opsi-placeholder').style.display='';
+          }
+          cekIdentitasBerubah();
+          new bootstrap.Tab(e.target).show();
+        });
       }
     });
   },100);

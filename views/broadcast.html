@@ -84,6 +84,12 @@ Terima kasih.</textarea>
 // --- Template management ---
 let savedTemplate = '';
 const TEMPLATE_KEY = 'broadcast_template';
+let _waEnabled = false;
+
+async function cekWAStatus(){
+  const res = await fetchAPI('/api/settings');
+  if(res?.success) _waEnabled = res.data.wa_enabled === '1';
+}
 
 function simpanTemplate(){
   savedTemplate = document.getElementById('inpPesan').value;
@@ -128,9 +134,13 @@ async function hitungPenerima(){
     const lanjut = await konfirmasiUnsaved();
     if(lanjut) return;
   }
+  const info = document.getElementById('info-count');
+  if(!_waEnabled){
+    info.innerHTML = '<span style="color:#EF4444;"><i class="bi bi-exclamation-triangle-fill"></i> WhatsApp Gateway Tidak Aktif</span>';
+    return;
+  }
   const kelas = document.getElementById('filterKelas').value;
   const tahun_ajaran_id = document.getElementById('filterTahunAjaran').value;
-  const info = document.getElementById('info-count');
   info.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" style="width:14px;height:14px;"></span> Menghitung penerima...';
   const res = await fetchAPI('/api/siswa?limit=99999&kelas='+encodeURIComponent(kelas)+'&tahun_ajaran_id='+tahun_ajaran_id);
   if(!res || !res.success) {
@@ -138,7 +148,7 @@ async function hitungPenerima(){
     return;
   }
   const total = (res.data||[]).filter(s => s.no_hp_ortu && s.no_hp_ortu.trim().length >= 10).length;
-  info.innerHTML = '<span><i class="bi bi-people-fill" style="color:#3B82F6;"></i> Penerima <span style="background:#3B82F6;color:white;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:700;">' + total + '</span> siswa</span>';
+  info.innerHTML = '<span><i class="bi bi-people-fill" style="color:#3B82F6;"></i> Penerima Pesan Broadcast <span style="background:#3B82F6;color:white;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:700;">' + total;
 }
 
 document.getElementById('inpPesan').addEventListener('input', function(){
@@ -232,7 +242,8 @@ async function init(){
   await loadLayout('broadcast','Broadcast WhatsApp');
   await Promise.all([
     loadKelasOptions('filterKelas', true),
-    loadTAOptions('filterTahunAjaran')
+    loadTAOptions('filterTahunAjaran'),
+    cekWAStatus()
   ]);
   interceptSidebarNav();
   savedTemplate = localStorage.getItem(TEMPLATE_KEY);
