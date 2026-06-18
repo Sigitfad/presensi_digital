@@ -41,7 +41,11 @@
       <div class="page-title">Data Lulusan / Alumni</div>
       <div class="page-subtitle">Kelola data siswa yang telah lulus</div>
     </div>
-    <button class="btn-primary-custom" onclick="bukaTambah()"><i class="bi bi-plus-circle"></i> Tambah Alumni</button>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-primary-custom" onclick="bukaTambah()"><i class="bi bi-plus-circle"></i> Tambah Alumni</button>
+      <button class="btn-primary-custom" onclick="bukaImportCsv()" style="background:linear-gradient(135deg,#059669,#047857);"><i class="bi bi-file-earmark-arrow-up"></i> Import CSV</button>
+      <button class="btn-primary-custom" onclick="exportCsv()" style="background:linear-gradient(135deg,#059669,#047857);"><i class="bi bi-download"></i> Export CSV</button>
+    </div>
   </div>
 
   <!-- Tombol Hapus Massal -->
@@ -532,9 +536,111 @@ function hapusMassalAlumni(){
     Swal.fire({title:'Menghapus...',html:`<i class="bi bi-arrow-repeat spin"></i> ${checked.length} alumni`,allowOutsideClick:false,didOpen:()=>{Swal.showLoading();}});
     const res=await fetchAPI('/api/alumni/hapus-massal','POST',{ids:checked});
     Swal.close();
-    if(res?.success){showToast(res.message,'success');loadAlumni();loadTahunFilter();}
+    if(res?.success){showToast(res.message,'success');document.getElementById('selectAllAlumni').checked=false;document.getElementById('bulkActionsAlumni').style.display='none';loadAlumni();loadTahunFilter();}
     else showToast(res?.message||'Gagal','error');
   });
+}
+</script>
+
+<!-- Modal Import CSV -->
+<div class="modal fade" id="modalImportCsv" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:520px;">
+    <div class="modal-content" style="border-radius:var(--radius-lg);border:none;">
+      <div class="modal-header" style="background:linear-gradient(135deg,#059669,#047857);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border:none;">
+        <h5 class="modal-title text-white fw-bold">Import Data Alumni (.CSV)</h5>
+        <button type="button" class="btn-close btn-close-white" onclick="tutupImportCsv()"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div id="alertImportCsv" style="font-size:12px;"></div>
+        <div id="importStepFile">
+          <p style="font-size:12px;color:#64748B;margin-bottom:12px;">Pilih file CSV dengan format:</p>
+          <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:12px;font-size:11px;font-family:monospace;margin-bottom:14px;word-break:break-all;">
+            nama,nisn,kelas_lulus,tahun_lulus,nipd
+          </div>
+          <div style="border:2px dashed #CBD5E1;border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all 0.2s;" id="dropArea" onclick="document.getElementById('csvFileInput').click()" onmouseover="this.style.borderColor='#059669';this.style.background='#F0FDF4'" onmouseout="this.style.borderColor='#CBD5E1';this.style.background=''">
+            <i class="bi bi-cloud-arrow-up" style="font-size:32px;color:#94A3B8;"></i>
+            <p style="font-size:12px;color:#64748B;margin:8px 0 0;">Klik disini pilih file CSV</p>
+          </div>
+          <input type="file" id="csvFileInput" accept=".csv" style="display:none;" onchange="onCsvFileSelect(this)">
+          <div id="csvFileName" style="display:none;margin-top:10px;font-size:12px;color:#059669;font-weight:600;"><i class="bi bi-check-circle-fill"></i> <span></span></div>
+        </div>
+        <div id="importStepResult" style="display:none;">
+          <div id="importResultContent" style="font-size:12px;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button onclick="tutupImportCsv()" style="background:#1E293B;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:13px;padding:8px 20px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='#334155';this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 12px rgba(30,41,59,0.3)';" onmouseout="this.style.background='#1E293B';this.style.transform='';this.style.boxShadow='none';">Tutup</button>
+        <button class="btn-primary-custom" id="btnImportUpload" onclick="uploadImportCsv()" style="display:none;background:linear-gradient(135deg,#059669,#047857);">Upload & Import</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let _allAlumni = [];
+let _alumniPAGE = {};
+
+function bukaImportCsv(){
+  document.getElementById('alertImportCsv').innerHTML='';
+  document.getElementById('importStepFile').style.display='';
+  document.getElementById('importStepResult').style.display='none';
+  document.getElementById('csvFileInput').value='';
+  document.getElementById('csvFileName').style.display='none';
+  document.getElementById('btnImportUpload').style.display='none';
+  openModal('modalImportCsv');
+}
+
+function onCsvFileSelect(inp){
+  const file=inp.files[0];
+  if(!file) return;
+  const nameEl=document.getElementById('csvFileName');
+  nameEl.style.display='block';
+  nameEl.querySelector('span').textContent=file.name;
+  document.getElementById('btnImportUpload').style.display='inline-flex';
+}
+
+function tutupImportCsv(){
+  const file=document.getElementById('csvFileInput').files[0];
+  if(!file){closeModal('modalImportCsv');return;}
+  Swal.fire({title:'Perubahan Belum Disimpan',text:'File CSV sudah dipilih namun belum diimport.',icon:'warning',showCancelButton:true,confirmButtonText:'Lanjut Edit',cancelButtonText:'Discard',confirmButtonColor:'#2563EB',cancelButtonColor:'#DC2626',reverseButtons:true,width:'320px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}}).then(result=>{if(result.dismiss)closeModal('modalImportCsv');});
+}
+
+async function uploadImportCsv(){
+  const file=document.getElementById('csvFileInput').files[0];
+  if(!file){showToast('Pilih file CSV terlebih dahulu','error');return;}
+  const {isConfirmed}=await Swal.fire({title:'Konfirmasi Import',text:'Yakin ingin mengimport file CSV ini?',icon:'question',showCancelButton:true,confirmButtonText:'Ya, Import',cancelButtonText:'Batal',confirmButtonColor:'#059669',cancelButtonColor:'#1E293B',reverseButtons:true,width:'300px',padding:'16px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil',cancelButton:'swal-btn-kecil'}});
+  if(!isConfirmed) return;
+  const fd=new FormData();
+  fd.append('file',file);
+  const btn=document.getElementById('btnImportUpload');
+  btn.disabled=true;btn.textContent='Memproses...';
+  const tStart=Date.now();
+  closeModal('modalImportCsv');
+  Swal.fire({title:'Mengimport data...',text:'Harap tunggu, sedang memproses file CSV',allowOutsideClick:false,allowEscapeKey:false,showConfirmButton:false,didOpen:()=>Swal.showLoading(),width:'320px',padding:'24px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil'}});
+  const res=await fetchAPI('/api/alumni/import','POST',fd);
+  btn.disabled=false;btn.textContent='Upload & Import';
+  if(!res){Swal.close();return;}
+  if(!res.success){Swal.close();document.getElementById('alertImportCsv').innerHTML=`<div class="alert-msg error">${res.message||'Gagal import'}</div>`;return;}
+  const elapsed=Date.now()-tStart;
+  if(elapsed<5000) await new Promise(r=>setTimeout(r,5000-elapsed));
+  Swal.close();
+  if(res.gagal){
+    let errList='';
+    if(res.errors&&res.errors.length){
+      errList='<div style="text-align:left;max-height:200px;overflow-y:auto;margin-top:8px;font-size:12px;">';
+      res.errors.forEach(e=>{errList+=`<div style="padding:3px 0;border-bottom:1px solid #F1F5F9;">${e}</div>`;});
+      errList+='</div>';
+    }
+    Swal.fire({icon:'warning',title:res.message,html:errList,confirmButtonColor:'#1E293B',confirmButtonText:'Tutup',width:'400px',customClass:{popup:'swal-kecil',title:'swal-title-kecil',htmlContainer:'swal-text-kecil',confirmButton:'swal-btn-kecil'}});
+  } else {
+    Swal.fire({icon:'success',title:res.message,toast:true,position:'center',showConfirmButton:false,timer:2500,padding:'12px 16px',customClass:{popup:'swal-kecil'}});
+  }
+  loadAlumni();
+}
+
+function exportCsv(){
+  const params=new URLSearchParams({search:document.getElementById('searchInput').value,tahun_lulus:document.getElementById('filterTahun').value});
+  downloadWithProgress('/api/alumni/export?'+params,'data_alumni.csv',_alumniData.length,'alumni');
 }
 
 async function init(){

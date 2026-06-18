@@ -1078,7 +1078,7 @@ async function uploadImportCsvGtk(){
   if(res.gagal){
     let errList='';
     if(res.errors&&res.errors.length){
-      errList='<div style="text-align:left;max-height:200px;overflow-y:auto;margin-top:8px;font-size:12px;">';
+      errList='<div style="text-align:center;max-height:200px;overflow-y:auto;margin-top:8px;font-size:12px;">';
       res.errors.forEach(e=>{errList+=`<div style="padding:3px 0;border-bottom:1px solid #F1F5F9;">${e}</div>`;});
       errList+='</div>';
     }

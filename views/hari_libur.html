@@ -113,7 +113,7 @@
         <div class="card-modern-header">
           <div class="card-modern-title">
             <i class="bi bi-flag-fill" style="color:#DC2626;"></i>
-            <span style="color:#DC2626;">Kalender Indonesia</span>
+            <span style="color:#DC2626;">Kalender Nasional</span>
             <span style="font-size:11px;font-weight:400;color:#94A3B8;margin-left:6px;">libur.deno.dev</span>
           </div>
           <div style="display:flex;gap:6px;align-items:center;">
@@ -468,7 +468,7 @@ function tipeLabel(l){
   const map = { nasional:'Libur Nasional', cuti_bersama:'Cuti Bersama', libur_sekolah:'Libur Sekolah', kegiatan_sekolah:'Kegiatan Sekolah' };
   const colors = { nasional:'#FEE2E2;#DC2626', cuti_bersama:'#FEF3C7;#92400E', libur_sekolah:'#F5F3FF;#7C3AED', kegiatan_sekolah:'#FEF9C3;#A16207' };
   const c = (colors[l.tipe]||'#F1F5F9;#475569').split(';');
-  return '<span style="background:' + c[0] + ';color:' + c[1] + ';padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;">' + (map[l.tipe]||l.tipe) + '</span>';
+  return '<span style="background:' + c[0] + ';color:' + c[1] + ';padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap;">' + (map[l.tipe]||l.tipe) + '</span>';
 }
 
 function loadTables(){

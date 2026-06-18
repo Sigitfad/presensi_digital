@@ -23,8 +23,84 @@ const upload = multer({
   }
 });
 
-const { auth, requireOperator } = require('./_helpers');
+const { auth, requireOperator, detectDelimiter, parseCSV } = require('./_helpers');
 router.use(auth, requireOperator);
+
+// Multer untuk CSV import (memory storage)
+const csvUpload = multer({ storage: multer.memoryStorage(), limits:{fileSize:5*1024*1024},
+  fileFilter:(req,file,cb)=> {
+    const ext = path.extname(file.originalname).toLowerCase();
+    if(ext!=='.csv' && file.mimetype!=='text/csv' && file.mimetype!=='application/vnd.ms-excel')
+      return cb(new Error('Hanya file CSV'));
+    cb(null,true);
+  }
+});
+
+// GET: export pindahan ke CSV (harus sebelum /:id)
+router.get('/export', (req,res) => {
+  const { search='' } = req.query;
+  let sql = 'SELECT * FROM pindahan WHERE 1=1';
+  const p = [];
+  if(search){ sql += ' AND (nama LIKE ? OR nisn LIKE ? OR nipd LIKE ?)'; p.push(`%${search}%`,`%${search}%`,`%${search}%`); }
+  sql += ' ORDER BY tanggal_pindah DESC, nama ASC';
+  const data = queryAll(sql,p);
+  const header = ['nisn','nipd','nama','kelas','jenis_kelamin','nik','tempat_lahir','tanggal_lahir','agama','alamat','no_hp_ortu','alasan','tanggal_pindah','foto'];
+  const textCols = ['nisn','nipd','nik','no_hp_ortu'];
+  const csvRows = [header.join(';')];
+  data.forEach(r => {
+    csvRows.push(header.map(h => {
+      let v = (r[h]||'')+'';
+      if(textCols.includes(h) && /^\d+$/.test(v)) return '="'+v+'"';
+      if(/[;"\n]/.test(v)) return '"'+v.replace(/"/g,'""')+'"';
+      return v;
+    }).join(';'));
+  });
+  res.setHeader('Content-Type','text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition','attachment; filename=data_pindahan.csv');
+  res.send('\uFEFF' + csvRows.join('\n'));
+});
+
+// POST: import pindahan dari CSV
+router.post('/import', csvUpload.single('file'), (req,res) => {
+  try {
+    if(!req.file) return res.json({success:false,message:'File CSV tidak ditemukan'});
+    let text = req.file.buffer.toString('utf-8');
+    if(text.charCodeAt(0)===0xFEFF) text=text.slice(1);
+    const {header, rows: rawRows} = parseCSV(text);
+    const required = ['nama','nisn','kelas'];
+    const missing = required.filter(r=>!header.includes(r));
+    if(missing.length) return res.json({success:false,message:`Kolom wajib tidak ditemukan: ${missing.join(', ')}`});
+
+    const rows = rawRows.filter(r=>required.some(k=>r[k])).map(r=>{
+      const o={};for(const k of Object.keys(r)){let v=r[k];if(/^=".+"$/.test(v))v=v.slice(2,-1);o[k]=v;}
+      return o;
+    });
+
+    let sukses=0, gagal=0, errors=[];
+    const sql = 'INSERT INTO pindahan (nama,nisn,kelas,alasan,tanggal_pindah,foto,jenis_kelamin,nik,tempat_lahir,tanggal_lahir,agama,alamat,no_hp_ortu,nipd) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+
+    runWithoutSave('BEGIN TRANSACTION');
+    for(let i=0; i<rows.length; i++){
+      const r = rows[i];
+      const no = i+2;
+      const errs = [];
+      for(const f of required) if(!r[f]) errs.push(`${f} kosong`);
+      if(r.nisn&&queryOne('SELECT id FROM pindahan WHERE nisn=?',[r.nisn])) errs.push('NISN sudah terdaftar');
+      if(errs.length){gagal++;errors.push(`Baris ${no}: ${errs.join('; ')}`);continue;}
+      try {
+        runWithoutSave(sql, [r.nama,r.nisn,r.kelas,(r.alasan||''),(r.tanggal_pindah||''),(r.foto||''),(r.jenis_kelamin||''),(r.nik||''),(r.tempat_lahir||''),(r.tanggal_lahir||''),(r.agama||''),(r.alamat||''),(r.no_hp_ortu||''),(r.nipd||'')]);
+        sukses++;
+      } catch(e){gagal++;errors.push(`Baris ${no}: ${e.message}`);}
+    }
+    runWithoutSave('COMMIT');
+    saveDB();
+
+    logActivity(req.session.operatorId,req.session.operatorNama,req.session.operatorRole,'Import CSV',`${sukses} sukses, ${gagal} gagal - Pindahan`);
+    res.json({success:true, sukses, gagal, errors, message:`${sukses} berhasil, ${gagal} gagal`});
+  } catch(e){
+    res.json({success:false,message:e.message});
+  }
+});
 
 router.get('/', (req,res) => {
   const { search='' } = req.query;
