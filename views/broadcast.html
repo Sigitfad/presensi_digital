@@ -50,7 +50,7 @@ Diberitahukan bahwa hari ini akan diadakan kegiatan sekolah. Mohon dukungan dan 
 Terima kasih.</textarea>
 
           <div class="d-flex gap-2 mt-3 flex-wrap">
-            <button class="btn-primary-custom" onclick="hitungPenerima()" style="background:var(--gray);border-color:var(--gray);">
+            <button class="btn-primary-custom" onclick="hitungPenerima()" style="background:var(--gray);border-color:var(--gray);" id="btnHitungPenerima">
               <i class="bi bi-search"></i> Hitung Penerima
             </button>
             <button class="btn-primary-custom" onclick="kirimBroadcast()" style="background:#25D366;border-color:#25D366;" id="btnKirim">
@@ -89,6 +89,17 @@ let _waEnabled = false;
 async function cekWAStatus(){
   const res = await fetchAPI('/api/settings');
   if(res?.success) _waEnabled = res.data.wa_enabled === '1';
+  updateWAButtonStates();
+}
+
+function updateWAButtonStates(){
+  const btnKirim = document.getElementById('btnKirim');
+  const btnHitung = document.getElementById('btnHitungPenerima');
+  const nonaktif = !_waEnabled;
+  btnKirim.disabled = nonaktif;
+  btnHitung.disabled = nonaktif;
+  btnKirim.style.opacity = nonaktif ? '0.5' : '1';
+  btnHitung.style.opacity = nonaktif ? '0.5' : '1';
 }
 
 function simpanTemplate(){
@@ -163,9 +174,13 @@ document.getElementById('inpPesan').addEventListener('input', function(){
 });
 
 async function kirimBroadcast(){
+  if(!_waEnabled){
+    showToast('WhatsApp Gateway tidak aktif','warning');
+    return;
+  }
   if(cekUnsaved()){
     const lanjut = await konfirmasiUnsaved();
-    if(lanjut) return; // user clicked Lanjut Edit
+    if(lanjut) return;
   }
 
   const kelas = document.getElementById('filterKelas').value;
